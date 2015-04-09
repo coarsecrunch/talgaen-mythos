@@ -1,0 +1,11 @@
+build/
+Debug/
+Release/
+*.obj
+*.log
+*.pdb
+*.psess
+*.vspx
+*.xml
+
+
