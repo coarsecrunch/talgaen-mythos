@@ -1,12 +1,9 @@
 build/
 Debug/
 Release/
-!/lib
 *.obj
 *.log
 *.pdb
 *.psess
 *.vspx
 *.xml
-
-
