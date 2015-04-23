@@ -8,6 +8,7 @@ namespace talga
 
 		Vector3& operator=(const Vector3& copy);
 		float& operator[](int index);
+		const float& operator[](int index) const { return vec[index]; }
 		float operator()(int index) const;
 
 		float mag() const;

@@ -24,6 +24,10 @@
 #include "LuaBridge\LuaBridge.h"
 
 
+#include "Renderer.h"
+#include "Layer.h"
+#include "Sprite.h"
+
 using namespace talga;
 
 const I32 WIDTH = 800;
@@ -206,21 +210,6 @@ int main(int argc, char** argv)
 	
 	Character talga(&game, vec4(100.0f, 0.0f, 0.0f, 1.0f), vec4(0.0f,0.0f,0.0f,0.0f), talgaAnims);
 	PhysSprite bob(&game, vec4(300.0f, 0.0f, 0.0f, 1.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f), anims);
-	std::vector<ParticleEmitter> emitters;
-
-	for (int y = 0; y < 2; ++y)
-	{
-		for (int x = 0; x < 4; ++x)
-		{
-			emitters.push_back(ParticleEmitter(&game, 10000, 10000, 30, 1));
-		}
-	}
-
-	for (int i = 0; i < emitters.size(); ++i)
-	{
-		emitters[i].setX(i * 200);
-		game.AddSpr(&emitters[i]);
-	}
 
 	glfwMakeContextCurrent(game.getWindow());
 	glfwSetKeyCallback(game.getWindow(), key_callback);
@@ -266,7 +255,15 @@ int main(int argc, char** argv)
 	talga.setY(-100);
 	bob.setY(-100);
 	game.setPlayer(&talga);
+
 	
+	Renderer renderer("../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag");
+
+	Layer layer(&renderer, WIDTH, HEIGHT);
+	
+	Sprite spr(nullptr, 100, 100);
+	layer.add(&spr);
+
 	while (!glfwWindowShouldClose(game.getWindow()))
 	{
 
@@ -280,11 +277,6 @@ int main(int argc, char** argv)
 			std::cout << std::endl << "FPS: " << fps << std::endl;
 			fps = 0;
 		
-			I32 numparticles = 0;
-			for (int i = 0; i < emitters.size(); ++i)
-				numparticles += emitters[i].getNumParticles();
-
-			std::cout << "NumParticles: " << numparticles << std::endl;
 		}
 		
 		
@@ -307,12 +299,16 @@ int main(int argc, char** argv)
 		cam.setX( (talga.getX() + talga.getW() * 0.5f) - (cam.getW() * 0.5f) );
 		cam.setY((talga.getY() + talga.getH() * 0.5f) - (cam.getH() * 0.5f));
 
-
-
 		game.Update(dt);
 		game.ResolveCollisions();
-		game.Render(&manager);
+		//game.Render(&manager);
 		
+		layer.getRenderer()->push(cam.getCameraMat());
+		
+		layer.render();
+
+		layer.getRenderer()->pop();
+
 		++fps;
 	}
 

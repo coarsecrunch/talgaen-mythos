@@ -22,11 +22,14 @@
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Interpolation.cpp" />
+    <ClCompile Include="Layer.cpp" />
     <ClCompile Include="LuaEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Math\Vector4.cpp" />
     <ClCompile Include="Matrix3x3.cpp" />
     <ClCompile Include="Matrix4x4.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Operations.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
@@ -34,10 +37,10 @@
     <ClCompile Include="PhysSprite.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Rendering.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
-    <ClCompile Include="Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\include\Math\Interpolation.h" />
@@ -52,6 +55,8 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="IRenderable.h" />
+    <ClInclude Include="Layer.h" />
     <ClInclude Include="LuaEngine.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Math\Interpolation.h" />
@@ -62,6 +67,7 @@
     <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Matrix3x3.h" />
     <ClInclude Include="AObj.h" />
+    <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="ParticleEngine.h" />
@@ -70,6 +76,7 @@
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Rendering.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vector3.h" />
   </ItemGroup>
@@ -111,11 +118,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)..\build\debug\</OutDir>
     <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\;</IncludePath>
-    <SourcePath>$(ProjectDir)..\src\;$(VC_SourcePath)</SourcePath>
+    <SourcePath>$(ProjectDir)Math;$(VC_SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)..\build\release\</OutDir>
-    <SourcePath>$(ProjectDir)..\src\;</SourcePath>
+    <SourcePath>$(ProjectDir)Math;</SourcePath>
     <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\;</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

@@ -9,7 +9,7 @@
 #include "Rendering.h"
 #include <string>
 #include <iostream>
-#include "Matrix3x3.h"
+#include "Math/Matrix3x3.h"
 #include "AssetManager.h"
 #include "Animation.h"
 

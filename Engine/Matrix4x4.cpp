@@ -1,4 +1,5 @@
 #include "Math\Matrix4x4.h"
+#include "Vector3.h"
 #include "Math\Vector4.h"
 #include "Cmn.h"
 #include <cmath>
@@ -106,21 +107,21 @@ namespace talga
 
 	Vector4 operator*(const Matrix4x4& mat, const Vector4& vec)
 	{
-		Vector4 copy;
+		return vec4(
+			mat[0][0] * vec[0] + mat[0][1] * vec[1] + mat[0][2] * vec[2] + mat[0][3] * vec[3],
+			mat[1][0] * vec[0] + mat[1][1] * vec[1] + mat[1][2] * vec[2] + mat[1][3] * vec[3],
+			mat[2][0] * vec[0] + mat[2][1] * vec[1] + mat[2][2] * vec[2] + mat[2][3] * vec[3],
+			mat[3][0] * vec[0] + mat[3][1] * vec[1] + mat[3][2] * vec[2] + mat[3][3] * vec[3]
+			);
+	}
 
-		for (int i = 0; i < 4; i++)
-		{
-			float dotProduct = 0.0f;
-
-			for (int j = 0; j < 4; j++)
-			{
-				dotProduct += mat(i, j) * vec(j);
-			}
-
-			copy[i] = dotProduct;
-		}
-
-		return copy;
+	Vector3 operator*(const Matrix4x4& mat, const Vector3& vec)
+	{
+		return vec3(
+			mat[0][0] * vec[0] + mat[0][1] * vec[1] + mat[0][2] * vec[2] + mat[0][3],
+			mat[1][0] * vec[0] + mat[1][1] * vec[1] + mat[1][2] * vec[2] + mat[1][3],
+			mat[2][0] * vec[0] + mat[2][1] * vec[1] + mat[2][2] * vec[2] + mat[2][3]
+			);
 	}
 
 	Matrix4x4 ProjectionPerspectiveMat(float near, float far, float fov, float aspectRatio)

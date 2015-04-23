@@ -1,4 +1,4 @@
-#include "Matrix3x3.h"
+#include "Math/Matrix3x3.h"
 #include "AObj.h"
 #include "Rendering.h"
 #include "Game.h"
