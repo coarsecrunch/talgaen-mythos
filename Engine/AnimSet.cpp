@@ -7,7 +7,7 @@ namespace talga
 {
 	static vec2 GET_UV(F32 x, F32 xMax, F32 y, F32 yMax)
 	{
-		return vec2(x / xMax, -(y / yMax));
+		return vec2(x / xMax, (y / yMax));
 	}
 
 	AnimationSet::AnimationSet(cpTex tex)
@@ -31,17 +31,17 @@ namespace talga
 	/* Takes a list of Rectangles using pixel coordinates and converts them
 	to UV cooridnates and stores them in the Animation set*/
 
-	void AnimationSet::add(std::string name, const RectList& frames)
+	void AnimationSet::addAnim(std::string name, const RectList& frames)
 	{
 		UVAnimation anim;
 		for (const auto& rectFrame : frames)
 		{
 			UVFrame frame;
 			
-			frame[0] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y, mTex->h());
-			frame[1] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y, mTex->h());
-			frame[2] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
-			frame[3] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
+			frame[3] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y, mTex->h());
+			frame[2] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y, mTex->h());
+			frame[1] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
+			frame[0] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
 
 			anim.push_back(frame);
 		}

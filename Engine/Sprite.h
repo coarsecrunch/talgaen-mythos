@@ -13,18 +13,27 @@ namespace talga
 	public:
 		Sprite(cpTex tex, I32 width = -1, I32 height = -1);
 		Sprite(cpAnimSet anims, I32 width = -1, I32 height = -1);
-		Sprite(cpAnimSet anims);
 		~Sprite();
 
 		virtual void render(Renderer* renderer) const override;
 		virtual void update(F32 dt) override;
+
+		/*speed in ms*/
+		void playAnimation(const std::string& animName, I32 speed, bool loop);
+		void playDefault();
 	protected:
 		Rectangle mImageBox;
 		cpTex mTex;
+		UVFrame mUVCurrentFrame;
+
+		// Animation specific members
 
 		cpAnimSet mAnims;
-		UVFrame mCurrentFrame;
 		const UVAnimation* mCurrentAnimation;
 		bool isAnimated;
+		bool isLoop;
+		F32 mTimeSince;
+		F32 mFrameSpeed;
+		I32 mCurrentFrame;
 	};
 }

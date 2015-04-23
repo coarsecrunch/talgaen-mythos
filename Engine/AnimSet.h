@@ -9,7 +9,7 @@
 
 namespace talga
 {
-	class Rect;
+	struct Rect;
 
 	//TL TR BR BL
 	typedef std::array<vec2, 4> UVFrame;
@@ -22,12 +22,13 @@ namespace talga
 	public:
 		AnimationSet(cpTex tex);
 
-		void add(std::string name, const RectList& frames);
+		void addAnim(std::string name, const RectList& frames);
 		const UVAnimation* getAnim(const std::string& name) const;
 		cpTex tex() const { return mTex; }
 
 		const std::string& getName() const { return mName; }
 		void setName(std::string value) { mName = value; }
+		I32 numAnimations() const { return mAnims.size(); }
 
 		~AnimationSet();
 	protected:

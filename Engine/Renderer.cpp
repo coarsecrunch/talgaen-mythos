@@ -102,7 +102,6 @@ namespace talga
 	//
 	void Renderer::submit(const Rectangle& imageBox, cpTex tex, UVFrame frame)
 	{
-
 		float texId = -1;
 		bool found = false;
 		if (tex)

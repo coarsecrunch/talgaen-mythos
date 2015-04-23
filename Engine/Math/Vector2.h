@@ -8,6 +8,7 @@ namespace talga
 		virtual ~Vector2();
 
 		float& operator[](int index);
+		float operator[](int index) const { return arr[index]; }
 		float operator()(int index);
 	private:
 		float arr[2];

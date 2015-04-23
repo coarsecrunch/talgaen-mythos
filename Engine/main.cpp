@@ -257,14 +257,19 @@ int main(int argc, char** argv)
 	bob.setY(-100);
 	game.setPlayer(&talga);
 
+	AnimationSet set(manager.GetTexture("talgasheet.png"));
+
+	set.addAnim("poop", talgaWalkL);
 
 	Renderer renderer("../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag");
 
 	Layer layer(&renderer, WIDTH, HEIGHT);
 	
-	Sprite spr(manager.GetTexture("sprite_sheet.png"), 100, 100);
+	Sprite spr(&set);
 
 	layer.add(&spr);
+
+	spr.playAnimation("poop", 1000, true);
 
 	while (!glfwWindowShouldClose(game.getWindow()))
 	{
@@ -300,6 +305,7 @@ int main(int argc, char** argv)
 		cam.setX( (talga.getX() + talga.getW() * 0.5f) - (cam.getW() * 0.5f) );
 		cam.setY((talga.getY() + talga.getH() * 0.5f) - (cam.getH() * 0.5f));
 
+		spr.update(dt);
 		game.Update(dt);
 		game.ResolveCollisions();
 		//game.Render(&manager);
