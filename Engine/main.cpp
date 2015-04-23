@@ -14,7 +14,7 @@
 #include "Command.h"
 #include "Character.h"
 #include "Math/Matrix4x4.h"
-#include "Vector3.h"
+#include "Math/Vector3.h"
 #include "AssetManager.h"
 #include "Clock.h"
 
@@ -27,6 +27,7 @@
 #include "Renderer.h"
 #include "Layer.h"
 #include "Sprite.h"
+#include "AnimSet.h"
 
 using namespace talga;
 
@@ -122,9 +123,9 @@ void resize_window_callback(GLFWwindow* window, int width, int height)
 	game.getCamera().setH(height);
 }
 
-
 int main(int argc, char** argv)
 {
+
 	LuaEngine luaEngine;
 	luaEngine.Init();
 	
@@ -256,12 +257,13 @@ int main(int argc, char** argv)
 	bob.setY(-100);
 	game.setPlayer(&talga);
 
-	
+
 	Renderer renderer("../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag");
 
 	Layer layer(&renderer, WIDTH, HEIGHT);
 	
-	Sprite spr(nullptr, 100, 100);
+	Sprite spr(manager.GetTexture("sprite_sheet.png"), 100, 100);
+
 	layer.add(&spr);
 
 	while (!glfwWindowShouldClose(game.getWindow()))
@@ -276,7 +278,6 @@ int main(int argc, char** argv)
 			timeSince = 0;
 			std::cout << std::endl << "FPS: " << fps << std::endl;
 			fps = 0;
-		
 		}
 		
 		

@@ -14,6 +14,7 @@ namespace talga
 	class Texture;
 	class Animation;
 	class Map;
+	class AnimationSet;
 
 	typedef signed __int8 I8;
 	typedef signed __int16 I16;
@@ -35,6 +36,7 @@ namespace talga
 	//engine specific
 	typedef const Texture* cpTex;
 	typedef const Animation* cpAnim;
+	typedef const AnimationSet* cpAnimSet;
 	typedef const Map* cpMap;
 	typedef const Map& crMap;
 

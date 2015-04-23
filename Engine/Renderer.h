@@ -4,10 +4,10 @@
 #include <vector>
 #include "Cmn.h"
 #include "Math/Matrix4x4.h"
-#include "Vector3.h"
+#include "Math/Vector3.h"
 #include "Math/Vector4.h"
 #include "Math/Vector2.h"
-
+#include "Animset.h"
 namespace talga
 {
 	struct VertexData
@@ -42,7 +42,7 @@ namespace talga
 		void Init();
 
 		void begin();
-		void submit(const Rectangle& imageBox, cpTex texture = nullptr);
+		void submit(const Rectangle& imageBox, cpTex texture = nullptr, UVFrame frame = UVFrame());
 		void render();
 		void end();
 

@@ -100,7 +100,7 @@ namespace talga
 
 	//Verts must already be transformed before submit is called
 	//
-	void Renderer::submit(const Rectangle& imageBox, cpTex tex)
+	void Renderer::submit(const Rectangle& imageBox, cpTex tex, UVFrame frame)
 	{
 
 		float texId = -1;
@@ -135,25 +135,25 @@ namespace talga
 
 		mNextVertex->position = mTransformationStack.top() * imageBox.getVerts()[0];
 		mNextVertex->color = imageBox.getColor();
-		//mNextVertex->uv = frame[0];
+		mNextVertex->uv = frame[0];
 		mNextVertex->tid = texId;
 		++mNextVertex;
 
 		mNextVertex->position = mTransformationStack.top() * imageBox.getVerts()[1];
 		mNextVertex->color = imageBox.getColor();
-	//	mNextVertex->uv = frame[1];
+		mNextVertex->uv = frame[1];
 		mNextVertex->tid = texId;
 		++mNextVertex;
 		
 		mNextVertex->position = mTransformationStack.top() * imageBox.getVerts()[2];
 		mNextVertex->color = imageBox.getColor();
-		//mNextVertex->uv = frame[2];
+		mNextVertex->uv = frame[2];
 		mNextVertex->tid = texId;
 		++mNextVertex;
 		
 		mNextVertex->position = mTransformationStack.top() * imageBox.getVerts()[3];
 		mNextVertex->color = imageBox.getColor();
-		//mNextVertex->uv = frame[3];
+		mNextVertex->uv = frame[3];
 		mNextVertex->tid = texId;
 		++mNextVertex;
 		

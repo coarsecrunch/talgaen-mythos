@@ -3,7 +3,7 @@
 #include <vector>
 #include "AObj.h"
 #include "Cmn.h"
-#include "Vector3.h"
+#include "Math/Vector3.h"
 #include "GL\glew.h"
 #include "AssetManager.h"
 #include "Animation.h"

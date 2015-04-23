@@ -3,7 +3,7 @@
 #include "GL\glew.h"
 #include <string>
 #include "Cmn.h"
-#include "Vector3.h"
+#include "Math/Vector3.h"
 #include "Map.h"
 
 namespace talga

@@ -28,6 +28,11 @@ namespace talga
 		return vec[index];
 	}
 
+	const float& Vector3::operator[](int index) const
+	{
+		return vec[index];
+	}
+
 	float Vector3::operator ()(int index) const
 	{
 		return vec[index];
