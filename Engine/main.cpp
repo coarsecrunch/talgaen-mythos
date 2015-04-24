@@ -204,7 +204,6 @@ int main(int argc, char** argv)
 	talgaAnims[(I32)Character::ANIM::RUNR] = (manager.GetAnimation("talgaRunR"));
 	talgaAnims[(I32)Character::ANIM::RUNL] = (manager.GetAnimation("talgaRunL"));
 
-
 	std::vector<cpAnim> anims;
 	anims.push_back(manager.GetAnimation("bobStillAnim"));
 	anims.push_back(manager.GetAnimation("bobWalkAnim"));
@@ -265,9 +264,14 @@ int main(int argc, char** argv)
 
 	Layer layer(&renderer, WIDTH, HEIGHT);
 	
-	Sprite spr(&set);
+	AnimSprite spr{ &set };
+
+	Sprite sprity{ manager.GetTexture("sprite_sheet.png") };
+	sprity.getBox().setX(300);
+
 
 	layer.add(&spr);
+	layer.add(&sprity);
 
 	spr.playAnimation("poop", 1000, true);
 
@@ -306,6 +310,7 @@ int main(int argc, char** argv)
 		cam.setY((talga.getY() + talga.getH() * 0.5f) - (cam.getH() * 0.5f));
 
 		spr.update(dt);
+		sprity.update(dt);
 		game.Update(dt);
 		game.ResolveCollisions();
 		//game.Render(&manager);

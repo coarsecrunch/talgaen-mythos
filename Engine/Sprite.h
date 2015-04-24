@@ -8,12 +8,27 @@
 
 namespace talga
 {
-	class Sprite : public IRenderable, public IDynamic
+	template<typename T> class SpriteTemplate;
+
+	template<> class SpriteTemplate<cpTex> : public IRenderable, public IDynamic
 	{
 	public:
-		Sprite(cpTex tex, I32 width = -1, I32 height = -1);
-		Sprite(cpAnimSet anims, I32 width = -1, I32 height = -1);
-		~Sprite();
+		SpriteTemplate(cpTex tex, I32 width = -1, I32 height = -1);
+		virtual void render(Renderer* renderer) const override;
+		virtual void update(F32 dt) override;
+
+		Rectangle& getBox() { return mImageBox; }
+	protected:
+		Rectangle mImageBox;
+		cpTex mTex;
+		UVFrame mUVCurrentFrame;
+	};
+
+	template<> class SpriteTemplate<cpAnimSet> : public IRenderable, public IDynamic
+	{
+	public:
+		SpriteTemplate(cpAnimSet anims, I32 width = -1, I32 height = -1);
+		~SpriteTemplate();
 
 		virtual void render(Renderer* renderer) const override;
 		virtual void update(F32 dt) override;
@@ -23,7 +38,6 @@ namespace talga
 		void playDefault();
 	protected:
 		Rectangle mImageBox;
-		cpTex mTex;
 		UVFrame mUVCurrentFrame;
 
 		// Animation specific members
@@ -36,4 +50,7 @@ namespace talga
 		F32 mFrameSpeed;
 		I32 mCurrentFrame;
 	};
+
+	typedef SpriteTemplate<cpTex> Sprite;
+	typedef SpriteTemplate<cpAnimSet> AnimSprite;
 }

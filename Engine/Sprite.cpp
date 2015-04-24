@@ -9,18 +9,10 @@
 
 namespace talga
 {
-	Sprite::Sprite(cpTex tex, I32 width, I32 height)
+	Sprite::SpriteTemplate(cpTex tex, I32 width, I32 height)
 		: mTex(tex)
 		, mImageBox(width, height)
-		, mAnims(nullptr)
-		, isAnimated(false)
 		, mUVCurrentFrame(UVFrame({ { vec2(0, 1), vec2(1, 1), vec2(1, 0), vec2(0, 0) } }))
-		, mCurrentFrame(-1)
-		, mFrameSpeed(-1)
-		, mTimeSince(0)
-		, isLoop(false)
-		, mCurrentAnimation(nullptr)
-
 	{
 		if (mTex)
 		{
@@ -29,12 +21,23 @@ namespace talga
 		}
 		else
 			std::cerr << "Invalid texture was passed to sprite" << std::endl;
+
+		mImageBox.updateVerts();
 	}
 
-	Sprite::Sprite(cpAnimSet anims, I32 width, I32 height)
+	void Sprite::render(Renderer* renderer) const
+	{
+		renderer->submit(mImageBox, mTex, mUVCurrentFrame);
+	}
+
+	void Sprite::update(F32 dt)
+	{
+		mImageBox.updateVerts();
+	}
+
+	AnimSprite::SpriteTemplate(cpAnimSet anims, I32 width, I32 height)
 		: mAnims(anims)
 		, mImageBox(width, height)
-		, mTex(nullptr)
 		, isAnimated(true)
 		, mCurrentFrame(-1)
 		, mFrameSpeed(-1)
@@ -52,18 +55,15 @@ namespace talga
 
 	}
 
-	void Sprite::render(Renderer* renderer) const
+	void AnimSprite::render(Renderer* renderer) const
 	{
-		if (isAnimated)
-		{
-			if (mCurrentAnimation)
-				renderer->submit(mImageBox, mAnims->tex(), mCurrentAnimation->at(mCurrentFrame));
-		}
+		if (mCurrentAnimation)
+			renderer->submit(mImageBox, mAnims->tex(), mCurrentAnimation->at(mCurrentFrame));
 		else
-			renderer->submit(mImageBox, mTex, mUVCurrentFrame);
+			renderer->submit(mImageBox);
 	}
 
-	void Sprite::update(F32 dt)
+	void AnimSprite::update(F32 dt)
 	{
 		if (isAnimated)
 		{
@@ -90,7 +90,7 @@ namespace talga
 		mImageBox.updateVerts();
 	}
 
-	void Sprite::playAnimation(const std::string& animName, I32 speed, bool loop) // in Milliseconds
+	void AnimSprite::playAnimation(const std::string& animName, I32 speed, bool loop) // in Milliseconds
 	{
 		if (!isAnimated)
 			return;
@@ -112,12 +112,12 @@ namespace talga
 			* mAnims->tex()->h());
 	}
 
-	void Sprite::playDefault()
+	void AnimSprite::playDefault()
 	{
 		playAnimation("default", 5000, true);
 	}
 
-	Sprite::~Sprite()
+	AnimSprite::~SpriteTemplate()
 	{
 	}
 }
