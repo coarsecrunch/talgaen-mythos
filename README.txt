@@ -4,4 +4,4 @@ Talga Engine uses msvc2013. To build, open Engine/Engine.sln in Visual Studio 20
 and build. Then you must copy all of the dll dependencies into both build/release 
 and build/debug to run each executable
 
-added sometghing to the end of README
+josh was here as was luke and talga << WHAT?!??
