@@ -25,7 +25,7 @@ namespace talga
 		mImageBox.updateVerts();
 	}
 
-	void Sprite::render(Renderer* renderer) const
+	void Sprite::render(Renderer* renderer, const Camera* camera) const
 	{
 		renderer->submit(mImageBox, mTex, mUVCurrentFrame);
 	}
@@ -55,7 +55,7 @@ namespace talga
 
 	}
 
-	void AnimSprite::render(Renderer* renderer) const
+	void AnimSprite::render(Renderer* renderer, const Camera* camera) const
 	{
 		if (mCurrentAnimation)
 			renderer->submit(mImageBox, mAnims->tex(), mCurrentAnimation->at(mCurrentFrame));

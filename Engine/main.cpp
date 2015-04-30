@@ -28,6 +28,7 @@
 #include "Layer.h"
 #include "Sprite.h"
 #include "AnimSet.h"
+#include "Math/RandomGen.h"
 
 using namespace talga;
 
@@ -125,14 +126,13 @@ void resize_window_callback(GLFWwindow* window, int width, int height)
 
 int main(int argc, char** argv)
 {
-
 	LuaEngine luaEngine;
 	luaEngine.Init();
-	
+
 	Character::LUA_REGISTER(&luaEngine);
 	Game::LUA_REGISTER(&luaEngine);
 	GLOBALS_LUA_REGISTER(&luaEngine);
-	
+
 	luaEngine.ExecuteStr("print 'testCommand'");
 
 	game.Init(WIDTH, HEIGHT, "hello talga");
@@ -153,7 +153,7 @@ int main(int argc, char** argv)
 	walk.push_back(Rect{ 32, 64, 32, 64 });
 	walk.push_back(Rect{ 64, 64, 32, 64 });
 	walk.push_back(Rect{ 96, 64, 32, 64 });
-	
+
 	manager.AddAnimation("charactersheet.png", "bobStillAnim", still);
 	manager.AddAnimation("charactersheet.png", "bobWalkAnim", walk);
 
@@ -191,7 +191,7 @@ int main(int argc, char** argv)
 	manager.AddAnimation("talgasheet.png", "talgaRunR", talgaRunR);
 
 	manager.LoadAnimations();
-	
+
 	std::vector<cpAnim> talgaAnims;
 
 	//talgaAnims.reserve((I32)Character::ANIM::numAnimations);
@@ -207,39 +207,16 @@ int main(int argc, char** argv)
 	std::vector<cpAnim> anims;
 	anims.push_back(manager.GetAnimation("bobStillAnim"));
 	anims.push_back(manager.GetAnimation("bobWalkAnim"));
-	
-	Character talga(&game, vec4(100.0f, 0.0f, 0.0f, 1.0f), vec4(0.0f,0.0f,0.0f,0.0f), talgaAnims);
+
+	Character talga(&game, vec4(100.0f, 0.0f, 0.0f, 1.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f), talgaAnims);
 	PhysSprite bob(&game, vec4(300.0f, 0.0f, 0.0f, 1.0f), vec4(0.0f, 0.0f, 0.0f, 0.0f), anims);
 
 	glfwMakeContextCurrent(game.getWindow());
 	glfwSetKeyCallback(game.getWindow(), key_callback);
 	glfwSetWindowSizeCallback(game.getWindow(), resize_window_callback);
 	glfwSwapInterval(0);
-	//LoadMap("..\\..\\assets\\test.map", &manager);
 
-	bob.setScaleX(1.0f);
-	bob.setScaleY(1.0f);
-	bob.setX(500);
-	bob.setY(0);
 
-	talga.setX(200);
-	talga.setY(200.0f);
-	
-	game.AddSpr(&talga);
-	game.AddSpr(&bob);
-
-	bob.setApplyG(true);
-	
-
-	PhysSprite blockCollider(&game, vec4(0, 8 * 32));
-	blockCollider.setX(0);
-	blockCollider.setY(8 * 32);
-
-	blockCollider.setW(25 * 32);
-	blockCollider.setH(10 * 32);
-
-	game.AddStaticSpr(&blockCollider);
-	
 
 	U32 previousTime = 0;
 	U32 dt = 0;
@@ -247,33 +224,33 @@ int main(int argc, char** argv)
 	U32 timeSince = 0;
 	F32 rot = 0;
 	bool positive = true;
-	F32 rotateTo = 0.2;
-	game.LoadMap("test.map", &manager);
-	bob.PlayAnimation(0, 2000, true);
-	talga.PlayAnimation(0, 2000, true);
-	talga.setApplyG(true);
-	talga.setY(-100);
-	bob.setY(-100);
-	game.setPlayer(&talga);
 
-	AnimationSet set(manager.GetTexture("talgasheet.png"));
+	AnimationSet set{ manager.GetTexture("talgasheet.png") };
 
 	set.addAnim("poop", talgaWalkL);
 
 	Renderer renderer("../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag");
+	renderer.setCamera(&game.getCamera());
 
-	Layer layer(&renderer, WIDTH, HEIGHT);
+	Layer layer{&renderer, WIDTH, HEIGHT};
 	
 	AnimSprite spr{ &set };
 
 	Sprite sprity{ manager.GetTexture("sprite_sheet.png") };
 	sprity.getBox().setX(300);
 
+	seedRand(clock.TimePassed());
 
+	cpMap testMap = manager.GetMap("test.map");
+
+	layer.add(static_cast<const IRenderable*>(testMap));
 	layer.add(&spr);
 	layer.add(&sprity);
+	
 
 	spr.playAnimation("poop", 1000, true);
+
+	
 
 	while (!glfwWindowShouldClose(game.getWindow()))
 	{
@@ -295,19 +272,15 @@ int main(int argc, char** argv)
 		
 		glfwPollEvents();
 
-		ACommand* command = performActor(kakey, talga, acaction, &luaEngine);
+		//ACommand* command = performActor(kakey, talga, acaction, &luaEngine);
 		
-		if (command)
-			command->execute(talga);
+		//if (command)
+		//	command->execute(talga);
 
 		acaction = -11;
 		kakey = -11;
 
 		Camera& cam = game.getCamera();
-
-
-		cam.setX( (talga.getX() + talga.getW() * 0.5f) - (cam.getW() * 0.5f) );
-		cam.setY((talga.getY() + talga.getH() * 0.5f) - (cam.getH() * 0.5f));
 
 		spr.update(dt);
 		sprity.update(dt);

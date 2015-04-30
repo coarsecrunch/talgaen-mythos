@@ -4,11 +4,8 @@ namespace talga
 {
 	Rectangle::Rectangle(F32 width, F32 height, vec3 position, vec4 color,
 		F32 orientation, F32 scaleX, F32 scaleY)
-		: mPosition(position)
+		: Transformation2D(position, orientation, scaleX, scaleY)
 		, mColor(color)
-		, mOrientation(orientation)
-		, mScaleX(scaleX)
-		, mScaleY(scaleY)
 		, mWidth(width)
 		, mHeight(height)
 	{
@@ -17,11 +14,8 @@ namespace talga
 	}
 
 	Rectangle::Rectangle(const Rectangle& cpy)
-		: mPosition(cpy.mPosition)
+		: Transformation2D(cpy.mPosition, cpy.mOrientation, cpy.mScaleX, cpy.mScaleY)
 		, mColor(cpy.mColor)
-		, mOrientation(cpy.mOrientation)
-		, mScaleX(cpy.mScaleX)
-		, mScaleY(cpy.mScaleY)
 		, mWidth(cpy.mWidth)
 		, mHeight(cpy.mHeight)
 		, mVerts(cpy.mVerts)
@@ -30,11 +24,8 @@ namespace talga
 
 	const Rectangle& Rectangle::operator=(const Rectangle& cpy)
 	{
-		mPosition = cpy.mPosition;
+		Transformation2D::operator=(cpy);
 		mColor = cpy.mColor;
-		mOrientation = cpy.mOrientation;
-		mScaleX = cpy.mScaleX;
-		mScaleY = cpy.mScaleY;
 		mWidth = cpy.mWidth;
 		mHeight = cpy.mHeight;
 		mVerts = cpy.mVerts;
@@ -59,8 +50,16 @@ namespace talga
 		mVerts[3] = transMat * rotMat * scaleMat * vec3(-0.5f * mWidth, -0.5f * mHeight, 0);
 	}
 
+	void Rectangle::updateVertsPosition()
+	{
+		mVerts[0] = vec3(-0.5f * mWidth, 0.5f * mHeight, 0) + mPosition;
+		mVerts[1] = vec3(0.5f * mWidth, 0.5f * mHeight, 0) + mPosition;
+		mVerts[2] = vec3(0.5f * mWidth, -0.5f * mHeight, 0) + mPosition;
+		mVerts[3] = vec3(-0.5f * mWidth, -0.5f * mHeight, 0) + mPosition;
+	}
 
 	Rectangle::~Rectangle()
 	{
+		
 	}
 }

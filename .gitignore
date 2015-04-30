@@ -1,9 +1,15 @@
 build/
 Debug/
 Release/
+sandbox/
+ipch/
 *.obj
 *.log
 *.pdb
 *.psess
 *.vspx
 *.xml
+*.tlog
+*.opensdf
+*.suo
+*.vcxproj.user

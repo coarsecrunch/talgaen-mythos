@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-#include <random>
+
 
 namespace talga
 {
@@ -106,13 +106,7 @@ namespace talga
 		
 		
 		
-		static std::default_random_engine generator;
-		static std::uniform_real_distribution<double> distributionRadius(0.0, mSpawnRadius);
-		static std::uniform_real_distribution<double> distributionAngle(0.0, 2 * 3.1415);
-		static std::uniform_real_distribution<double> distributionColor(0.0, 1.0);
-
-		F32 radius = (float)distributionRadius(generator);
-		F32 angle = (float)distributionAngle(generator);
+		/*
 
 		F32 r = (F32)distributionColor(generator);
 		F32 g = (F32)distributionColor(generator);
@@ -126,7 +120,7 @@ namespace talga
 		mParticles[mNumParticles].mColor = vec4(r, g, b, 1.0f);
 		mParticles[mNumParticles].mPosition = vec4(xSet, ySet);
 		mParticles[mNumParticles].mVelocity = mVelocity + launchSpeed;
-		
+		*/
 		++mNumParticles;
 	}
 

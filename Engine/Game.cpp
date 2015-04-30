@@ -22,27 +22,21 @@ namespace talga
 			.beginNamespace("Engine")
 			.beginClass<Game>("Game")
 			.addConstructor<void(*)(void)>()
-			.addFunction("getPlayer", &Game::getPlayer)
 			.endClass()
 			.endNamespace();
 	}
 
 	Game::Game()
 		: mCamera(this)
-		, mCurrentMap()
-		, mNumMaps(0)
 		, mKeyDownHandlers()
 		, mKeyUpHandlers()
 		, mActors()
 		, mStaticActors()
-		, mPlayer(nullptr)
 	{
 	}
 
 	void Game::DestroyActor(I32 location)
 	{
-		assert(mActors.size() > 0 && location >= 0 && location < mActors.size());
-
 		mActors[location] = mActors.back();
 		mActors[location]->setListLoc(location);
 		mActors.pop_back();
@@ -89,11 +83,11 @@ namespace talga
 
 			for (auto staticObj = mStaticActors.begin(); staticObj != mStaticActors.end(); ++staticObj)
 			{
-				FindResCollision(*(*obj), (**staticObj).getCollider());
+				FindResCollision(**obj, (**staticObj).getCollider());
 			}
 		}
 
-		for (auto obj = mActors.begin(); obj != mActors.end() - 1; ++obj)
+		for (auto obj = mActors.begin(); obj != mActors.end(); ++obj)
 		{
 			if (!(**obj).checkCollisions())
 				continue;
@@ -102,7 +96,7 @@ namespace talga
 			{
 				if (!(**obj2).checkCollisions())
 					continue;
-				ResMovingMovingCol(*(*obj), *(*obj2));
+				ResMovingMovingCol(**obj, **obj2);
 			}
 		}
 	}
@@ -110,9 +104,6 @@ namespace talga
 	void Game::Render(const AssetManager* man)
 	{
 		Camera::Clear();
-
-		mCurrentMap.Render(mCamera);
-		//mCamera.RenderTiles();
 
 
 		for (auto rdrObj = mActors.begin(); rdrObj != mActors.end(); ++rdrObj)
@@ -149,11 +140,6 @@ namespace talga
 		//return mStaticActors.back();
 	}
 
-	void Game::LoadMap(cStr mapName, AssetManager* manager)
-	{
-		mCurrentMap = *manager->GetMap(mapName);
-	}
-
 	void Game::AddKeyDownHandler(char c, void(*perform)())
 	{
 		mKeyDownHandlers.insert(std::pair<char, void(*)()>(c, perform));
@@ -173,18 +159,6 @@ namespace talga
 	void Game::RemoveKeyUpHandler(char c)
 	{
 		mKeyUpHandlers.erase(c);
-	}
-
-
-	void Game::UnloadMap()
-	{
-
-	}
-
-	void Game::Destroy()
-	{
-		UnloadMap();
-		mCamera.Destroy();
 	}
 
 	Game::~Game()

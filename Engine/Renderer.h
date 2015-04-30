@@ -32,6 +32,7 @@ namespace talga
 
 
 	class Rectangle;
+	class Camera;
 
 	class Renderer
 	{
@@ -48,11 +49,15 @@ namespace talga
 
 		void push(const mat4& mat);
 		void pop();
+
+		const Camera* getCamera() const { return mCamera; }
+		void setCamera(Camera* camera) { mCamera = camera; }
 	protected:
 		std::stack<mat4> mTransformationStack;
 		std::vector<U32> mTextureSlots;
 
 		VertexData* mNextVertex;
+		Camera* mCamera;
 		U32 mProgram;
 		U32 mVAO;
 		U32 mVBO;

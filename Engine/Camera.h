@@ -42,9 +42,6 @@ namespace talga
 
 		void Update();
 		static void Clear();
-		void RenderObjs();
-		void RenderTiles();
-		void Render();
 		void Destroy();
 		void RenderObj(const ARenderableObj& obj, const AssetManager* man) const;
 		void RenderQuad(const vec4& pos, const vec4& color, const vec4& size) const;

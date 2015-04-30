@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Cmn.h"
+#include "Transformation2D.h"
 #include "Math/Vector4.h"
 #include "Math/Vector3.h"
 #include <array>
@@ -9,7 +10,7 @@ namespace talga
 {
 	typedef std::array<vec3, 4> VertList;
 
-	class Rectangle
+	class Rectangle : public Transformation2D
 	{
 	public:
 		virtual ~Rectangle();
@@ -26,7 +27,11 @@ namespace talga
 
 		const VertList getVerts() const { return mVerts; }
 
+
 		void updateVerts();
+		/*Only updates vertices position, completely avoids using matrix multiplication
+		so much faster*/
+		void updateVertsPosition();
 
 		inline const vec3& getPosition() const { return mPosition; }
 		inline const vec4& getColor() const { return mColor; }
@@ -54,9 +59,6 @@ namespace talga
 
 	protected:
 		vec4 mColor;
-		vec3 mPosition;
-		F32 mOrientation;
-		F32 mScaleX, mScaleY;
 		
 		F32 mWidth;
 		F32 mHeight;

@@ -10,6 +10,7 @@
 #include <cassert>
 #include "Cmn.h"
 #include "Animation.h"
+#include "AnimSet.h"
 
 using namespace std;
 
@@ -34,9 +35,10 @@ namespace talga
 
 
 	AssetManager::AssetManager() :
-		mBuffers{}, mAnimations(), mTextures(), mAnimationsToLoad(), mMaps()
+		mBuffers{}, mAnimations(), mTextures(), mAnimationsToLoad(), mMaps(), mAnimationSets()
 	{
 		mAnimations.reserve(MAX_ANIMATIONS);
+		mAnimationSets.reserve(MAX_ANIMATIONS);
 		mTextures.reserve(MAX_TEXTURES);
 		mMaps.reserve(MAX_MAPS);
 		mAnimationsToLoad.reserve(MAX_ANIMATIONS);
@@ -141,7 +143,7 @@ namespace talga
 
 		AddAnimation(texName, animName, rects);
 
-		I32* mapdata = new I32[mapWidth * mapHeight];
+		std::vector<I32> mapdata(mapWidth * mapHeight);
 
 		for (int y = 0; y < mapHeight; ++y)
 		{
@@ -155,10 +157,10 @@ namespace talga
 		cpAnim tester = GetAnimation(animName);
 		//map.Init(name, tiles,tester, mapdata, mapWidth, mapHeight);
 
-		Map map(nullptr, name, tiles, tester, mapdata, mapWidth, mapHeight, 32, 32);
-		mMaps.push_back(map);
 
-		delete[] mapdata;
+
+		Map map(name, tiles, tester, mapdata, mapWidth, mapHeight, 32, 32);
+		mMaps.push_back(map);
 	}
 
 	static vec3 UV(float x, float xMax, float y, float yMax, float frameH)

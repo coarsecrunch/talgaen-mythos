@@ -186,15 +186,6 @@ namespace talga
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	void Camera::Render()
-	{
-		glViewport(0, 0, mWidth, mHeight);
-
-		RenderTiles();
-		RenderObjs();
-
-	}
-
 	void Camera::RenderObj(const ARenderableObj& obj, const AssetManager* man) const
 	{
 		glBindVertexArray(mVAOs[TEXTURED_QUAD]);
@@ -218,45 +209,6 @@ namespace talga
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
-		glFlush();
-	}
-
-	void Camera::RenderTiles()
-	{
-		glBindVertexArray(mVAOs[TEXTURED_QUAD]);
-		glUseProgram(mProgram);
-		glViewport(0, 0, mWidth, mHeight);
-
-
-		mGame->getCurrentMap().getSheet()->tex->Bind();
-
-		mat4 fix;
-
-		I32 tileY = mGame->getCurrentMap().CartToTile(getX(), getY()).y;
-		I32 tileX = mGame->getCurrentMap().CartToTile(getX(), getY()).x;
-
-		for (I32 y = tileY; y <= mHeight / mGame->getCurrentMap().getTileHeight() + tileY; ++y)
-		{
-			for (I32 x = tileX; x <= mWidth / mGame->getCurrentMap().getTileWidth() + tileX; ++x)
-			{
-				if (!mGame->getCurrentMap().Exists(x, y))
-					continue;
-
-				U32 offset = mGame->getCurrentMap().getSheet()->getOffset(mGame->getCurrentMap().getTileIndex(x, y));
-
-				fix = mProjectionMatrix * getCameraMat() * mat4(1.0f, 0.0f, 0.0f, mGame->getCurrentMap().TileToCart(x, y).x + (0.5f * mGame->getCurrentMap().getTileWidth()),
-					0.0f, 1.0f, 0.0f, mGame->getCurrentMap().TileToCart(x, y).y + (mGame->getCurrentMap().getTileHeight() * 0.5f),
-					0.0f, 0.0f, 1.0f, 0.0f,
-					0.0f, 0.0f, 0.0f, 1.0f);
-
-				glUniformMatrix4fv(MVPShaderLoc, 1, GL_TRUE, &fix[0][0]);
-				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const void*)offset);
-			}
-		}
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindVertexArray(0);
-		glFlush();
 	}
 
 
@@ -266,10 +218,6 @@ namespace talga
 		updateCameraRotMat();
 		updateCameraTransMat();
 		updateCameraMat();
-	}
-
-	void Camera::RenderObjs()
-	{
 	}
 
 

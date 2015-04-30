@@ -170,11 +170,8 @@ namespace talga
 		glUseProgram(mProgram);
 		glViewport(0, 0, 800, 600);
 
-		
-		
 		glDrawElements(GL_TRIANGLES, mIndexCount, GL_UNSIGNED_INT, NULL);
 		
-
 		glBindTexture(GL_TEXTURE_2D, 0);
 		mTextureSlots.clear();
 		mIndexCount = 0;

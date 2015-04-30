@@ -13,4 +13,5 @@ namespace talga
 	private:
 		unsigned long mZeroPoint;
 	};
+
 }

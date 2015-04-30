@@ -5,6 +5,7 @@ namespace talga
 {
 	Clock::Clock()
 	{
+		Init();
 	}
 
 	void Clock::Init()

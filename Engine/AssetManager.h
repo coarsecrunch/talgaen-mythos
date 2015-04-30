@@ -7,6 +7,7 @@
 namespace talga
 {
 	class Animation;
+	class AnimationSet;
 	class Texture;
 	class Map;
 	struct Rect;
@@ -27,6 +28,7 @@ namespace talga
 		void AddAnimation(std::string texName, std::string name, std::vector<Rect> frames);
 		void LoadAnimations();//GLDep
 		void AddTexture(std::string path);
+		void AddAnimationSet(std::string name, const AnimationSet& anim);
 		void LoadMap(std::string path);
 		cpAnim GetAnimation(std::string name) const;
 		cpTex GetTexture(std::string name) const;
@@ -47,6 +49,7 @@ namespace talga
 		std::vector<toLoadAnim> mAnimationsToLoad;
 		std::vector<Texture> mTextures;
 		std::vector<Animation> mAnimations;
+		std::vector<AnimationSet> mAnimationSets;
 		std::vector<Map> mMaps;
 	};
 }

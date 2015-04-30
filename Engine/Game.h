@@ -29,7 +29,6 @@ namespace talga
 
 		int Init(int width, int height, const char* name);
 
-		//Map* currentMap() { return mCurrentMap; }
 
 		void Input(SDL_Event* e);
 		void Update(F32 dt);
@@ -43,34 +42,20 @@ namespace talga
 		void RemoveKeyUpHandler(char c);
 		void AddSpr(PhysSprite* spr);
 		void AddStaticSpr(PhysSprite* spr);
-		void AddMap(Map map);
-		void LoadMap(cStr mapName, AssetManager* manager);
-		void UnloadMap();
 
 		void DeleteItem();
 
 		Camera& getCamera() { return mCamera; } // XXX
-		Map& getCurrentMap() { return mCurrentMap; } // XXX
 		GLFWwindow* getWindow() { return mCamera.mWindow; }
 
-		Character& getPlayer()
-		{
-			return *mPlayer;
-		}
-
-		void setPlayer(Character* player) { mPlayer = player; }
 	private:
 		Camera mCamera;
-		Map mCurrentMap;
 
 		std::vector<PhysSprite*> mStaticActors;
 		std::vector<PhysSprite*> mActors;
 
 		std::multimap<char, void(*)()> mKeyDownHandlers;
 		std::multimap<char, void(*)()> mKeyUpHandlers;
-
-		Character* mPlayer;
-		int mNumMaps;
 
 	public:
 		void setRenderCollisions(bool value) { mRenderCollisions = value; }

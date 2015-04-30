@@ -21,7 +21,7 @@ namespace talga
 		mRenderer->begin();
 		for (const IRenderable* rdr : mRenderList)
 		{ 
-			rdr->render(mRenderer);
+			rdr->render(mRenderer, mRenderer->getCamera());
 		}
 		mRenderer->end();
 		mRenderer->render();

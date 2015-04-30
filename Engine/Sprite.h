@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Rectangle.h"
 #include "Math\Vector2.h"
 #include "IRenderable.h"
@@ -14,7 +15,7 @@ namespace talga
 	{
 	public:
 		SpriteTemplate(cpTex tex, I32 width = -1, I32 height = -1);
-		virtual void render(Renderer* renderer) const override;
+		virtual void render(Renderer* renderer, const Camera* camera) const override;
 		virtual void update(F32 dt) override;
 
 		Rectangle& getBox() { return mImageBox; }
@@ -30,7 +31,7 @@ namespace talga
 		SpriteTemplate(cpAnimSet anims, I32 width = -1, I32 height = -1);
 		~SpriteTemplate();
 
-		virtual void render(Renderer* renderer) const override;
+		virtual void render(Renderer* renderer, const Camera* camera) const override;
 		virtual void update(F32 dt) override;
 
 		/*speed in ms*/

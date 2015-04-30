@@ -49,12 +49,7 @@ namespace talga
 
 	Vector3 operator +(const Vector3& vec1, const Vector3& vec2)
 	{
-		Vector3 newVec;
-		newVec[0] = vec1(0) + vec2(0);
-		newVec[1] = vec1(1) + vec2(1);
-		newVec[2] = vec1(2) + vec2(2);
-		newVec[3] = 0;
-		return newVec;
+		return Vector3{ vec1(0) + vec2(0), vec1(1) + vec2(1), vec1(2) + vec2(2) };
 	}
 
 	float Vector3::mag() const
