@@ -13,3 +13,6 @@ ipch/
 *.opensdf
 *.suo
 *.vcxproj.user
+*.sdf
+*.v12.suo
+
