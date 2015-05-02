@@ -59,7 +59,7 @@ namespace talga
 		glEnableVertexAttribArray(SHADER_COLOR_LOC);
 		glEnableVertexAttribArray(SHADER_UV_LOC);
 		glEnableVertexAttribArray(SHADER_TID_LOC);
-		
+
 		vec3 testOffsetToFirstElementVec3;
 		vec4 testOffsetToFirstElementVec4;
 		vec2 testOffsetToFirstElementVec2;
@@ -68,6 +68,12 @@ namespace talga
 		I32 colorOffset = (offsetof(VertexData, VertexData::color) + ((U64)&testOffsetToFirstElementVec4[0] - (U64)&testOffsetToFirstElementVec4));
 		I32 uvOffset = (offsetof(VertexData, VertexData::uv) + ((U64)&testOffsetToFirstElementVec2[0] - (U64)&testOffsetToFirstElementVec2));
 		I32 tidOffset = offsetof(VertexData, VertexData::tid);
+
+		TALGA_WARN(0, std::to_string( posOffset) + " position offset");
+		TALGA_WARN(0, std::to_string(colorOffset) + " color offset");
+		TALGA_WARN(0, std::to_string(uvOffset) + " UV offset");
+		TALGA_WARN(0, std::to_string(tidOffset) + " TID offset");
+		TALGA_WARN(0, std::to_string(sizeof(VertexData)) + " total size");
 
 		glVertexAttribPointer(SHADER_POSITION_LOC, 3, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (const void*)posOffset);
 		glVertexAttribPointer(SHADER_COLOR_LOC, 4, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (const void*)colorOffset);
@@ -114,6 +120,7 @@ namespace talga
 					if (mTextureSlots[i] == tex->id())
 					{
 						found = true;
+						break;
 					}
 				}
 

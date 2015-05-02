@@ -216,8 +216,6 @@ int main(int argc, char** argv)
 	glfwSetWindowSizeCallback(game.getWindow(), resize_window_callback);
 	glfwSwapInterval(0);
 
-
-
 	U32 previousTime = 0;
 	U32 dt = 0;
 	U32 fps = 0;
@@ -232,7 +230,7 @@ int main(int argc, char** argv)
 	Renderer renderer("../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag");
 	renderer.setCamera(&game.getCamera());
 
-	Layer layer{&renderer, WIDTH, HEIGHT};
+	Layer layer{&renderer, (F32)WIDTH, (F32)HEIGHT};
 	
 	AnimSprite spr{ &set };
 
@@ -246,11 +244,14 @@ int main(int argc, char** argv)
 	layer.add(static_cast<const IRenderable*>(testMap));
 	layer.add(&spr);
 	layer.add(&sprity);
-	
 
 	spr.playAnimation("poop", 1000, true);
 
+	spr.getBox().setX(200);
+	spr.getBox().setY(200);
 	
+	sprity.getBox().setX(100);
+	sprity.getBox().setY(400);
 
 	while (!glfwWindowShouldClose(game.getWindow()))
 	{

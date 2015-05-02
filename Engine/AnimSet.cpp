@@ -2,14 +2,10 @@
 #include <iostream>
 #include "Rect.h"
 #include "Texture.h"
+#include "Math/Operations.h"
 
 namespace talga
 {
-	static vec2 GET_UV(F32 x, F32 xMax, F32 y, F32 yMax)
-	{
-		return vec2(x / xMax, (y / yMax));
-	}
-
 	AnimationSet::AnimationSet(cpTex tex)
 		: mTex(tex)
 		, mAnims({AnimSetPair("default",
@@ -38,10 +34,10 @@ namespace talga
 		{
 			UVFrame frame;
 			
-			frame[3] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y, mTex->h());
-			frame[2] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y, mTex->h());
-			frame[1] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
-			frame[0] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
+			frame[0] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y, mTex->h());
+			frame[1] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y, mTex->h());
+			frame[2] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
+			frame[3] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
 
 			anim.push_back(frame);
 		}

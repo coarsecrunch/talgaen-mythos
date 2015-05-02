@@ -16,7 +16,7 @@ out vec4 oColor;
 void main()
 {	
 	
-	if (fs_in.tid >= 0)
+	if (fs_in.tid >= -0.1)
 	{
 		oColor = texture2D(textures[ int(fs_in.tid) ], fs_in.uv);
 	}

@@ -9,14 +9,13 @@
 
 namespace talga
 {
-	Map::Map(std::string mapName, std::vector<Tile> tileSet, cpAnim sheet, const std::vector<I32>& map, I32 width, I32 height, I32 tileWidth, I32 tileHeight)
+	Map::Map(std::string mapName, std::vector<Tile> tileSet, const std::vector<I32>& map, I32 width, I32 height, I32 tileWidth, I32 tileHeight)
 		: mName(mapName)
 		, mWidth(width)
 		, mHeight(height)
 		, mTileSet(tileSet)
 		, mTileWidth(tileWidth)
 		, mTileHeight(tileHeight)
-		, mSheet(sheet)
 		, mMap(map)
 		, mRects()
 	{
@@ -65,7 +64,7 @@ namespace talga
 				if (!Exists(x, y))
 					continue;
 				
-				renderer->submit(mRects[y * mWidth + x]);
+				renderer->submit(mRects[y * mWidth + x], TileAt(x, y)->first, TileAt(x,y)->second);
 			}
 		}
 	}
@@ -78,9 +77,8 @@ namespace talga
 		{
 			for (I32 x = 0; x < mWidth; ++x)
 			{
-
 				mRects.push_back(Rectangle(mTileWidth, mTileHeight,
-					vec3{ x * mTileWidth + (mTileWidth * 0.5f), y * mTileHeight + (mTileHeight *0.5f) },
+					vec3{ x * mTileWidth + (mTileWidth * 0.5f), y * mTileHeight + (mTileHeight * 0.5f) },
 					vec4{ get01f(), get01f(), get01f() }
 				));
 
@@ -100,11 +98,6 @@ namespace talga
 			return nullptr;
 
 		return &mTileSet[mMap[y*mHeight + x]];
-	}
-
-	bool Map::Solid(I32 x, I32 y) const
-	{
-		return mTileSet[mMap[y*mHeight + x]].solid;
 	}
 
 	bool Map::Exists(I32 x, I32 y) const

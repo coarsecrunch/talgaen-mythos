@@ -3,7 +3,9 @@
 #include "GL\glew.h"
 #include <cstring>
 #include <iostream>
-#include <cassert>
+
+/*TODO: get rid of cstring code replace with std::string version
+*/
 
 namespace talga
 {
@@ -14,12 +16,14 @@ namespace talga
 
 	int Texture::Init(std::string path)
 	{
+		
 		SDL_Surface* tempSurf = IMG_Load(path.c_str());
 		if (!tempSurf)
 		{
-			std::cout << "Failed to load texture at " << path << std::endl;
+			TALGA_WARN(0, std::string("failed to load texture at ") + path);
 			return -1;
 		}
+
 		glGenTextures(1, &mTexture);
 
 		glActiveTexture(GL_TEXTURE0);
@@ -27,7 +31,7 @@ namespace talga
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tempSurf->w, tempSurf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, tempSurf->pixels);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
+		
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		mWidth = tempSurf->w;

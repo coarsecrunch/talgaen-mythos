@@ -34,6 +34,8 @@ namespace talga
 		cpTex GetTexture(std::string name) const;
 		cpMap GetMap(std::string name) const;
 
+
+		cpTex NO_TEXTURE;
 	private:
 		struct toLoadAnim
 		{

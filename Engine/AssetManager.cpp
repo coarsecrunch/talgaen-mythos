@@ -7,12 +7,12 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <cassert>
 #include "Cmn.h"
 #include "Animation.h"
 #include "AnimSet.h"
+#include "Math/Operations.h"
 
-using namespace std;
+#define RELATIVE_ASSETS_PATH std::string("../assets/")
 
 namespace talga
 {
@@ -33,22 +33,32 @@ namespace talga
 	const I32 MAX_MAPS = 50;
 
 
-
-	AssetManager::AssetManager() :
-		mBuffers{}, mAnimations(), mTextures(), mAnimationsToLoad(), mMaps(), mAnimationSets()
+	AssetManager::AssetManager()
+		: mBuffers{}
+		, mAnimations{}
+		, mTextures{}
+		, mAnimationsToLoad{}
+		, mMaps{}
+		, mAnimationSets{}
+		, NO_TEXTURE{ nullptr }
 	{
 		mAnimations.reserve(MAX_ANIMATIONS);
 		mAnimationSets.reserve(MAX_ANIMATIONS);
 		mTextures.reserve(MAX_TEXTURES);
 		mMaps.reserve(MAX_MAPS);
 		mAnimationsToLoad.reserve(MAX_ANIMATIONS);
+
+		AddTexture(RELATIVE_ASSETS_PATH + "NOTEX.png");
+		NO_TEXTURE = GetTexture("NOTEX.png");
 	}
 
 	void AssetManager::AddTexture(std::string path)
 	{
 		Texture tex;
-		tex.Init(path.c_str());
-		mTextures.push_back(tex);
+		if (tex.Init(path.c_str()) != -1)
+		{
+			mTextures.push_back(tex);
+		}
 	}
 
 	void AssetManager::AddAnimation(std::string texName, std::string name, std::vector<Rect> frames)
@@ -68,7 +78,7 @@ namespace talga
 		std::ifstream stream;
 
 		stream.open(path);
-		assert(stream.is_open());
+		TALGA_ASSERT(stream.is_open());
 
 		char cc = '\0';
 		I32 index = path.size();
@@ -88,60 +98,65 @@ namespace talga
 		I32 tileHeight;
 		I32 mapWidth;
 		I32 mapHeight;
-		I32 numTiles;
+		I32 numTextures;
+
+		std::vector<Tile> tiles;
+		std::string tempTex;
 
 		stream >> tileWidth;
 		stream >> tileHeight; // tileHeight
 		stream >> mapWidth; // mapWidth
 		stream >> mapHeight; // mapHeight
-		stream >> numTiles; // numTiles
+		stream >> numTextures; // numTiles
 
-		std::string texName;
-
-
-		int pos = 0;
-		char solid = '\0';
-		stream >> texName;
-		std::vector<Rect> rects;
-		std::vector<Tile> tiles;
-
-		rects.reserve(numTiles);
-		tiles.reserve(numTiles);
-
-		cpTex tex = GetTexture(texName);
-
-		I32 framesPerRow = -1; // per row
-
-		if (tex != nullptr)
+		for (auto i = 0; i < numTextures; ++i)
 		{
-			framesPerRow = tex->w() / tileWidth;
-		}
-
-		//assumes for now that all tiles come from the same texture.
-		for (int i = 0; i < numTiles; ++i)
-		{
-			stream >> pos;
-			stream >> solid;
-			I32 x = tileWidth * (pos % framesPerRow);
-			I32 y = tileHeight * (pos / framesPerRow);
-			bool s;
-
-			if (solid == 'F')
+			stream >> tempTex;
+			cpTex tex = GetTexture(tempTex);
+			
+			if (!tex)
 			{
-				s = false;
+				AddTexture( RELATIVE_ASSETS_PATH + tempTex);
+				tex = GetTexture(tempTex);
 			}
-			else if (solid == 'T')
+			
+			TALGA_WARN(tex, std::string("map ") + name + " tried to load " + tempTex + " but could not");
+
+
+			if (tex)
 			{
-				s = true;
+				I32 framesPerRow = tex->w() / tileWidth;
+				I32 framesPerColumn = tex->h() / tileHeight;
+
+				for (auto y = 0; y < framesPerColumn; ++y)
+				{
+					for (auto x = 0; x < framesPerRow; ++x)
+					{
+						//TL TR BR BL
+						/*tiles.push_back(Tile{ tex, UVFrame{ {
+								GET_UV((F32)tileWidth * x, tex->w(), (F32)tileHeight * y, tex->h()),
+								GET_UV( (F32)tileWidth * x + tileWidth, tex->w(), (F32)tileHeight * y, tex->h()),
+								GET_UV((F32)tileWidth * x + tileWidth, tex->w(), (F32)tileHeight * y + tileHeight, tex->h()),
+								GET_UV((F32)tileWidth * x, tex->w(), (F32)tileHeight * y + tileHeight, tex->h())
+							} } });
+						*/
+						
+						tiles.push_back(Tile{ tex, UVFrame{ {
+								GET_UV((F32)tileWidth * x, tex->w(), (F32)tileHeight * y + tileHeight, tex->h()),
+						
+						GET_UV((F32)tileWidth * x + tileWidth, tex->w(), (F32)tileHeight * y + tileHeight, tex->h()),
+						GET_UV((F32)tileWidth * x + tileWidth, tex->w(), (F32)tileHeight * y, tex->h()),
+						GET_UV((F32)tileWidth * x, tex->w(), (F32)tileHeight * y, tex->h())
+						} } });
+						
+					}
+				}
 			}
-
-			rects.push_back(Rect{ x, y, tileWidth, tileHeight });
-			tiles.push_back(Tile{ i, s });
+			else // push back default UVs for the NO_TEXTURE texture
+			{
+				tiles.push_back(Tile{ tex, UVFrame{{ vec2{0.0f, 1.0f}, vec2{1.0f, 1.0f}, vec2{1.0f, 0.0f}, vec2{0.0f, 0.0f} } }});
+			}
 		}
-		std::string animName = texName.substr(0, texName.size() - 4); // aka without the file extension (.png)
-		animName.append("Anim");
-
-		AddAnimation(texName, animName, rects);
 
 		std::vector<I32> mapdata(mapWidth * mapHeight);
 
@@ -153,13 +168,7 @@ namespace talga
 			}
 		}
 
-		LoadAnimations();
-		cpAnim tester = GetAnimation(animName);
-		//map.Init(name, tiles,tester, mapdata, mapWidth, mapHeight);
-
-
-
-		Map map(name, tiles, tester, mapdata, mapWidth, mapHeight, 32, 32);
+		Map map(name, tiles, mapdata, mapWidth, mapHeight, tileWidth, tileHeight);
 		mMaps.push_back(map);
 	}
 
@@ -282,7 +291,7 @@ namespace talga
 				return &mMaps[i];
 		}
 
-		std::cout << "Failed to get map " << name << std::endl;
+		TALGA_WARN(0, std::string("failed to find map ") + name);
 		return nullptr;
 	}
 
@@ -294,7 +303,7 @@ namespace talga
 				return &mAnimations[i];
 		}
 
-		std::cout << "Failed to get animation " << name << std::endl;
+		TALGA_WARN(0, std::string("failed to find map ") + name);
 		return nullptr;
 	}
 	cpTex AssetManager::GetTexture(std::string name) const
@@ -307,8 +316,7 @@ namespace talga
 			}
 		}
 
-
-		std::cout << "Failed to get texture " << name << std::endl;
+		TALGA_WARN(0, std::string("failed to find texture ") + name);
 		return nullptr;
 	}
 	AssetManager::~AssetManager()

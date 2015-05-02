@@ -3,7 +3,7 @@
 #include "AnimSet.h"
 #include "Texture.h"
 #include "Renderer.h"
-
+#include "Math/Operations.h"
 #include <iostream>
 
 
@@ -20,7 +20,7 @@ namespace talga
 			mImageBox.setH(mTex->h());
 		}
 		else
-			std::cerr << "Invalid texture was passed to sprite" << std::endl;
+			TALGA_WARN(0, "Invalid texture was passed to sprite");
 
 		mImageBox.updateVerts();
 	}
@@ -51,14 +51,14 @@ namespace talga
 			mImageBox.setH(mAnims->tex()->h());
 		}
 		else
-			std::cerr << "Invalid animation was passed to sprite" << std::endl;
+			TALGA_WARN(0, "Invalid texture was passed to animated sprite");
 
 	}
 
 	void AnimSprite::render(Renderer* renderer, const Camera* camera) const
 	{
 		if (mCurrentAnimation)
-			renderer->submit(mImageBox, mAnims->tex(), mCurrentAnimation->at(mCurrentFrame));
+			renderer->submit(mImageBox, mAnims->tex(), mUVCurrentFrame);
 		else
 			renderer->submit(mImageBox);
 	}
@@ -84,6 +84,8 @@ namespace talga
 					playAnimation("default", 5000, true);
 					mTimeSince = 0;
 				}
+
+				setUVFrame();
 			}
 		}
 
@@ -100,6 +102,7 @@ namespace talga
 		if (!mCurrentAnimation)
 			return;
 		mCurrentFrame = 0;
+		setUVFrame();
 		isLoop = loop;
 		mFrameSpeed = speed / mCurrentAnimation->size();
 		mTimeSince = 0;
@@ -115,6 +118,11 @@ namespace talga
 	void AnimSprite::playDefault()
 	{
 		playAnimation("default", 5000, true);
+	}
+
+	void AnimSprite::setUVFrame()
+	{
+		mUVCurrentFrame = mCurrentAnimation->at(mCurrentFrame);
 	}
 
 	AnimSprite::~SpriteTemplate()

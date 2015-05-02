@@ -37,7 +37,10 @@ namespace talga
 		/*speed in ms*/
 		void playAnimation(const std::string& animName, I32 speed, bool loop);
 		void playDefault();
+
+		Rectangle& getBox() { return mImageBox; }
 	protected:
+		void setUVFrame();
 		Rectangle mImageBox;
 		UVFrame mUVCurrentFrame;
 

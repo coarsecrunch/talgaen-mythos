@@ -8,7 +8,6 @@ namespace talga
 
 	void seedRand(F64 sd)
 	{
-
 		generator = std::minstd_rand0(sd);
 	}
 

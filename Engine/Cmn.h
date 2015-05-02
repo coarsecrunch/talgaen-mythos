@@ -1,13 +1,7 @@
 #pragma once
 
-#define TALGA_WINDOWS_BUILD
-#define _GLFW_USE_DWM_SWAP_INTERVAL 1
-
-#ifdef _DEBUG
-#define TDEBUG
-#endif
-
 #define MAX_STRBFR 50
+#include "tassert.h"
 
 namespace talga
 {
