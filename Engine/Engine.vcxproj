@@ -148,7 +148,7 @@
     <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\;</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|Win32'">
-    <OutDir>$(ProjectDir)..\build\release\</OutDir>
+    <OutDir>$(ProjectDir)..\build\final\</OutDir>
     <SourcePath>$(SolutionDir)Math\;</SourcePath>
     <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\;</IncludePath>
   </PropertyGroup>
