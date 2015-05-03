@@ -15,4 +15,4 @@ ipch/
 *.vcxproj.user
 *.sdf
 *.v12.suo
-
+*.db
