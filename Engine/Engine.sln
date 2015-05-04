@@ -13,6 +13,8 @@ Global
 		Debug|x64 = Debug|x64
 		Final|Win32 = Final|Win32
 		Final|x64 = Final|x64
+		libtalga|Win32 = libtalga|Win32
+		libtalga|x64 = libtalga|x64
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 	EndGlobalSection
@@ -23,6 +25,9 @@ Global
 		{CD8ECB51-C3FE-4D3C-A8F1-E01AB026C838}.Final|Win32.ActiveCfg = Final|Win32
 		{CD8ECB51-C3FE-4D3C-A8F1-E01AB026C838}.Final|Win32.Build.0 = Final|Win32
 		{CD8ECB51-C3FE-4D3C-A8F1-E01AB026C838}.Final|x64.ActiveCfg = Final|Win32
+		{CD8ECB51-C3FE-4D3C-A8F1-E01AB026C838}.libtalga|Win32.ActiveCfg = libtalga|Win32
+		{CD8ECB51-C3FE-4D3C-A8F1-E01AB026C838}.libtalga|Win32.Build.0 = libtalga|Win32
+		{CD8ECB51-C3FE-4D3C-A8F1-E01AB026C838}.libtalga|x64.ActiveCfg = libtalga|Win32
 		{CD8ECB51-C3FE-4D3C-A8F1-E01AB026C838}.Release|Win32.ActiveCfg = Release|Win32
 		{CD8ECB51-C3FE-4D3C-A8F1-E01AB026C838}.Release|Win32.Build.0 = Release|Win32
 		{CD8ECB51-C3FE-4D3C-A8F1-E01AB026C838}.Release|x64.ActiveCfg = Release|Win32

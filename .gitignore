@@ -3,6 +3,7 @@ Debug/
 Release/
 sandbox/
 ipch/
+libtalga/
 *.obj
 *.log
 *.pdb
@@ -16,3 +17,5 @@ ipch/
 *.sdf
 *.v12.suo
 *.db
+*.pro.user
+
