@@ -57,31 +57,16 @@
     <ClCompile Include="Collider.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="AObj.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="ARenderableObj.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Character.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Particle.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleEngine.cpp">
-      <Filter>Source Files\Physics</Filter>
-    </ClCompile>
     <ClCompile Include="AssetManager.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
     <ClCompile Include="Clock.cpp">
-      <Filter>Source Files\Misc</Filter>
-    </ClCompile>
-    <ClCompile Include="Command.cpp">
       <Filter>Source Files\Misc</Filter>
     </ClCompile>
     <ClCompile Include="LuaEngine.cpp">
@@ -104,9 +89,6 @@
     </ClCompile>
     <ClCompile Include="Interpolation.cpp">
       <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysSprite.cpp">
-      <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -150,6 +132,9 @@
     <ClCompile Include="Math\Operations.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\include\Math\Interpolation.h">
@@ -164,31 +149,16 @@
     <ClInclude Include="Collider.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="AObj.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="ARenderableObj.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Particle.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
     <ClInclude Include="ParticleEmitter.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Character.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleEngine.h">
-      <Filter>Header Files\Misc</Filter>
-    </ClInclude>
     <ClInclude Include="AssetManager.h">
       <Filter>Header Files\Misc</Filter>
     </ClInclude>
     <ClInclude Include="Clock.h">
-      <Filter>Header Files\Misc</Filter>
-    </ClInclude>
-    <ClInclude Include="Command.h">
       <Filter>Header Files\Misc</Filter>
     </ClInclude>
     <ClInclude Include="LuaEngine.h">
@@ -198,9 +168,6 @@
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysSprite.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
@@ -273,6 +240,9 @@
       <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="tassert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

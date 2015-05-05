@@ -4,7 +4,7 @@
 #include <ctime>
 #include <iostream>
 
-
+/*
 namespace talga
 {
 	ParticleEmitter::ParticleEmitter(Game* game, const I32 maxNumParticles, F32 particleLifetime, F32 spawnRadius, F32 spawnSpeed)
@@ -104,9 +104,6 @@ namespace talga
 		mParticles[mNumParticles] = Particle();
 		mParticles[mNumParticles].mLifetime = mParticleTotalLife;
 		
-		
-		
-		/*
 
 		F32 r = (F32)distributionColor(generator);
 		F32 g = (F32)distributionColor(generator);
@@ -120,7 +117,7 @@ namespace talga
 		mParticles[mNumParticles].mColor = vec4(r, g, b, 1.0f);
 		mParticles[mNumParticles].mPosition = vec4(xSet, ySet);
 		mParticles[mNumParticles].mVelocity = mVelocity + launchSpeed;
-		*/
+		
 		++mNumParticles;
 	}
 
@@ -134,4 +131,4 @@ namespace talga
 	{
 		delete[] mParticles;
 	}
-}
+}*/

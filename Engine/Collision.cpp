@@ -6,7 +6,7 @@
 #include "Map.h"
 
 using namespace std;
-
+#if 0
 namespace talga
 {
 
@@ -327,7 +327,7 @@ namespace talga
 
 		moving1.setIsColliding(false);
 		moving2.setIsColliding(false);
-	}
+	}*/
 
 	void FindResCollision(PhysSprite& moving, RectCollider& still)
 	{
@@ -410,3 +410,4 @@ namespace talga
 	}*/
 
 }
+#endif

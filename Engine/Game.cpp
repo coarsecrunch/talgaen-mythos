@@ -25,55 +25,36 @@ namespace talga
 	}
 
 	Game::Game()
-		: mCamera(this)
-		, mKeyDownHandlers()
-		, mKeyUpHandlers()
-		, mActors()
-		, mStaticActors()
+		: mCamera(800, 600)
+		, mWindow(800, 600)
 	{
 	}
 
-	void Game::DestroyActor(I32 location)
-	{
-		mActors[location] = mActors.back();
-		mActors[location]->setListLoc(location);
-		mActors.pop_back();
-	}
 
 	int Game::Init(int width, int height, const char* name)
 	{
-		Camera::InitRendering(width, height);
-		mCamera.setW(width);
-		mCamera.setH(height);
+		//Camera::InitRendering(width, height);
+		//Window::initGL();
 
-		mActors.reserve(MAX_GAMEOBJECTS);
-		mStaticActors.reserve(MAX_GAMEOBJECTS);
+		mCamera.getBox().setW(width);
+		mCamera.getBox().setH(height);
 
 		return 0;
 	}
 
-	void Game::Input(SDL_Event* e)
-	{
-		//char c = e->key.keysym.sym;
-		if (mKeyDownHandlers.size() > 0)
-		{
-			(*(mKeyDownHandlers.find('k'))).second();
-		}
-
-		//(*mKeyUpHandlers.find(c)).second();
-	}
-
 	void Game::Update(F32 dt)
 	{
-		mCamera.Update(dt);
-		for (auto obj = mActors.begin(); obj != mActors.end(); ++obj)
+		mCamera.update(dt);
+		
+		/*for (auto obj = mActors.begin(); obj != mActors.end(); ++obj)
 		{
 			(*(*obj)).Update(dt);
-		}
+		}*/
 	}
 
 	void Game::ResolveCollisions()
 	{
+		/*
 		for (auto obj = mActors.begin(); obj != mActors.end(); ++obj)
 		{
 			if (!(**obj).checkCollisions())
@@ -96,13 +77,12 @@ namespace talga
 					continue;
 				ResMovingMovingCol(**obj, **obj2);
 			}
-		}
+		}*/
 	}
 
 	void Game::Render(const AssetManager* man)
 	{
-		Camera::Clear();
-
+		/*
 
 		for (auto rdrObj = mActors.begin(); rdrObj != mActors.end(); ++rdrObj)
 		{
@@ -123,41 +103,9 @@ namespace talga
 			}
 		}
 
-
+		*/
 	}
 
-	void Game::AddSpr(PhysSprite* spr)
-	{
-		mActors.push_back(spr);
-		//return mActors.back();
-	}
-
-	void Game::AddStaticSpr(PhysSprite* spr)
-	{
-		mStaticActors.push_back(spr);
-		//return mStaticActors.back();
-	}
-
-	void Game::AddKeyDownHandler(char c, void(*perform)())
-	{
-		mKeyDownHandlers.insert(std::pair<char, void(*)()>(c, perform));
-
-	}
-
-	void Game::RemoveKeyDownHandler(char c)
-	{
-		mKeyDownHandlers.erase(c);
-	}
-
-	void Game::AddKeyUpHandler(char c, void(*perform)())
-	{
-		mKeyUpHandlers.insert(std::pair<char, void(*)()>(c, perform));
-	}
-
-	void Game::RemoveKeyUpHandler(char c)
-	{
-		mKeyUpHandlers.erase(c);
-	}
 
 	Game::~Game()
 	{

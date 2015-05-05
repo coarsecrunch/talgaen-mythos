@@ -1,32 +1,39 @@
 #include "Texture.h"
 #include "GL\glew.h"
-#include <cstring>
-#include <cstdio>
 #include <iostream>
+#include <cstdio>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image\stb_image.h"
 
-/*TODO: get rid of cstring code replace with std::string version
-*/
+#ifdef TALGA_WINDOWS_BUILD // if using paths in
+//windows, you have to deal with the double back slash nonsense
+#include <algorithm>
+#endif
 
 namespace talga
 {
-	Texture::Texture() :
-		mWidth(0), mHeight(0), mTexture(0)
+	Texture::Texture(std::string path) :
+		mWidth(-1), mHeight(-1), mTexture(-1), name()
 	{
+		Init(path);
 	}
 
 	int Texture::Init(std::string path)
 	{
-		FILE* imgFile = fopen(path.c_str(), "rb");
+#ifdef TALGA_WINDOWS_BUILD
+		//std::replace(path.begin(), path.end(), '/', '\\');
+#endif
+		FILE* imgFile = nullptr;
+		
+		imgFile = fopen(path.c_str(), "rb");
 		
 		I32 imgW = -1, imgH = -1, channels = -1;
 		const U8* data = nullptr;
 
 		if (!imgFile)
 		{
-			TALGA_ASSERT(0, "invalid textue was attempted to  be loaded");
+			TALGA_WARN(0, "invalid textue was attempted to  be loaded");
 			return -1;
 		}
 		
@@ -41,23 +48,42 @@ namespace talga
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		
 		glBindTexture(GL_TEXTURE_2D, 0);
+		static int cc = 0; 
+
+		if (cc == 0)
+		{
+			for (int y = 0; y < imgH; ++y)
+			{
+				for (int x = 0; x < imgW; ++x)
+				{
+					//std::cout << std::hex << *((int*)(data + (y * imgW + x))) << std::endl;
+				}
+			}
+
+			std::cout << "CHANNELS: " << channels << std::endl;
+		}
+		
+
+		++cc;
 
 		mWidth = imgW;
 		mHeight = imgH;
 
 		int start = -1;
-		for (int i = strlen(path.c_str()) - 1; i > 0; --i)
+		
+		std::string tempName = path;
+
+		for (int i = path.size() - 1; i >= 0; i--)
 		{
-			if (path[i] == '\\' || path[i] == '/')
-			{
-				start = i;
-				break;
-			}
+			if (path[i] == '\\' || path[i] == '/') break;
+			tempName = path.substr(i, path.size() - i);
 		}
 
-		name = path.substr(start + 1);
+		name = tempName;
 
 		stbi_image_free((void*)data);
+		fclose(imgFile);
+		imgFile = nullptr;
 
 		return 0;
 	}
@@ -68,15 +94,13 @@ namespace talga
 		glBindTexture(GL_TEXTURE_2D, mTexture);
 	}
 
-	void Texture::Destroy()
+	void Texture::destroy()
 	{
-		mWidth = 0;
-		mHeight = 0;
+		glDeleteTextures(1, &mTexture);
 	}
-
 
 	Texture::~Texture()
 	{
-
+		
 	}
 }

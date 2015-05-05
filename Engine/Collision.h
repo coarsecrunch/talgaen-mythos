@@ -1,11 +1,10 @@
 #pragma once
 
-#include "PhysSprite.h"
 #include <vector>
 
 namespace talga
 {
-
+	/* ON HOLD
 	class Character;
 
 	enum class SIDE { NONE, RIGHT, LEFT, TOP, BOTTOM, TOPRIGHT, TOPRIGHT_X, TOPRIGHT_Y, TOPLEFT, TOPLEFT_X, TOPLEFT_Y, BOTRIGHT, BOTRIGHT_X, BOTRIGHT_Y, BOTLEFT, BOTLEFT_X, BOTLEFT_Y };
@@ -25,5 +24,5 @@ namespace talga
 	void FindResCollision(PhysSprite& moving, RectCollider& still);
 	//std::vector<Collision> GetTileCols(PhysSprite& object);
 	//void ResloveMultipleCol(PhysSprite& object);
-
+	*/
 }

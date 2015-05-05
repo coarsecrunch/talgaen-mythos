@@ -1,9 +1,9 @@
 #pragma once
 
-#include "PhysSprite.h"
 #include "Particle.h"
 #include "Cmn.h"
 
+/* ON HOLD
 namespace talga
 {
 	class Game;
@@ -42,4 +42,4 @@ namespace talga
 		void UpdateGLBuffer();
 	};
 
-}
+}*/

@@ -29,7 +29,7 @@ namespace talga
 	/* Amounts for the max amounts for stored assets. If vector are constantly dynamically allocated
 	then the addresses for the elements change and the pointers to them become invalid */
 	const I32 MAX_ANIMATIONS = 100;
-	const I32 MAX_TEXTURES = 100;
+	const I32 MAX_TEXTURES = 1000;
 	const I32 MAX_MAPS = 50;
 
 
@@ -48,17 +48,13 @@ namespace talga
 		mMaps.reserve(MAX_MAPS);
 		mAnimationsToLoad.reserve(MAX_ANIMATIONS);
 
-		AddTexture(RELATIVE_ASSETS_PATH + "NOTEX.png");
-		NO_TEXTURE = GetTexture("NOTEX.png");
+		//AddTexture(RELATIVE_ASSETS_PATH + "notex.png");
+		//NO_TEXTURE = GetTexture("notex.png");
 	}
 
 	void AssetManager::AddTexture(std::string path)
 	{
-		Texture tex;
-		if (tex.Init(path.c_str()) != -1)
-		{
-			mTextures.push_back(tex);
-		}
+		mTextures.push_back(Texture{path});
 	}
 
 	void AssetManager::AddAnimation(std::string texName, std::string name, std::vector<Rect> frames)
@@ -78,7 +74,7 @@ namespace talga
 		std::ifstream stream;
 
 		stream.open(path);
-		TALGA_ASSERT(stream.is_open());
+		TALGA_ASSERT(stream.is_open(), std::string("failed to read map ") + path);
 
 		char cc = '\0';
 		I32 index = path.size();
@@ -241,7 +237,7 @@ namespace talga
 			mAnimations.push_back(anim);
 		}
 
-		glBindVertexArray(Camera::mVAOs[Camera::TEXTURED_QUAD]);
+		/*glBindVertexArray(Camera::mVAOs[Camera::TEXTURED_QUAD]);
 
 		glGenBuffers(numBuffers, mBuffers);
 		glBindBuffer(GL_ARRAY_BUFFER, mBuffers[ARRAY_BUFFER_TEXTURED_QUAD]);
@@ -278,7 +274,7 @@ namespace talga
 		U16 num = *(U16*)currentPos;
 
 		Vertex* posCast = &vertices[num];
-
+		*/
 		delete[] indices;
 		delete[] vertices;
 	}
@@ -321,6 +317,10 @@ namespace talga
 	}
 	AssetManager::~AssetManager()
 	{
+		for (Texture& tex : mTextures)
+		{
+			tex.destroy();
+		}
 		delete[] indis;
 		delete[] verts;
 	}

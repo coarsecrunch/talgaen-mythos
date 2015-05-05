@@ -54,12 +54,12 @@ namespace talga
 
 	void Map::render(Renderer* renderer, const Camera* camera) const
 	{
-		I32 tileY = CartToTile(camera->getX(), camera->getY()).y;
-		I32 tileX = CartToTile(camera->getX(), camera->getY()).x;
+		I32 tileY = CartToTile(camera->getBox().getX(), camera->getBox().getY()).y;
+		I32 tileX = CartToTile(camera->getBox().getX(), camera->getBox().getY()).x;
 
-		for (I32 y = tileY; y <= camera->getH() / mTileHeight + tileY; ++y)
+		for (I32 y = tileY; y <= camera->getBox().getH() / mTileHeight + tileY; ++y)
 		{
-			for (I32 x = tileX; x <= camera->getW() / mTileWidth + tileX; ++x)
+			for (I32 x = tileX; x <= camera->getBox().getW() / mTileWidth + tileX; ++x)
 			{
 				if (!Exists(x, y))
 					continue;
@@ -67,6 +67,8 @@ namespace talga
 				renderer->submit(mRects[y * mWidth + x], TileAt(x, y)->first, TileAt(x,y)->second);
 			}
 		}
+
+
 	}
 
 	void Map::updateRects()
