@@ -1,8 +1,11 @@
 #include "Texture.h"
-#include "SDL2\SDL_image.h"
 #include "GL\glew.h"
 #include <cstring>
+#include <cstdio>
 #include <iostream>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image\stb_image.h"
 
 /*TODO: get rid of cstring code replace with std::string version
 */
@@ -16,26 +19,31 @@ namespace talga
 
 	int Texture::Init(std::string path)
 	{
+		FILE* imgFile = fopen(path.c_str(), "rb");
 		
-		SDL_Surface* tempSurf = IMG_Load(path.c_str());
-		if (!tempSurf)
+		I32 imgW = -1, imgH = -1, channels = -1;
+		const U8* data = nullptr;
+
+		if (!imgFile)
 		{
-			TALGA_WARN(0, std::string("failed to load texture at ") + path);
+			TALGA_ASSERT(0, "invalid textue was attempted to  be loaded");
 			return -1;
 		}
+		
+		data = stbi_load_from_file(imgFile, &imgW, &imgH, &channels, 0);
 
 		glGenTextures(1, &mTexture);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tempSurf->w, tempSurf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, tempSurf->pixels);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgW, imgH, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		mWidth = tempSurf->w;
-		mHeight = tempSurf->h;
+		mWidth = imgW;
+		mHeight = imgH;
 
 		int start = -1;
 		for (int i = strlen(path.c_str()) - 1; i > 0; --i)
@@ -48,6 +56,8 @@ namespace talga
 		}
 
 		name = path.substr(start + 1);
+
+		stbi_image_free((void*)data);
 
 		return 0;
 	}

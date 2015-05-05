@@ -39,5 +39,5 @@ MainWindow::~MainWindow()
 
 void talga::editor::MainWindow::on_actionLoad_Assets_triggered()
 {
-    ui->listWidget->sl_chooseAssets();
+    ui->assetList->sl_chooseAssets();
 }

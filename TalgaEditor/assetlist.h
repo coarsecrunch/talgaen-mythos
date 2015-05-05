@@ -1,20 +1,20 @@
 #ifndef ASSETLIST_H
 #define ASSETLIST_H
 
-#include <QListWidget>
+#include <QTreeWidget>
 #include <QString>
 #include <QMap>
 
 class QMouseEvent;
 class QPixmap;
-class QListWidgetItem;
+class QTreeWidgetItem;
 
 namespace talga
 {
 namespace editor
 {
 
-class AssetList : public QListWidget
+class AssetList : public QTreeWidget
 {
     Q_OBJECT
 
@@ -24,12 +24,16 @@ public:
     void sl_chooseAssets();
 signals:
     void sig_textureSelected(QPixmap*);
-
+    void sig_mapSelcted();
+    void sig_scriptSelected();
 public slots:
-    void sl_assetSelected(QListWidgetItem*);
+    void sl_assetSelected(QTreeWidgetItem*, int);
 
 protected:
     QMap<QString, QPixmap*> mAssets;
+    QTreeWidgetItem* mTexturesFolder;
+    QTreeWidgetItem* mMapsFolder;
+    QTreeWidgetItem* mScriptsFolder;
 };
 
 }

@@ -14,50 +14,21 @@
    <string>TalgaEditor</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <property name="spacing">
-     <number>1</number>
-    </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
     <property name="leftMargin">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="topMargin">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="rightMargin">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="bottomMargin">
-     <number>1</number>
+     <number>0</number>
     </property>
     <item>
-     <widget class="talga::editor::AssetList" name="listWidget">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="mouseTracking">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="talga::editor::AssetViewer" name="imageView">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>1</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="mouseTracking">
-       <bool>true</bool>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-      </property>
-     </widget>
+     <widget class="QOpenGLWidget" name="openGLWidget"/>
     </item>
    </layout>
   </widget>
@@ -93,6 +64,91 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QDockWidget" name="assetManagerDock">
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>AssetManger</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="talga::editor::AssetList" name="assetList">
+       <property name="columnCount">
+        <number>1</number>
+       </property>
+       <attribute name="headerVisible">
+        <bool>true</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>Assets</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="viewerDock">
+   <property name="windowTitle">
+    <string>Viewer</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="talga::editor::AssetViewer" name="imageView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="mouseTracking">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionLoad_Assets">
    <property name="text">
     <string>Load Assets</string>
@@ -102,16 +158,6 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>talga::editor::AssetList</class>
-   <extends>QListWidget</extends>
-   <header>assetlist.h</header>
-   <slots>
-    <signal>sig_assetSelected(QListWidgetItem*)</signal>
-    <signal>sig_textureSelected(QPixmap*)</signal>
-    <slot>sl_assetSelected(QListWidgetItem*)</slot>
-   </slots>
-  </customwidget>
-  <customwidget>
    <class>talga::editor::AssetViewer</class>
    <extends>QGraphicsView</extends>
    <header>assetviewer.h</header>
@@ -119,38 +165,47 @@
     <slot>sl_updateTexture(QPixmap*)</slot>
    </slots>
   </customwidget>
+  <customwidget>
+   <class>talga::editor::AssetList</class>
+   <extends>QTreeWidget</extends>
+   <header>assetlist.h</header>
+   <slots>
+    <signal>sig_textureSelected(QPixmap*)</signal>
+    <slot>sl_assetSelected(QTreeWidgetItem*,int)</slot>
+   </slots>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
-   <sender>listWidget</sender>
-   <signal>itemClicked(QListWidgetItem*)</signal>
-   <receiver>listWidget</receiver>
-   <slot>sl_assetSelected(QListWidgetItem*)</slot>
+   <sender>assetList</sender>
+   <signal>itemClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>assetList</receiver>
+   <slot>sl_assetSelected(QTreeWidgetItem*,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>151</x>
-     <y>155</y>
+     <x>164</x>
+     <y>229</y>
     </hint>
     <hint type="destinationlabel">
-     <x>193</x>
-     <y>193</y>
+     <x>208</x>
+     <y>258</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>listWidget</sender>
+   <sender>assetList</sender>
    <signal>sig_textureSelected(QPixmap*)</signal>
    <receiver>imageView</receiver>
    <slot>sl_updateTexture(QPixmap*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>194</x>
-     <y>320</y>
+     <x>187</x>
+     <y>401</y>
     </hint>
     <hint type="destinationlabel">
-     <x>371</x>
-     <y>324</y>
+     <x>350</x>
+     <y>385</y>
     </hint>
    </hints>
   </connection>

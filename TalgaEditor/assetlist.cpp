@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QFileDialog>
+#include "wrongextdialog.h"
 
 namespace talga
 {
@@ -12,8 +13,17 @@ namespace editor
 {
 
 AssetList::AssetList(QWidget* parent)
-    : QListWidget(parent)
+    : QTreeWidget(parent)
+    , mTexturesFolder(nullptr)
+    , mMapsFolder(nullptr)
+    , mScriptsFolder(nullptr)
 {
+    mTexturesFolder = new QTreeWidgetItem(this);
+    mTexturesFolder->setText(0, "textures");
+    mMapsFolder = new QTreeWidgetItem(this);
+    mMapsFolder->setText(0, "maps");
+    mScriptsFolder = new QTreeWidgetItem(this);
+    mScriptsFolder->setText(0, "scripts");
 }
 
 AssetList::~AssetList()
@@ -34,16 +44,32 @@ void AssetList::sl_chooseAssets()
     foreach(QString str, filePaths)
     {
         QString fileName = QFileInfo(QFile(str).fileName()).fileName();
+        QString fileExtension = QFile(str).fileName().split(".",QString::SkipEmptyParts).at(1);
+        qDebug() << fileExtension;
+
         QImage image(str);
         mAssets.insert(fileName, new QPixmap(QPixmap::fromImage(image)));
 
-        addItem(fileName);
+        if (fileExtension == "png")
+        {
+            QTreeWidgetItem* txt = new QTreeWidgetItem(mTexturesFolder);
+            txt->setText(0, fileName);
+        }
+        else
+        {
+            WrongExtDialog ext;
+            ext.exec();
+        }
+
     }
 }
 
-void AssetList::sl_assetSelected(QListWidgetItem* item)
+void AssetList::sl_assetSelected(QTreeWidgetItem* item, int column)
 {
-    emit sig_textureSelected(mAssets[item->text()]);
+    if (item == mTexturesFolder || item == mMapsFolder || item == mScriptsFolder)
+        return;
+
+    emit sig_textureSelected(mAssets[item->text(0)]);
 }
 
 

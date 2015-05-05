@@ -1,5 +1,3 @@
-#include "SDL2\SDL.h"
-#include "SDL2\SDL_image.h"
 #include "GL\glew.h"
 #include "GLFW\glfw3.h"
 #include "Camera.h"
@@ -69,21 +67,6 @@ namespace talga
 
 	int Camera::InitRendering(int width, int height)
 	{
-		if (SDL_Init(SDL_INIT_VIDEO) < 0)
-		{
-			//error
-			std::cout << "Error SDL_Init(): " << SDL_GetError() << std::endl;
-			return -1;
-		}
-
-		int img_flags = IMG_INIT_PNG;
-
-		if (!(IMG_Init(img_flags) & img_flags))
-		{
-			std::cout << "Error Img_Init(): " << IMG_GetError() << std::endl;
-			return -1;
-		}
-
 		glfwSetErrorCallback(error_callback);
 
 		if (!glfwInit())

@@ -1,6 +1,5 @@
 #include "Cmn.h"
 #include "Rendering.h"
-#include "SDL2\SDL.h"
 #include "Map.h"
 #include "Game.h"
 #include "Texture.h"

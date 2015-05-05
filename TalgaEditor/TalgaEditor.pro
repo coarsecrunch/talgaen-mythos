@@ -15,10 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     assetlist.cpp \
-    assetviewer.cpp
+    assetviewer.cpp \
+    wrongextdialog.cpp
 
 HEADERS  += mainwindow.h \
     assetlist.h \
-    assetviewer.h
+    assetviewer.h \
+    wrongextdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    wrongextdialog.ui
