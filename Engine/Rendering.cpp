@@ -6,7 +6,6 @@
 #include <streambuf>
 #include <vector>
 #include <iostream>
-#include <cassert>
 
 namespace talga
 {
@@ -78,6 +77,8 @@ namespace talga
 	void LoadShaderSrc(const char* path, std::string& src)
 	{
 		std::ifstream t(path);
+
+        TALGA_ASSERT(t.is_open(), std::string("failed to find shader at ") + path)
 
 		t.seekg(0, std::ios::end);
 		src.reserve(t.tellg());

@@ -8,6 +8,9 @@
 namespace talga
 {
 	Renderer::Renderer(const char* vertexShaderPath, const char* fragmentShaderPath)
+        : mVAO{0}
+        , mVBO{0}
+        , mIBO{0}
 	{
 		std::string vertSrc;
 		LoadShaderSrc(vertexShaderPath, vertSrc);

@@ -26,6 +26,7 @@ namespace talga
 			0.0f, (2.0f / (0.0f - height)), 0.0f, 0.0f, // -(top + bottom) / (top - bottom)
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f);
+		update(0);
 	}
 
 

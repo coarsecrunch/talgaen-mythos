@@ -25,8 +25,6 @@ namespace talga
 
 		virtual void update(F32 dt) override;
 
-		void Update();
-	
 		const mat4& getCameraMat() const;
 
 

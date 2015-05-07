@@ -8,11 +8,18 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+CONFIG += console
 TARGET = TalgaEditor
 TEMPLATE = app
-INCLUDEPATH += ../include/
+INCLUDEPATH += ../Engine/ \
+    ../Engine/Math/ \
+    ../include/
 
-DEFINES += GLFW_DLL
+DEFINES += GLFW_DLL \
+    TALGA_WINDOWS_BUILD \
+    TALGA_ASSERTIONS_ENABLED \
+    TALGA_WARNINGS_ENABLED \
+    TALGA_MESSAGES_ENABLED
 
 SOURCES += ../TalgaEditor/main.cpp \
         mainwindow.cpp \

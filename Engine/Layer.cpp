@@ -1,6 +1,7 @@
 #include "Layer.h"
 #include "Renderer.h"
 #include "IRenderable.h"
+#include "Sprite.h"
 
 namespace talga
 {
@@ -8,7 +9,7 @@ namespace talga
 		: mRenderer(renderer)
 		, mProjectionMatrix(OrthographicProjectionMat2D(renderWidth, renderHeight))
 	{
-		mRenderer->push(mProjectionMatrix);
+        //mRenderer->push(mProjectionMatrix);
 	}
 
 	void Layer::add(const IRenderable* sprite)
@@ -20,7 +21,8 @@ namespace talga
 	{
 		mRenderer->begin();
 		for (const IRenderable* rdr : mRenderList)
-		{ 
+        {
+            const Sprite* spr = (const Sprite*) rdr;
 			rdr->render(mRenderer, mRenderer->getCamera());
 		}
 		mRenderer->end();
