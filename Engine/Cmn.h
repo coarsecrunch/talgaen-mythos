@@ -6,7 +6,6 @@
 namespace talga
 {
 	class Texture;
-	class Animation;
 	class Map;
 	class AnimationSet;
 
@@ -29,7 +28,6 @@ namespace talga
 
 	//engine specific
 	typedef const Texture* cpTex;
-	typedef const Animation* cpAnim;
 	typedef const AnimationSet* cpAnimSet;
 	typedef const Map* cpMap;
 	typedef const Map& crMap;

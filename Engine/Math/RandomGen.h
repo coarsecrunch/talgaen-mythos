@@ -1,7 +1,7 @@
 #pragma once
-#include "Cmn.h"
+#include "../Cmn.h"
 #include <random>
-#include "Clock.h"
+#include "../Clock.h"
 
 namespace talga
 {

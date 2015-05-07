@@ -1,6 +1,6 @@
+#include "GL\glew.h"
 #include "Renderer.h"
 #include "Rendering.h"
-#include "GL\glew.h"
 #include "Rectangle.h"
 #include "Texture.h"
 #include <iostream>

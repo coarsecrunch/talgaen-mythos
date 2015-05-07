@@ -42,7 +42,6 @@ namespace talga
 		I32 getHeight() const { return mHeight; }
 		I32 getTileHeight() const { return mTileHeight; }
 		I32 getTileWidth() const { return mTileWidth; }
-		cpAnim getSheet() const { return mSheet; }
 		std::string getName() const { return mName; }
 
 		
@@ -53,8 +52,6 @@ namespace talga
 		I32 mHeight;
 		I32 mWidth;
 
-		I32 mNumTiles;
-		cpAnim mSheet;
 		std::vector<Tile> mTileSet;
 		std::string mName;
 		std::vector<I32> mMap;

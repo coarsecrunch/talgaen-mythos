@@ -28,7 +28,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QOpenGLWidget" name="openGLWidget"/>
+     <widget class="talga::editor::GLContext" name="openGLWidget"/>
     </item>
    </layout>
   </widget>
@@ -173,6 +173,11 @@
     <signal>sig_textureSelected(QPixmap*)</signal>
     <slot>sl_assetSelected(QTreeWidgetItem*,int)</slot>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>talga::editor::GLContext</class>
+   <extends>QOpenGLWidget</extends>
+   <header>glcontext.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

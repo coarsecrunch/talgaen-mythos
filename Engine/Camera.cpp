@@ -9,7 +9,6 @@
 #include <iostream>
 #include "Math/Matrix3x3.h"
 #include "AssetManager.h"
-#include "Animation.h"
 
 namespace talga
 {

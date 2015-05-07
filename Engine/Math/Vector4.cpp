@@ -1,4 +1,4 @@
-#include "Math\Vector4.h"
+#include "Vector4.h"
 #include <cmath>
 
 namespace talga

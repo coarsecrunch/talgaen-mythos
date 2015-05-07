@@ -25,13 +25,11 @@ namespace talga
 	Map::Map(const Map& cpy)
 		: mName(cpy.mName)
 		, mTileSet(cpy.mTileSet)
-		, mSheet(cpy.mSheet)
 		, mWidth(cpy.mWidth)
 		, mHeight(cpy.mHeight)
 		, mMap(cpy.mMap)
 		, mTileHeight(cpy.mTileHeight)
 		, mTileWidth(cpy.mTileWidth)
-		, mNumTiles(cpy.mNumTiles)
 		, mRects(cpy.mRects)
 	{
 	}
@@ -40,12 +38,10 @@ namespace talga
 	{
 		mName = cpy.mName;
 		mTileSet = cpy.mTileSet;
-		mSheet = cpy.mSheet;
 		mWidth = cpy.mWidth;
 		mHeight = cpy.mHeight;
 		mTileHeight = cpy.mTileHeight;
 		mTileWidth = cpy.mTileHeight;
-		mNumTiles = cpy.mNumTiles;
 		mRects = cpy.mRects;
 
 

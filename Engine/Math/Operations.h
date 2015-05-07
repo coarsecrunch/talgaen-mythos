@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Cmn.h"
-#include "Math/Vector2.h"
+#include "../Cmn.h"
+#include "Vector2.h"
 
 namespace talga
 {

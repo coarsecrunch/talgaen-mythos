@@ -1,4 +1,4 @@
-#include "Math\Operations.h"
+#include "Operations.h"
 
 namespace talga
 {
