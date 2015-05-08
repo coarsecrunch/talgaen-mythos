@@ -19,12 +19,12 @@ namespace talga
 		
 		void render();
 		Renderer* getRenderer() { return mRenderer; }
-        void setRenderer(Renderer* renderer) { mRenderer = renderer; mRenderer->push(mProjectionMatrix);}
+		void setRenderer(Renderer* renderer);
 		//only call when the previous projection is on top
-		void setProjectionMatrix(I32 w, I32 h) { mRenderer->pop(); mRenderer->push(OrthographicProjectionMat2D(w, h)); };
+		void setProjectionMatrix(I32 w, I32 h);
 	protected:
+		F32 mWidth, mHeight;
 		Renderer* mRenderer;
-		mat4 mProjectionMatrix;
 		std::vector<const IRenderable*> mRenderList;
 	};
 }

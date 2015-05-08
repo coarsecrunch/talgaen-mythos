@@ -194,12 +194,12 @@ namespace talga
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 	}
 
-	void Renderer::push(const mat4& mat)
+	void Renderer::tStackPush(const mat4& mat)
 	{
 		mTransformationStack.push(mTransformationStack.top() * mat);
 	}
 
-	void Renderer::pop()
+	void Renderer::tStackPop()
 	{
 		mTransformationStack.pop();
 	}

@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 	//manager.AddTexture("../assets/charactersheet.png");
 	manager.AddTexture("../assets/sprite_sheet.png");
 	manager.AddTexture("../assets/talgasheet.png");
-	manager.LoadMap("../assets/test.map");
+	manager.AddMap("../assets/test.map");
 
 	Clock clock;
 	clock.Init();
@@ -149,11 +149,11 @@ int main(int argc, char** argv)
 		game.ResolveCollisions();
 		//game.Render(&manager);
 		
-		layer.getRenderer()->push(cam.getCameraMat());
+		layer.getRenderer()->tStackPush(cam.getCameraMat());
 		
 		layer.render();
 
-		layer.getRenderer()->pop();
+		layer.getRenderer()->tStackPop();
 
 		++fps;
 	}

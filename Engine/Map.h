@@ -1,10 +1,12 @@
 #pragma once
 
+#include "AAsset.h"
 #include "Point.h"
 #include "Cmn.h"
 #include "IRenderable.h"
 #include "Rectangle.h"
 #include "Math/Vector2.h"
+
 #include <vector>
 
 namespace talga
@@ -13,14 +15,17 @@ namespace talga
 	typedef std::array<vec2, 4> UVFrame;
 	typedef std::pair<cpTex, UVFrame> Tile;
 
-	class Map : public IRenderable
+	class Map : public AAsset, public IRenderable
 	{
 	public:
-		Map(std::string mapName = "INVALID_MAP_NAME", std::vector<Tile> tileSet = {}, const std::vector<I32>& map = {}, I32 width = -1, I32 height = -1, I32 tileWidth = -1, I32 tileHeight = -1);
+		Map();
 		Map(const Map& cpy);
 		~Map();
 
 		virtual void render(Renderer* renderer, const Camera* camera) const override;
+
+		virtual void load(std::string path, AssetManager& manager) override;
+		virtual void destroy() override;
 
 		const Map& operator=(const Map& cpy);
 
@@ -42,8 +47,6 @@ namespace talga
 		I32 getHeight() const { return mHeight; }
 		I32 getTileHeight() const { return mTileHeight; }
 		I32 getTileWidth() const { return mTileWidth; }
-		std::string getName() const { return mName; }
-
 		
 	protected:
 		I32 mTileWidth;
@@ -53,7 +56,6 @@ namespace talga
 		I32 mWidth;
 
 		std::vector<Tile> mTileSet;
-		std::string mName;
 		std::vector<I32> mMap;
 		std::vector<Rectangle> mRects;
 	};

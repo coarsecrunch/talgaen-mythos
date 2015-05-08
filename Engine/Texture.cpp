@@ -6,24 +6,18 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image\stb_image.h"
 
-#ifdef TALGA_WINDOWS_BUILD // if using paths in
-//windows, you have to deal with the double back slash nonsense
-#include <algorithm>
-#endif
-
 namespace talga
 {
-	Texture::Texture(std::string path) :
-		mWidth(-1), mHeight(-1), mTexture(-1), name()
+	Texture::Texture() 
+		: AAsset()
+		, mWidth(-1)
+		, mHeight(-1)
+		, mTexture(-1)
 	{
-		Init(path);
 	}
 
-	int Texture::Init(std::string path)
+	void Texture::load(std::string path, AssetManager& manager)
 	{
-#ifdef TALGA_WINDOWS_BUILD
-		//std::replace(path.begin(), path.end(), '/', '\\');
-#endif
 		FILE* imgFile = nullptr;
 		
 		imgFile = fopen(path.c_str(), "rb");
@@ -33,8 +27,8 @@ namespace talga
 
 		if (!imgFile)
 		{
-			TALGA_WARN(0, "invalid textue was attempted to  be loaded");
-			return -1;
+			TALGA_WARN(0, path + ", invalid textue was attempted to  be loaded");
+			return;
 		}
 		
 		data = stbi_load_from_file(imgFile, &imgW, &imgH, &channels, 0);
@@ -79,13 +73,11 @@ namespace talga
 			tempName = path.substr(i, path.size() - i);
 		}
 
-		name = tempName;
+		mName = tempName;
 
 		stbi_image_free((void*)data);
 		fclose(imgFile);
 		imgFile = nullptr;
-
-		return 0;
 	}
 
 	void Texture::Bind() const

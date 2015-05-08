@@ -7,9 +7,10 @@ namespace talga
 {
 	Layer::Layer(Renderer* renderer, F32 renderWidth, F32 renderHeight)
 		: mRenderer(renderer)
-		, mProjectionMatrix(OrthographicProjectionMat2D(renderWidth, renderHeight))
+		, mWidth{ renderWidth }
+		, mHeight{ renderHeight }
 	{
-        //mRenderer->push(mProjectionMatrix);
+		setProjectionMatrix(mWidth, mHeight);
 	}
 
 	void Layer::add(const IRenderable* sprite)
@@ -27,6 +28,20 @@ namespace talga
 		}
 		mRenderer->end();
 		mRenderer->render();
+	}
+
+	void Layer::setProjectionMatrix(I32 w, I32 h)
+	{	
+		while (mRenderer->tStackSize() > 1)
+			mRenderer->tStackPop();
+		
+		mRenderer->tStackPush(OrthographicProjectionMat2D(w, h));
+	}
+
+	void Layer::setRenderer(Renderer* renderer)
+	{ 
+		mRenderer = renderer;
+		setProjectionMatrix(mWidth, mHeight);
 	}
 
 	Layer::~Layer()

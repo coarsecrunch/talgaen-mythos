@@ -1,18 +1,20 @@
 #pragma once
 
 #include "Cmn.h"
-#include <string>
+#include "AAsset.h"
 
 namespace talga
 {
-	class Texture
+	class AssetManager;
+
+	class Texture : public AAsset
 	{
 	public:
-		Texture(std::string path);
-		~Texture();
-		I32 Init(std::string path);
-		
-		void destroy();
+		Texture();
+		virtual ~Texture();
+
+		virtual void load(std::string path, AssetManager& manager) override;
+		virtual void destroy() override;
 
 		void Bind() const;
 
@@ -21,8 +23,6 @@ namespace talga
 		I32 h() const { return mHeight; }
 		U32 texture() const { return mTexture; }
 
-
-		std::string name;
 	private:
 		talga::U32 mTexture;
 		talga::I32 mWidth;

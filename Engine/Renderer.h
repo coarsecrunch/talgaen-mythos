@@ -47,8 +47,9 @@ namespace talga
 		void render();
 		void end();
 
-		void push(const mat4& mat);
-		void pop();
+		size_t tStackSize() const { return mTransformationStack.size(); }
+		void tStackPush(const mat4& mat);
+		void tStackPop();
 
 		const Camera* getCamera() const { return mCamera; }
 		void setCamera(Camera* camera) { mCamera = camera; }

@@ -21,7 +21,7 @@ namespace talga
 
 		void AddTexture(std::string path);
 		void AddAnimationSet(std::string name, const AnimationSet& anim);
-		void LoadMap(std::string path);
+		void AddMap(std::string path);
 		cpTex GetTexture(std::string name) const;
 		cpMap GetMap(std::string name) const;
 
