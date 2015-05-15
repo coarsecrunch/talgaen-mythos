@@ -5,12 +5,13 @@
 
 namespace talga
 {
+	/*LAYER TAKES RESPONSIBLITY FOR ALL */
 	Layer::Layer(Renderer* renderer, F32 renderWidth, F32 renderHeight)
 		: mRenderer(renderer)
 		, mWidth{ renderWidth }
 		, mHeight{ renderHeight }
 	{
-		setProjectionMatrix(mWidth, mHeight);
+        setProjectionMatrix(renderWidth, renderHeight);
 	}
 
 	void Layer::add(const IRenderable* sprite)
@@ -23,7 +24,6 @@ namespace talga
 		mRenderer->begin();
 		for (const IRenderable* rdr : mRenderList)
         {
-            const Sprite* spr = (const Sprite*) rdr;
 			rdr->render(mRenderer, mRenderer->getCamera());
 		}
 		mRenderer->end();
@@ -32,6 +32,8 @@ namespace talga
 
 	void Layer::setProjectionMatrix(I32 w, I32 h)
 	{	
+        if (!mRenderer) return;
+
 		while (mRenderer->tStackSize() > 1)
 			mRenderer->tStackPop();
 		
@@ -39,12 +41,18 @@ namespace talga
 	}
 
 	void Layer::setRenderer(Renderer* renderer)
-	{ 
+    {
 		mRenderer = renderer;
 		setProjectionMatrix(mWidth, mHeight);
 	}
 
 	Layer::~Layer()
 	{
+		//TODO: get rid of this nonsense
+		for (auto iter = mRenderList.begin(); iter != mRenderList.end(); ++iter)
+			if (dynamic_cast<const Sprite*>(*iter))
+				delete *iter;
+			else if (dynamic_cast<const AnimSprite*>(*iter))
+				delete *iter;
 	}
 }

@@ -28,7 +28,7 @@
 #ifdef TALGA_MESSAGES_ENABLED
 #include <iostream>
 #define TALGA_MSG(message) \
-	std::cout << "MESSAGE: " << message << std::endl;
+	std::cout << "MSG: " << message << std::endl;
 #else
 #define TALGA_MSG(message) {}
 #endif

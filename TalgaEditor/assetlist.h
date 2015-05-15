@@ -11,31 +11,41 @@ class QTreeWidgetItem;
 
 namespace talga
 {
-namespace editor
-{
+  namespace editor
+  {
+    typedef QPair<QString, QImage*> TextureAsset;
 
-class AssetList : public QTreeWidget
-{
-    Q_OBJECT
+    class AssetList : public QTreeWidget
+    {
+      Q_OBJECT
 
-public:
-    explicit AssetList( QWidget* parent = nullptr);
-    ~AssetList();
-    void sl_chooseAssets();
-signals:
-    void sig_textureSelected(QPixmap*);
-    void sig_mapSelcted();
-    void sig_scriptSelected();
-public slots:
-    void sl_assetSelected(QTreeWidgetItem*, int);
+    public:
+      explicit AssetList( QWidget* parent = nullptr);
+      ~AssetList();
+      void sl_chooseAssets();
 
-protected:
-    QMap<QString, QPixmap*> mAssets;
-    QTreeWidgetItem* mTexturesFolder;
-    QTreeWidgetItem* mMapsFolder;
-    QTreeWidgetItem* mScriptsFolder;
-};
+      //for dragging and dropping items into the GLContext
+      void mousePressEvent(QMouseEvent *e);
+      void mouseMoveEvent(QMouseEvent *e);
+    signals:
+      // to signal to GLContext to add an asset to the manager
+      void sig_assetChosen(QString path);
 
-}
+      void sig_textureSelected(TextureAsset);
+      void sig_mapSelcted();
+      void sig_scriptSelected();
+    public slots:
+      void sl_assetSelected(QTreeWidgetItem*, int);
+
+    protected:
+      QMap<QString, QImage*> mAssets;
+      QTreeWidgetItem* mTexturesFolder;
+      QTreeWidgetItem* mMapsFolder;
+      QTreeWidgetItem* mScriptsFolder;
+
+      QPoint dragStartPosition;
+    };
+
+  }
 }
 #endif // ASSETLIST_H

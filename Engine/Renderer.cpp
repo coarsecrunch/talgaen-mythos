@@ -105,7 +105,8 @@ namespace talga
 		glBindVertexArray(mVAO);
 
 		mNextVertex = (VertexData*) glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-	}
+        auto err = glGetError();
+    }
 
 	//Verts must already be transformed before submit is called
 	//
@@ -179,7 +180,6 @@ namespace talga
 		}
 
 		glUseProgram(mProgram);
-		glViewport(0, 0, 800, 600);
 
 		glDrawElements(GL_TRIANGLES, mIndexCount, GL_UNSIGNED_INT, NULL);
 		

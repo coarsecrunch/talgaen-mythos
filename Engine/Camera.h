@@ -28,23 +28,22 @@ namespace talga
 		const mat4& getCameraMat() const;
 
 
-		const mat4& getProjectionMatrix() const { return mProjectionMatrix; }
+        void setW(I32 w);
+        void setH(I32 h);
 		Rectangle& getBox() { return mBox; }
 		const Rectangle& getBox() const { return mBox; }
+		vec3 screenToWorld(const vec3& pos);
 	protected:
 		Rectangle mBox;
 
-		mat4 mProjectionMatrix;
 		mat4 mCameraMat;
 		mat4 mCameraScaleMat;
 		mat4 mCameraRotMat;
 		mat4 mCameraTransMat;
-		// Rendering globals for GL
 
 		void updateCameraScaleMat();
 		void updateCameraRotMat();
 		void updateCameraTransMat();
 		void updateCameraMat();
-
 	};
 }

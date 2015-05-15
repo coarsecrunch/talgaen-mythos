@@ -56,16 +56,28 @@ void resize_window_callback(GLFWwindow* window, int width, int height)
 	game.getCamera().getBox().setH(height);
 }*/
 
+Layer* LAYER = nullptr;
+Camera* CAMERA = nullptr;
+
+void resize_window_callback(GLFWwindow* window, int w, int h)
+{
+	LAYER->setProjectionMatrix(w, h);
+	CAMERA->setW(w);
+	CAMERA->setH(h);
+	glViewport(0, 0, w, h);
+}
+
 int main(int argc, char** argv)
 {
+
+	Clock clock;
+	clock.Init();
 	Game game;
 
 	LuaEngine luaEngine;
 	luaEngine.Init();
 
 	Game::LUA_REGISTER(&luaEngine);
-
-	luaEngine.ExecuteStr("print 'testCommand'");
 
 	game.Init(WIDTH, HEIGHT, "hello talga");
 	AssetManager manager;
@@ -74,17 +86,19 @@ int main(int argc, char** argv)
 	manager.AddTexture("../assets/talgasheet.png");
 	manager.AddMap("../assets/test.map");
 
-	Clock clock;
-	clock.Init();
+	
 
 	U32 previousTime = 0;
 	U32 dt = 0;
 	U32 fps = 0;
 	U32 timeSince = 0;
-	F32 rot = 0;
-	bool positive = true;
 	
+	glfwSetWindowSizeCallback(game.getWindow().getWindow(), resize_window_callback);
 	AnimationSet set{ manager.GetTexture("talgasheet.png") };
+
+	game.getCamera().getBox().setX(0);
+	game.getCamera().getBox().setY(0);
+
 
 	std::vector<Rect> talgaStandL{ { Rect{ 0, 0, 64, 64 }, Rect{ 64, 0, 64, 64 } } };
 
@@ -95,24 +109,27 @@ int main(int argc, char** argv)
 
 	Layer layer{&renderer, (F32)WIDTH, (F32)HEIGHT};
 	
-	AnimSprite spr{ &set };
+	LAYER = &layer;
+	CAMERA = &game.getCamera();
 
-	Sprite sprity{ manager.GetTexture("sprite_sheet.png") };
-	sprity.getBox().setX(300);
+	AnimSprite* spr = new AnimSprite { &set };
+
+	Sprite* sprity = new Sprite( manager.GetTexture("sprite_sheet.png") );
+	sprity->getBox().setX(300);
 
 	cpMap testMap = manager.GetMap("test.map");
 
 	layer.add(static_cast<const IRenderable*>(testMap));
-	layer.add(&spr);
-	layer.add(&sprity);
+	layer.add(spr);
+	layer.add(sprity);
 
-	spr.playAnimation("talgaStandL", 1000, true);
+	spr->playAnimation("talgaStandL", 1000, true);
 
-	spr.getBox().setX(200);
-	spr.getBox().setY(200);
+	spr->getBox().setX(200);
+	spr->getBox().setY(200);
 	
-	sprity.getBox().setX(100);
-	sprity.getBox().setY(400);
+	sprity->getBox().setX(100);
+	sprity->getBox().setY(400);
 
 	while (!glfwWindowShouldClose(game.getWindow().getWindow()))
 	{
@@ -129,7 +146,7 @@ int main(int argc, char** argv)
 		}
 		
 		game.getWindow().swap();
-		//game.getWindow().clear();
+		game.getWindow().clear();
 		
 		glfwPollEvents();
 
@@ -143,8 +160,11 @@ int main(int argc, char** argv)
 
 		Camera& cam = game.getCamera();
 
-		spr.update(dt);
-		sprity.update(dt);
+		//cam.getBox().setX(cam.getBox().getX() - 0.05f);
+		cam.update(0);
+
+		spr->update(dt);
+		sprity->update(dt);
 		game.Update(dt);
 		game.ResolveCollisions();
 		//game.Render(&manager);

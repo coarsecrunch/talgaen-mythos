@@ -55,7 +55,8 @@ SOURCES += ../TalgaEditor/main.cpp \
     ../Engine/Sprite.cpp \
     ../Engine/Texture.cpp \
     ../Engine/Transformation2D.cpp \
-    ../Engine/Window.cpp
+    ../Engine/Window.cpp \
+    editormap.cpp
 
 HEADERS  += mainwindow.h \
     assetlist.h \
@@ -98,7 +99,8 @@ HEADERS  += mainwindow.h \
     ../Engine/tassert.h \
     ../Engine/Texture.h \
     ../Engine/Transformation2D.h \
-    ../Engine/Window.h
+    ../Engine/Window.h \
+    editormap.h
 
 
 FORMS    += mainwindow.ui \

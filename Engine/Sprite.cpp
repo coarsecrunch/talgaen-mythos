@@ -9,7 +9,7 @@
 
 namespace talga
 {
-	Sprite::SpriteTemplate(cpTex tex, I32 width, I32 height)
+	Sprite::Sprite(cpTex tex, I32 width, I32 height)
 		: mTex(tex)
 		, mImageBox(width, height)
 		, mUVCurrentFrame(UVFrame({ { vec2(0, 1), vec2(1, 1), vec2(1, 0), vec2(0, 0) } }))
@@ -35,7 +35,7 @@ namespace talga
 		mImageBox.updateVerts();
 	}
 
-	AnimSprite::SpriteTemplate(cpAnimSet anims, I32 width, I32 height)
+	AnimSprite::AnimSprite(cpAnimSet anims, I32 width, I32 height)
 		: mAnims(anims)
 		, mImageBox(width, height)
 		, isAnimated(true)
@@ -123,9 +123,5 @@ namespace talga
 	void AnimSprite::setUVFrame()
 	{
 		mUVCurrentFrame = mCurrentAnimation->at(mCurrentFrame);
-	}
-
-	AnimSprite::~SpriteTemplate()
-	{
 	}
 }

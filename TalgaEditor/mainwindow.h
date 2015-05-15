@@ -6,7 +6,7 @@
 #include <QString>
 
 namespace Ui {
-class MainWindow;
+  class MainWindow;
 }
 
 class QListWidgetItem;
@@ -16,35 +16,32 @@ class QGraphicsPixmapItem;
 
 namespace talga
 {
-namespace editor
-{
+  namespace editor
+  {
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+    class MainWindow : public QMainWindow
+    {
+      Q_OBJECT
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    public:
+      explicit MainWindow(QWidget *parent = 0);
+      ~MainWindow();
 
-private slots:
+      Ui::MainWindow* getUi() {return ui;}
+    private slots:
 
-    //void on_listWidget_itemClicked(QListWidgetItem *item);
+      void on_actionLoad_Assets_triggered();
 
-    //void on_listWidget_itemClicked(QListWidgetItem *item);
+    protected:
+      Ui::MainWindow *ui;
 
-    void on_actionLoad_Assets_triggered();
+      int mTileWidth;
+      int mTileHeight;
 
-protected:
-    Ui::MainWindow *ui;
+      QGraphicsScene* pmImageViewScene;
+      QMap<QString, QPixmap* > mTextures;
+    };
 
-    int mTileWidth;
-    int mTileHeight;
-
-    QGraphicsScene* pmImageViewScene;
-    QMap<QString, QPixmap* > mTextures;
-};
-
-}
+  }
 }
 #endif // MAINWINDOW_H

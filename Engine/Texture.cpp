@@ -16,7 +16,7 @@ namespace talga
 	{
 	}
 
-	void Texture::load(std::string path, AssetManager& manager)
+	bool Texture::load(std::string path, AssetManager& manager)
 	{
 		FILE* imgFile = nullptr;
 		
@@ -27,11 +27,15 @@ namespace talga
 
 		if (!imgFile)
 		{
-			TALGA_WARN(0, path + ", invalid textue was attempted to  be loaded");
-			return;
+			return false;
 		}
 		
 		data = stbi_load_from_file(imgFile, &imgW, &imgH, &channels, 0);
+
+		if (!data)
+		{
+			return false;
+		}
 
 		glGenTextures(1, &mTexture);
 
@@ -42,23 +46,7 @@ namespace talga
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		
 		glBindTexture(GL_TEXTURE_2D, 0);
-		static int cc = 0; 
-
-		if (cc == 0)
-		{
-			for (int y = 0; y < imgH; ++y)
-			{
-				for (int x = 0; x < imgW; ++x)
-				{
-					//std::cout << std::hex << *((int*)(data + (y * imgW + x))) << std::endl;
-				}
-			}
-
-			std::cout << "CHANNELS: " << channels << std::endl;
-		}
 		
-
-		++cc;
 
 		mWidth = imgW;
 		mHeight = imgH;
@@ -80,7 +68,7 @@ namespace talga
 		imgFile = nullptr;
 	}
 
-	void Texture::Bind() const
+	void Texture::bind() const
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mTexture);

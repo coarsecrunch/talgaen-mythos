@@ -8,36 +8,35 @@
 #include  "assetlist.h"
 namespace talga
 {
-namespace editor
-{
+  namespace editor
+  {
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    pmImageViewScene(new QGraphicsScene),
-    mTextures(),
-    mTileWidth(32),
-    mTileHeight(32)
-{
-    ui->setupUi(this);
+    MainWindow::MainWindow(QWidget *parent) :
+      QMainWindow(parent),
+      ui(new Ui::MainWindow),
+      pmImageViewScene(new QGraphicsScene),
+      mTextures(),
+      mTileWidth(32),
+      mTileHeight(32)
+    {
+      ui->setupUi(this);
+    }
 
-}
+    MainWindow::~MainWindow()
+    {
+      pmImageViewScene->clear();
+      delete pmImageViewScene;
 
-MainWindow::~MainWindow()
-{
-    pmImageViewScene->clear();
-    delete pmImageViewScene;
+      qDeleteAll(mTextures.values());
+      mTextures.clear();
 
-    qDeleteAll(mTextures.values());
-    mTextures.clear();
+      delete ui;
+    }
 
-    delete ui;
-}
-
-}
+  }
 }
 
 void talga::editor::MainWindow::on_actionLoad_Assets_triggered()
 {
-    ui->assetList->sl_chooseAssets();
+  ui->assetList->sl_chooseAssets();
 }

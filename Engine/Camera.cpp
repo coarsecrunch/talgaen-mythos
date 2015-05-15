@@ -12,20 +12,9 @@
 
 namespace talga
 {
-	//glfw error callback
-	void error_callback(int code, const char* message)
-	{
-		std::cout << "GLFW error " << code << ": " << message << std::endl;
-	}
-
 	Camera::Camera(I32 width, I32 height, vec3 position)
 		: mBox(width, height, position)
-		, mProjectionMatrix()
 	{
-		mProjectionMatrix = mat4((2.0f / (width - 0.0f)), 0.0f, 0.0f, 0.0f, // -(right + left) / (right - left)
-			0.0f, (2.0f / (0.0f - height)), 0.0f, 0.0f, // -(top + bottom) / (top - bottom)
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f);
 		update(0);
 	}
 
@@ -38,11 +27,39 @@ namespace talga
 		updateCameraMat();
 	}
 
+    void Camera::setW(I32 w)
+    {
+        mBox.setW(w);
+        update(0);
+    }
+
+    void Camera::setH(I32 h)
+    {
+        mBox.setH(h);
+        update(0);
+    }
+
 	const mat4& Camera::getCameraMat() const
 	{
 		return mCameraMat;
 	}
 
+	vec3 Camera::screenToWorld(const vec3& pos)
+	{
+		mat4 inversePosition(
+			1.0f, 0.0f, 0.0f, mBox.getX() - (mBox.getW() * 0.5f),
+			0.0f, 1.0f, 0.0f, mBox.getY() - (mBox.getH() * 0.5f),
+			0.0f, 0.0f, 1.0f, mBox.getZ(),
+			0.0f, 0.0f, 0.0f, 1.0f);
+
+		mat4 inverseScale(
+			1.0f / mBox.getScaleX(), 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f / mBox.getScaleY(), 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f);
+
+		return inverseScale * Transpose(mCameraRotMat) * inversePosition * pos;
+	}
 
 	void Camera::updateCameraScaleMat()
 	{
@@ -62,8 +79,8 @@ namespace talga
 	
 	void Camera::updateCameraTransMat()
 	{
-		mCameraTransMat = mat4(1.0f, 0.0f, 0.0f, (-mBox.getX() + (-0.5 * mBox.getWidth())),
-			0.0f, 1.0f, 0.0f, (-mBox.getY() + (-0.5 * mBox.getHeight())),
+		mCameraTransMat = mat4(1.0f, 0.0f, 0.0f, (-mBox.getX()),
+			0.0f, 1.0f, 0.0f, (-mBox.getY()),
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f);
 	}

@@ -35,23 +35,44 @@ namespace talga
 		//NO_TEXTURE = GetTexture("notex.png");
 	}
 
-	void AssetManager::AddTexture(std::string path)
+	cpTex AssetManager::AddTexture(std::string path)
 	{
-		mTextures.push_back(Texture{});
-		mTextures.back().load(path, *this);
+		Texture tex;
+
+		if (tex.load(path, *this))
+		{
+			TALGA_MSG(path + " was successfully loaded");
+			mTextures.push_back(tex);
+			return &mTextures.back();
+		}
+		else
+		{
+			TALGA_WARN(0, path + " could not be loaded");
+			return nullptr;
+		}
+		
 	}
 
-	void AssetManager::AddMap(std::string path)
+  cpMap AssetManager::AddMap(std::string path)
 	{
-		mMaps.push_back(Map{});
-		mMaps.back().load(path, *this);
+		Map map;
+
+		if (map.load(path, *this))
+		{
+			TALGA_MSG(path + " was successfully loaded");
+			mMaps.push_back(map);
+      return &mMaps.back();
+		}
+		else
+    {
+      TALGA_WARN(0, path + " could not be loaded");
+    }
 	}
 
 	static vec3 UV(float x, float xMax, float y, float yMax, float frameH)
 	{
 		return vec3(x / xMax, (y / yMax));
 	}
-
 
 	cpMap AssetManager::GetMap(std::string name) const
 	{

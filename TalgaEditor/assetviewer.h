@@ -2,37 +2,46 @@
 #define ASSETVIEWER_H
 
 #include <QGraphicsView>
+#include <QPair>
+#include "glcontext.h"
 
-class QPixmap;
+class QImage;
 class QGraphicsScene;
 class QGraphicsRectItem;
 
 namespace talga
 {
-namespace editor
-{
+  namespace editor
+  {  
 
-class AssetViewer : public QGraphicsView
-{
-    Q_OBJECT
+      typedef QPair<QString, QImage*> TextureAsset;
 
-public:
-    AssetViewer(QWidget* );
-    ~AssetViewer();
+    class AssetViewer : public QGraphicsView
+    {
+      Q_OBJECT
 
-    virtual void mouseMoveEvent(QMouseEvent *event) override;
+    public:
+      AssetViewer(QWidget* );
+      ~AssetViewer();
 
+      virtual void mouseMoveEvent(QMouseEvent *event) override;
+      virtual void mousePressEvent(QMouseEvent* e) override;
+      virtual void mouseReleaseEvent(QMouseEvent* e) override;
+    signals:
+      void sig_updateSelection(Selection);
 
-public slots:
-    void sl_updateTexture(QPixmap*);
+    public slots:
+      void sl_updateTexture(TextureAsset);
 
-protected:
-    QGraphicsScene* pmImageViewScene;
-    QGraphicsRectItem* mSelectBox;
+    protected:
+      QGraphicsScene* pmImageViewScene;
+      QGraphicsRectItem* mSelectBox;
+      TextureAsset mCurrentImage;
+      void updateBox(int, int);
 
-    void updateBox(int, int);
-};
+      QPoint mStartPos;
+    };
 
-}
+  }
 }
 #endif // ASSETVIEWER_H

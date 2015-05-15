@@ -21,9 +21,7 @@ namespace talga
 		, mTileWidth{-1}
 		, mTileHeight{ -1 }
 		, mMap{}
-		, mRects{}
 	{
-		updateRects();
 	}
 
 	Map::Map(const Map& cpy)
@@ -34,7 +32,6 @@ namespace talga
 		, mMap(cpy.mMap)
 		, mTileHeight(cpy.mTileHeight)
 		, mTileWidth(cpy.mTileWidth)
-		, mRects(cpy.mRects)
 	{
 	}
 
@@ -46,65 +43,53 @@ namespace talga
 		mHeight = cpy.mHeight;
 		mTileHeight = cpy.mTileHeight;
 		mTileWidth = cpy.mTileHeight;
-		mRects = cpy.mRects;
-
+    mMap = cpy.mMap;
 
 		return *this;
 	}
 
+
 	void Map::render(Renderer* renderer, const Camera* camera) const
 	{
-		I32 tileY = CartToTile(camera->getBox().getX(), camera->getBox().getY()).y;
-		I32 tileX = CartToTile(camera->getBox().getX(), camera->getBox().getY()).x;
+		I32 tileY = CartToTile(camera->getBox().getX() - (camera->getBox().getW() * 0.5f), 
+			camera->getBox().getY() - (camera->getBox().getH() * 0.5f)).y;
+		I32 tileX = CartToTile(camera->getBox().getX() - (camera->getBox().getW() * 0.5f),
+			camera->getBox().getY() - (camera->getBox().getH() * 0.5f)).x;
 
-		for (I32 y = tileY; y <= camera->getBox().getH() / mTileHeight + tileY; ++y)
+		Rectangle tempR{ (F32)(I32)mTileWidth, (F32)(I32)mTileHeight};
+
+		for (I32 y = tileY; y <= camera->getBox().getH() / mTileHeight + tileY + 1; ++y)
 		{
-			for (I32 x = tileX; x <= camera->getBox().getW() / mTileWidth + tileX; ++x)
+			for (I32 x = tileX; x <= camera->getBox().getW() / mTileWidth + tileX + 1; ++x)
 			{
 				if (!Exists(x, y))
 					continue;
+
+				if (getTileIndex(x, y) == 0)
+					continue;
 				
-				renderer->submit(mRects[y * mWidth + x], TileAt(x, y)->first, TileAt(x,y)->second);
+				tempR.setX(x * mTileWidth + (0.5f * mTileWidth));
+				tempR.setY(y * mTileHeight + (0.5f * mTileHeight));
+				tempR.updateVertsPosition();
+
+				renderer->submit(tempR, TileAt(x, y)->first, TileAt(x, y)->second);
 			}
 		}
 
 
 	}
-
-	void Map::updateRects()
-	{
-		mRects.clear();
-
-		for (I32 y = 0; y < mHeight; ++y)
-		{
-			for (I32 x = 0; x < mWidth; ++x)
-			{
-				mRects.push_back(Rectangle(mTileWidth, mTileHeight,
-					vec3{ x * mTileWidth + (mTileWidth * 0.5f), y * mTileHeight + (mTileHeight * 0.5f) },
-					vec4{ get01f(), get01f(), get01f() }
-				));
-
-				
-				mRects.back().updateVertsPosition();
-			}
-			
-		}
-
-	}
-	
-
 
 	const Tile* Map::TileAt(I32 x, I32 y) const
 	{
 		if (!Exists(x, y))
 			return nullptr;
 
-		return &mTileSet[mMap[y*mHeight + x]];
+		return &mTileSet[mMap[y * mWidth + x] - 1];
 	}
 
 	bool Map::Exists(I32 x, I32 y) const
 	{
-		return !(x >= mWidth || y >= mHeight || x < 0 || y < 0);
+		return !(x >= mWidth || y >= mHeight || x < 0 || y < 0 );
 	}
 
 	Point Map::CartToTile(I32 x, I32 y) const
@@ -123,12 +108,14 @@ namespace talga
 	}
 
 
-	void Map::load(std::string path, AssetManager& manager)
+	bool Map::load(std::string path, AssetManager& manager)
 	{
 		std::ifstream stream;
 
 		stream.open(path);
-		TALGA_ASSERT(stream.is_open(), std::string("failed to read map ") + path);
+		
+		if (!stream.is_open())
+			return false;
 
 		char cc = '\0';
 		I32 index = path.size();
@@ -142,7 +129,6 @@ namespace talga
 		I32 startIndex = index + 1;
 		I32 length = (path.size() - startIndex);
 		std::string name = path.substr(startIndex, length);
-
 
 		I32 tileWidth;
 		I32 tileHeight;
@@ -170,8 +156,6 @@ namespace talga
 				tex = manager.GetTexture(tempTex);
 			}
 
-			TALGA_WARN(tex, std::string("map ") + name + " tried to load " + tempTex + " but could not");
-
 
 			if (tex)
 			{
@@ -183,17 +167,9 @@ namespace talga
 					for (auto x = 0; x < framesPerRow; ++x)
 					{
 						//TL TR BR BL
-						/*tiles.push_back(Tile{ tex, UVFrame{ {
-						GET_UV((F32)tileWidth * x, tex->w(), (F32)tileHeight * y, tex->h()),
-						GET_UV( (F32)tileWidth * x + tileWidth, tex->w(), (F32)tileHeight * y, tex->h()),
-						GET_UV((F32)tileWidth * x + tileWidth, tex->w(), (F32)tileHeight * y + tileHeight, tex->h()),
-						GET_UV((F32)tileWidth * x, tex->w(), (F32)tileHeight * y + tileHeight, tex->h())
-						} } });
-						*/
 
 						tiles.push_back(Tile{ tex, UVFrame{ {
 								GET_UV((F32)tileWidth * x, tex->w(), (F32)tileHeight * y + tileHeight, tex->h()),
-
 								GET_UV((F32)tileWidth * x + tileWidth, tex->w(), (F32)tileHeight * y + tileHeight, tex->h()),
 								GET_UV((F32)tileWidth * x + tileWidth, tex->w(), (F32)tileHeight * y, tex->h()),
 								GET_UV((F32)tileWidth * x, tex->w(), (F32)tileHeight * y, tex->h())
@@ -226,7 +202,7 @@ namespace talga
 		mTileWidth = tileWidth;
 		mTileHeight = tileHeight;
 
-		updateRects();
+		return true;
 	}
 
 	void Map::destroy()

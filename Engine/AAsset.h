@@ -14,7 +14,7 @@ namespace talga
 		const AAsset& operator=(const AAsset& cpy) { mName = cpy.mName; return *this; }
 		virtual ~AAsset() {}
 
-		virtual void load(std::string path, AssetManager& manager) = 0;
+		virtual bool load(std::string path, AssetManager& manager) = 0;
 		virtual void destroy() = 0;
 
 		std::string getName() const { return mName; }

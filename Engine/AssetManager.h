@@ -14,21 +14,19 @@ namespace talga
 	class AssetManager
 	{
 	public:
-		static const unsigned int MAX_ASSETS = 10000;
-
+		static const U32 MAX_ASSETS = 10000;
 		AssetManager();
 		~AssetManager();
 
-		void AddTexture(std::string path);
+		cpTex AddTexture(std::string path);
 		void AddAnimationSet(std::string name, const AnimationSet& anim);
-		void AddMap(std::string path);
+		cpMap AddMap(std::string path);
 		cpTex GetTexture(std::string name) const;
 		cpMap GetMap(std::string name) const;
 
 
 		cpTex NO_TEXTURE;
 	private:
-		//unsigned int mNumUnloadedAssets;
 
 		std::vector<Texture> mTextures;
 		std::vector<AnimationSet> mAnimationSets;

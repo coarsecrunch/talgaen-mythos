@@ -4,19 +4,19 @@
 #include <QDialog>
 
 namespace Ui {
-class WrongExtDialog;
+  class WrongExtDialog;
 }
 
 class WrongExtDialog : public QDialog
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit WrongExtDialog(QWidget *parent = 0);
-    ~WrongExtDialog();
+  explicit WrongExtDialog(QWidget *parent = 0);
+  ~WrongExtDialog();
 
 private:
-    Ui::WrongExtDialog *ui;
+  Ui::WrongExtDialog *ui;
 };
 
 #endif // WRONGEXTDIALOG_H

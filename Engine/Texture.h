@@ -13,10 +13,10 @@ namespace talga
 		Texture();
 		virtual ~Texture();
 
-		virtual void load(std::string path, AssetManager& manager) override;
+		virtual bool load(std::string path, AssetManager& manager) override;
 		virtual void destroy() override;
 
-		void Bind() const;
+		void bind() const;
 
 		I32 id() const { return mTexture; }
 		I32 w() const { return mWidth; }

@@ -20,16 +20,14 @@ namespace talga
 	public:
 		Map();
 		Map(const Map& cpy);
-		~Map();
+		virtual ~Map();
 
 		virtual void render(Renderer* renderer, const Camera* camera) const override;
 
-		virtual void load(std::string path, AssetManager& manager) override;
+		virtual bool load(std::string path, AssetManager& manager) override;
 		virtual void destroy() override;
 
 		const Map& operator=(const Map& cpy);
-
-		void updateRects();
 
 
 		const Tile* TileAt(I32 x, I32 y) const;
@@ -57,7 +55,6 @@ namespace talga
 
 		std::vector<Tile> mTileSet;
 		std::vector<I32> mMap;
-		std::vector<Rectangle> mRects;
 	};
 
 }

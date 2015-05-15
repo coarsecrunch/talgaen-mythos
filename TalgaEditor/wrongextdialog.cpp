@@ -2,13 +2,13 @@
 #include "ui_wrongextdialog.h"
 
 WrongExtDialog::WrongExtDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::WrongExtDialog)
+  QDialog(parent),
+  ui(new Ui::WrongExtDialog)
 {
-    ui->setupUi(this);
+  ui->setupUi(this);
 }
 
 WrongExtDialog::~WrongExtDialog()
 {
-    delete ui;
+  delete ui;
 }
