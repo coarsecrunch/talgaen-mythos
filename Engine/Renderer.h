@@ -15,7 +15,8 @@ namespace talga
 		vec3 position;
 		vec4 color;
 		vec2 uv;
-		float tid;
+		F32 tid;
+		F32 transparencyScale;
 	};
 
 	const U32 RENDERER_MAX_ACTIVE_TEXTURES = 32;
@@ -29,6 +30,7 @@ namespace talga
 	const I32 SHADER_COLOR_LOC			= 1;
 	const I32 SHADER_UV_LOC				= 2;
 	const I32 SHADER_TID_LOC			= 3;
+	const I32 SHADER_TRANSPARENCYSCALE_LOC = 4;
 
 
 	class Rectangle;
@@ -43,7 +45,7 @@ namespace talga
 		void Init();
 
 		void begin();
-		void submit(const Rectangle& imageBox, cpTex texture = nullptr, UVFrame frame = UVFrame());
+		void submit(const Rectangle& imageBox, cpTex texture = nullptr, F32 transparencyScale = 1.0f, UVFrame frame = UVFrame());
 		void render();
 		void end();
 

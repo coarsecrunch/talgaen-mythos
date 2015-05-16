@@ -4,7 +4,7 @@ layout(location = 0) in vec3 vPosition;
 layout(location = 1) in vec4 vColor;
 layout(location = 2) in vec2 vUv;
 layout(location = 3) in float vTid;
-
+layout(location = 4) in float vTransparencyScale;
 
 out DATA
 {
@@ -12,6 +12,7 @@ out DATA
 	vec4 color;
 	vec2 uv;
 	float tid;
+	float transparencyScale;
 } vs_out;
 
 void main()
@@ -21,4 +22,5 @@ void main()
 	vs_out.color = vColor;
 	vs_out.uv = vUv;
 	vs_out.tid = vTid;
+	vs_out.transparencyScale = vTransparencyScale;
 }

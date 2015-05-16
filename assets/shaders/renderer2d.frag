@@ -9,6 +9,7 @@ in DATA
 	vec4 color;
 	vec2 uv;
 	float tid;
+	float transparencyScale;
 } fs_in;
 
 out vec4 oColor;
@@ -24,4 +25,6 @@ void main()
 	{
 		oColor = fs_in.color;
 	}
+
+	oColor[3] *= fs_in.transparencyScale;
 }

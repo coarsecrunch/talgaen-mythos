@@ -62,6 +62,7 @@ namespace talga
 		glEnableVertexAttribArray(SHADER_COLOR_LOC);
 		glEnableVertexAttribArray(SHADER_UV_LOC);
 		glEnableVertexAttribArray(SHADER_TID_LOC);
+		glEnableVertexAttribArray(SHADER_TRANSPARENCYSCALE_LOC);
 
 		vec3 testOffsetToFirstElementVec3;
 		vec4 testOffsetToFirstElementVec4;
@@ -71,6 +72,7 @@ namespace talga
 		I32 colorOffset = (offsetof(VertexData, VertexData::color) + ((U64)&testOffsetToFirstElementVec4[0] - (U64)&testOffsetToFirstElementVec4));
 		I32 uvOffset = (offsetof(VertexData, VertexData::uv) + ((U64)&testOffsetToFirstElementVec2[0] - (U64)&testOffsetToFirstElementVec2));
 		I32 tidOffset = offsetof(VertexData, VertexData::tid);
+		I32 transparencyOffset = offsetof(VertexData, VertexData::transparencyScale);
 
 		TALGA_WARN(0, std::to_string( posOffset) + " position offset");
 		TALGA_WARN(0, std::to_string(colorOffset) + " color offset");
@@ -82,7 +84,7 @@ namespace talga
 		glVertexAttribPointer(SHADER_COLOR_LOC, 4, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (const void*)colorOffset);
 		glVertexAttribPointer(SHADER_UV_LOC, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (const void*)uvOffset);
 		glVertexAttribPointer(SHADER_TID_LOC, 1, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (const void*)tidOffset);
-
+		glVertexAttribPointer(SHADER_TRANSPARENCYSCALE_LOC, 1, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (const void*)transparencyOffset);
 
 		I32 samplers2Dnums[RENDERER_MAX_ACTIVE_TEXTURES] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31};
@@ -110,8 +112,9 @@ namespace talga
 
 	//Verts must already be transformed before submit is called
 	//
-	void Renderer::submit(const Rectangle& imageBox, cpTex tex, UVFrame frame)
+	void Renderer::submit(const Rectangle& imageBox, cpTex tex, F32 transparencyScale, UVFrame frame)
 	{
+		vec4 color = imageBox.getColor();
 
 		float texId = -1;
 		bool found = false;
@@ -148,24 +151,28 @@ namespace talga
 		mNextVertex->color = imageBox.getColor();
 		mNextVertex->uv = frame[0];
 		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
 		++mNextVertex;
 
 		mNextVertex->position = mTransformationStack.top() * imageBox.getVerts()[1];
 		mNextVertex->color = imageBox.getColor();
 		mNextVertex->uv = frame[1];
 		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
 		++mNextVertex;
 		
 		mNextVertex->position = mTransformationStack.top() * imageBox.getVerts()[2];
 		mNextVertex->color = imageBox.getColor();
 		mNextVertex->uv = frame[2];
 		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
 		++mNextVertex;
 		
 		mNextVertex->position = mTransformationStack.top() * imageBox.getVerts()[3];
 		mNextVertex->color = imageBox.getColor();
 		mNextVertex->uv = frame[3];
 		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
 		++mNextVertex;
 		
 		mIndexCount += 6;

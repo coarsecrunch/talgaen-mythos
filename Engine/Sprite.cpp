@@ -9,12 +9,13 @@
 
 namespace talga
 {
-	Sprite::Sprite(cpTex tex, I32 width, I32 height)
+	Sprite::Sprite(cpTex tex, I32 width, I32 height, F32 transparencyScale, UVFrame frame)
 		: mTex(tex)
+		, mTransparencyScale(transparencyScale)
 		, mImageBox(width, height)
-		, mUVCurrentFrame(UVFrame({ { vec2(0, 1), vec2(1, 1), vec2(1, 0), vec2(0, 0) } }))
+		, mUVCurrentFrame(frame)
 	{
-		if (mTex)
+		if (mTex && width == -1 && height == -1)
 		{
 			mImageBox.setW(mTex->w());
 			mImageBox.setH(mTex->h());
@@ -27,7 +28,7 @@ namespace talga
 
 	void Sprite::render(Renderer* renderer, const Camera* camera) const
 	{
-		renderer->submit(mImageBox, mTex, mUVCurrentFrame);
+		renderer->submit(mImageBox, mTex, mTransparencyScale, mUVCurrentFrame);
 	}
 
 	void Sprite::update(F32 dt)
@@ -58,7 +59,7 @@ namespace talga
 	void AnimSprite::render(Renderer* renderer, const Camera* camera) const
 	{
 		if (mCurrentAnimation)
-			renderer->submit(mImageBox, mAnims->tex(), mUVCurrentFrame);
+			renderer->submit(mImageBox, mAnims->tex(), 1.0f, mUVCurrentFrame);
 		else
 			renderer->submit(mImageBox);
 	}

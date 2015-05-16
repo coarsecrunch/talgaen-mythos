@@ -53,12 +53,12 @@ namespace talga
 			0.0f, 0.0f, 0.0f, 1.0f);
 
 		mat4 inverseScale(
-			1.0f / mBox.getScaleX(), 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f / mBox.getScaleY(), 0.0f, 0.0f,
+			mBox.getScaleX(), 0.0f, 0.0f, 0.0f,
+			0.0f, mBox.getScaleY(), 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f);
 
-		return inverseScale * Transpose(mCameraRotMat) * inversePosition * pos;
+		return  inversePosition * Transpose(mCameraRotMat) *  inverseScale * pos;
 	}
 
 	void Camera::updateCameraScaleMat()

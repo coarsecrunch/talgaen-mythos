@@ -1,19 +1,26 @@
 #include "GL/glew.h"
 
 #include "glcontext.h"
+
 #include <QSurfaceFormat>
-#include "Sprite.h"
 #include <QDebug>
 #include <QDir>
 #include <QDragEnterEvent>
+#include <QApplication>
 #include <QMimeData>
+
+#include "Sprite.h"
+#include "Texture.h"
+#include "IRenderable.h"
+
+#include <vector>
+
+
 
 namespace talga
 {
   namespace editor
   {
-
-    int WIDTH = 800, HEIGHT = 600;
 
     GLContext::GLContext(QWidget* parent)
       : QOpenGLWidget(parent)
@@ -21,9 +28,13 @@ namespace talga
       , mRenderer2D{nullptr}
       , mTileLayer{nullptr, width(), height()}
       , mSpriteLayer{nullptr, width(), height()}
+      , mSelectionLayer{nullptr, width(), height()}
       , mManager{}
       , mCurrentMap()
       , mCurrentSelection{"NULL", Rect{-1,-1,-1,-1}}
+      , mShift{false}
+      , mIsMouseDown{false}
+      , mPreviousMousePos{0.0f, 0.0f, 0.0f}
     {
       QSurfaceFormat format;
       format.setVersion(3, 3);
@@ -46,6 +57,8 @@ namespace talga
       mSpriteLayer.setProjectionMatrix(width(), height());
       mTileLayer.setRenderer(mRenderer2D);
       mTileLayer.setProjectionMatrix(width(), height());
+      mSelectionLayer.setRenderer(mRenderer2D);
+      mSelectionLayer.setProjectionMatrix(width(), height());
 
       camera.getBox().setW(width());
       camera.getBox().setH(height());
@@ -119,9 +132,16 @@ namespace talga
       mCurrentMap.insertSheet(tex);
       mCurrentSelection = selection;
 
-      std::cout << selection.first << "\tx:" << selection.second.x << "\ty:" << selection.second.y
-                << "\tw:" << selection.second.w << "\th:" << selection.second.h << std::endl;
+      auto tiles = mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first));
 
+      mSelectionLayer.clear();
+      mSelectionRender.clear();
+      mSelectionRender.reserve(tiles.size());
+      for (auto& t : tiles)
+      {
+        mSelectionRender.push_back(Sprite{t.first, mCurrentMap.getTileWidth(), mCurrentMap.getTileHeight(), 0.5f, t.second});
+        mSelectionLayer.add(&mSelectionRender.back());
+      }
     }
 
     void GLContext::paintGL()
@@ -135,6 +155,10 @@ namespace talga
       mSpriteLayer.getRenderer()->tStackPush(camera.getCameraMat());
       mSpriteLayer.render();
       mSpriteLayer.getRenderer()->tStackPop();
+
+      mSelectionLayer.getRenderer()->tStackPush(camera.getCameraMat());
+      mSelectionLayer.render();
+      mSelectionLayer.getRenderer()->tStackPop();
     }
 
     void GLContext::resizeGL(int w, int h)
@@ -148,25 +172,144 @@ namespace talga
 
     void GLContext::mousePressEvent(QMouseEvent *e)
     {
-      mStartPos = e->pos();
-      vec3 pos = camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
-      qDebug() << "x: " << pos[0] << "\ty: " << pos[1];
-
-      if ( !(mCurrentSelection.first == "NULL") )
+      if (e->button() == Qt::LeftButton)
       {
-        mCurrentMap.insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
+        if (!mShift)
+        {
+          mStartPos = e->pos();
+          vec3 pos = camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
+
+          if (pos(0) >= 0 && pos(0) < mCurrentMap.getTileWidth() * mCurrentMap.getWidth()
+              && pos(1) >= 0 && pos(1) < mCurrentMap.getTileHeight() * mCurrentMap.getHeight())
+          {
+            if ( !(mCurrentSelection.first == "NULL") )
+            {
+              mCurrentMap.insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
+            }
+
+            update();
+
+          }
+        }
+
+        mIsMouseDown = true;
+        mPreviousMousePos = vec3(e->x(), e->y(), 1.0f);
+
+      }
+    }
+
+    void GLContext::mouseMoveEvent(QMouseEvent *e)
+    {
+      if (mIsMouseDown && !mShift)
+      {
+        mStartPos = e->pos();
+        vec3 pos = camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
+
+        if (pos(0) >= 0 && pos(0) < mCurrentMap.getTileWidth() * mCurrentMap.getWidth()
+            && pos(1) >= 0 && pos(1) < mCurrentMap.getTileHeight() * mCurrentMap.getHeight())
+        {
+          if ( !(mCurrentSelection.first == "NULL") )
+          {
+            mCurrentMap.insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
+          }
+
+          update();
+        }
+      }
+      else if (mIsMouseDown && mShift)
+      {
+        vec3 currentMousePos = vec3(e->x(), e->y(), 1.0f);
+        vec3 dmouse = camera.screenToWorld(currentMousePos) - camera.screenToWorld(mPreviousMousePos);
+        camera.getBox().setPosition(camera.getBox().getPosition() - dmouse);
+        camera.update(0);
+        mPreviousMousePos = currentMousePos;
+
+        update();
       }
 
-      update();
+      // show transparent selection under mouse
+      if ( !(mCurrentSelection.first == "NULL"))
+      {
+        I32 tW = mCurrentMap.getTileWidth();
+        I32 tH = mCurrentMap.getTileHeight();
+
+        if (mSelectionRender.size() > 0)
+        {
+          for (I32 y = 0; y < mCurrentSelection.second.h; ++y)
+          {
+            for (I32 x = 0; x < mCurrentSelection.second.w; ++x)
+            {
+              vec3 setTo(e->x(), e->y(), 1.0f);
+              setTo = camera.screenToWorld(setTo);
+              setTo[0] -= (I32)setTo(0) % tW - (0.5f * tW);
+              setTo[1] -= (I32)setTo(1) % tH - (0.5f * tH);
+              setTo[0] += x * tW;
+              setTo[1] += y * tH;
+
+              setTo[0] = (I32)setTo(0);
+              setTo[1] = (I32)setTo(1);
+
+              mSelectionRender[y * mCurrentSelection.second.w + x].getBox().setPosition(setTo);
+              mSelectionRender[y * mCurrentSelection.second.w + x].getBox().updateVertsPosition();
+            }
+          }
+
+          update();
+        }
+      }
+
     }
 
     void GLContext::mouseReleaseEvent(QMouseEvent *e)
     {
+      if (e->button() == Qt::LeftButton)
+      {
+        mIsMouseDown = false;
+      }
+    }
+
+    void GLContext::wheelEvent(QWheelEvent *e)
+    {
+      F32 amount = e->delta() / 400.0f;
+
+      camera.getBox().setScaleX(camera.getBox().getScaleX() - amount);
+      camera.getBox().setScaleY(camera.getBox().getScaleY() - amount);
+
+      if (camera.getBox().getScaleX() <= 0.1f || camera.getBox().getScaleY() <= 0.1f)
+      {
+        camera.getBox().setScaleX(0.1f);
+        camera.getBox().setScaleY(0.1f);
+      }
+      camera.update(0);
+
+
+      update();
+    }
+
+    void GLContext::keyPressEvent(QKeyEvent *e)
+    {
+      if (e->key() == Qt::Key_Shift)
+      {
+        mShift = true;
+        QApplication::setOverrideCursor(Qt::PointingHandCursor);
+      }
+    }
+
+    void GLContext::keyReleaseEvent(QKeyEvent *e)
+    {
+      if (e->key() == Qt::Key_Shift)
+      {
+        mShift = false;
+        QApplication::restoreOverrideCursor();
+      }
 
     }
 
     GLContext::~GLContext()
     {
+      mSelectionLayer.clear();
+      mSelectionRender.clear();
+
       delete mRenderer2D;
     }
 

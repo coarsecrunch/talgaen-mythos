@@ -89,10 +89,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\assets\scripts\script.lua" />
-    <None Include="..\..\assets\shaders\collider.frag" />
-    <None Include="..\..\assets\shaders\collider.vert" />
-    <None Include="..\..\assets\shaders\tri.frag" />
-    <None Include="..\..\assets\shaders\tri.vert" />
+    <None Include="..\assets\shaders\renderer2d.frag" />
+    <None Include="..\assets\shaders\renderer2d.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CD8ECB51-C3FE-4D3C-A8F1-E01AB026C838}</ProjectGuid>

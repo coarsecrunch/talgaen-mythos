@@ -38,7 +38,11 @@ namespace talga
 
       virtual void mousePressEvent(QMouseEvent* e) override;
       virtual void mouseReleaseEvent(QMouseEvent* e) override;
-      //virtual void mouseMoveEvent(QMouseEvent *event) override;
+      virtual void mouseMoveEvent(QMouseEvent *e) override;
+      virtual void wheelEvent(QWheelEvent* e) override;
+
+      virtual void keyPressEvent(QKeyEvent* e) override;
+      virtual void keyReleaseEvent(QKeyEvent* e) override;
 
     public slots:
       void sl_addAsset(QString path);
@@ -49,12 +53,22 @@ namespace talga
 
       Layer mTileLayer;
       Layer mSpriteLayer;
+      Layer mSelectionLayer;
       Renderer* mRenderer2D;
       AssetManager mManager;
       EditorMap mCurrentMap;
+
+      //tracking
       Selection mCurrentSelection;
       QPoint mStartPos;
+      vec3 mPreviousMousePos;
+      bool mIsMouseDown;
+      bool mShift;
+      std::vector<Sprite> mSelectionRender;
+    private:
+
     };
+
 
   }
 }

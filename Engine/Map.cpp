@@ -56,7 +56,9 @@ namespace talga
 		I32 tileX = CartToTile(camera->getBox().getX() - (camera->getBox().getW() * 0.5f),
 			camera->getBox().getY() - (camera->getBox().getH() * 0.5f)).x;
 
-		Rectangle tempR{ (F32)(I32)mTileWidth, (F32)(I32)mTileHeight};
+		Rectangle tempR((I32)mTileWidth, (I32)mTileHeight);
+
+		tempR.setZ(0.1f);
 
 		for (I32 y = tileY; y <= camera->getBox().getH() / mTileHeight + tileY + 1; ++y)
 		{
@@ -68,11 +70,11 @@ namespace talga
 				if (getTileIndex(x, y) == 0)
 					continue;
 				
-				tempR.setX(x * mTileWidth + (0.5f * mTileWidth));
-				tempR.setY(y * mTileHeight + (0.5f * mTileHeight));
+				tempR.setX( I32(x * mTileWidth + (0.5f * mTileWidth)) );
+				tempR.setY( I32(y * mTileHeight + (0.5f * mTileHeight)) );
 				tempR.updateVertsPosition();
 
-				renderer->submit(tempR, TileAt(x, y)->first, TileAt(x, y)->second);
+				renderer->submit(tempR, TileAt(x, y)->first, 1.0f, TileAt(x, y)->second);
 			}
 		}
 

@@ -16,7 +16,8 @@ namespace talga
 		~Layer();
 
 		void add(const IRenderable* sprite);
-		
+		void remove(const IRenderable* sprite);
+		void clear();
 		void render();
 		Renderer* getRenderer() { return mRenderer; }
 		void setRenderer(Renderer* renderer);

@@ -29,6 +29,12 @@
     </property>
     <item>
      <widget class="talga::editor::GLContext" name="openGLWidget">
+      <property name="mouseTracking">
+       <bool>true</bool>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
+      </property>
       <property name="acceptDrops">
        <bool>true</bool>
       </property>

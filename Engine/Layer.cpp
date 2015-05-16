@@ -19,11 +19,32 @@ namespace talga
 		mRenderList.push_back(sprite);
 	}
 
+	void Layer::remove(const IRenderable* sprite)
+	{
+		for (const IRenderable* spr : mRenderList)
+		{
+			if (sprite == spr)
+			{
+				spr = mRenderList.back();
+				mRenderList.pop_back();
+				return;
+			}
+		}
+
+		TALGA_WARN(0, "Failed to remove rendereable from layer");
+		return;
+	}
+
+	void Layer::clear()
+	{
+		mRenderList.clear();
+	}
+
 	void Layer::render()
 	{
 		mRenderer->begin();
 		for (const IRenderable* rdr : mRenderList)
-        {
+    {
 			rdr->render(mRenderer, mRenderer->getCamera());
 		}
 		mRenderer->end();

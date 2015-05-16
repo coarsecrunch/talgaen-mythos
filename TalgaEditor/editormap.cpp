@@ -43,7 +43,7 @@ namespace talga
       {
         if (tex == mTileSet[i].first)
         {
-          return i + 1;
+          return i;
         }
       }
 
@@ -79,7 +79,6 @@ namespace talga
 
     void EditorMap::insertTile(Rect selection, Rect dropPos, cpTex tex)
     {
-      TALGA_ASSERT(Exists(selection.x, selection.y) && Exists(selection.x + selection.w, selection.y + selection.h), "Tried to insert tile in incorrect position");
       insertSheet(tex);
 
       I32 offset = getOffset(tex);
@@ -88,9 +87,39 @@ namespace talga
       {
         for (I32 x = selection.x, countX = 0; x < selection.x + selection.w; ++x, ++countX)
         {
-          mMap[ ((I32)dropPos.y + countY)* mWidth + ((I32)dropPos.x + countX)] = offset + (y * (tex->w() / mTileWidth) + x);
+          if (!Exists((I32)dropPos.x + countX, (I32)dropPos.y + countY)) continue;
+
+          mMap[ ((I32)dropPos.y + countY)* mWidth + ((I32)dropPos.x + countX)] = offset + (y * (tex->w() / mTileWidth) + x) + 1;
         }
       }
+    }
+
+    Tile EditorMap::getTile(I32 x, I32 y, cpTex tex)
+    {
+      I32 offset = getOffset(tex);
+      TALGA_ASSERT(offset != -1, "attempted to get offset of nonexistent texture");
+
+      I32 tileWidth = tex->w() / mTileWidth;
+      I32 tileHeight = tex->h() / mTileHeight;
+
+      TALGA_ASSERT( (x >= 0 && x < tileWidth) && (y >= 0 && y < tileHeight), "");
+
+      return mTileSet[offset + (y * tileWidth + x)];
+    }
+
+    std::vector<Tile> EditorMap::getTiles(Rect tiles, cpTex tex)
+    {
+      std::vector<Tile> set;
+
+      for (I32 y = tiles.y; y < tiles.y + tiles.h; ++y)
+      {
+        for (I32 x = tiles.x; x < tiles.x + tiles.w; ++x)
+        {
+          set.push_back(getTile(x, y, tex));
+        }
+      }
+
+      return set;
     }
 
   }

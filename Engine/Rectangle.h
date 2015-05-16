@@ -42,8 +42,8 @@ namespace talga
 		inline F32 getX() const { return mPosition(0); }
 		inline F32 getY() const { return mPosition(1); }
 		inline F32 getZ() const { return mPosition(2); }
-		inline F32 getW() const { return mWidth; }
-		inline F32 getH() const { return mHeight; }
+    inline F32 getW() const { return mWidth * mScaleX; }
+    inline F32 getH() const { return mHeight * mScaleY; }
 
 		inline void setPosition(const vec3& value) { mPosition = value; }
 		inline void setColor(const vec4& value) { mColor = value; }
