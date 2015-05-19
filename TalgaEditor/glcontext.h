@@ -3,7 +3,6 @@
 
 #include <QPoint>
 #include <QOpenGLWidget>
-
 #include <vector>
 
 #include "Renderer.h"
@@ -13,8 +12,8 @@
 #include "editormap.h"
 #include "Rect.h"
 
-
 class QDragEnterEvent;
+class QUndoCommand;
 
 namespace talga
 {
@@ -44,6 +43,9 @@ namespace talga
       virtual void keyPressEvent(QKeyEvent* e) override;
       virtual void keyReleaseEvent(QKeyEvent* e) override;
 
+    signals:
+      void sig_addUndoCommand(QUndoCommand* c);
+
     public slots:
       void sl_addAsset(QString path);
       void sl_updateSelection(Selection);
@@ -68,7 +70,6 @@ namespace talga
     private:
 
     };
-
 
   }
 }

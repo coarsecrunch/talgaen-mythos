@@ -16,11 +16,11 @@ namespace talga
 	Map::Map()
 		: AAsset()
 		, mWidth{ -1 }
-		, mHeight{-1}
-		, mTileSet{}
-		, mTileWidth{-1}
+		, mHeight{ -1 }
+		, mTileSet{ }
+		, mTileWidth{ -1 }
 		, mTileHeight{ -1 }
-		, mMap{}
+		, mMap{ }
 	{
 	}
 
@@ -43,11 +43,10 @@ namespace talga
 		mHeight = cpy.mHeight;
 		mTileHeight = cpy.mTileHeight;
 		mTileWidth = cpy.mTileHeight;
-    mMap = cpy.mMap;
+		mMap = cpy.mMap;
 
 		return *this;
 	}
-
 
 	void Map::render(Renderer* renderer, const Camera* camera) const
 	{

@@ -9,7 +9,6 @@
 
 namespace talga
 {
-
 	class Sprite : public IRenderable, public IDynamic
 	{
 	public:

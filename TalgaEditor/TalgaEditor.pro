@@ -56,7 +56,9 @@ SOURCES += ../TalgaEditor/main.cpp \
     ../Engine/Texture.cpp \
     ../Engine/Transformation2D.cpp \
     ../Engine/Window.cpp \
-    editormap.cpp
+    editormap.cpp \
+    commands/CInsertTiles.cpp \
+    historyviewer.cpp
 
 HEADERS  += mainwindow.h \
     assetlist.h \
@@ -100,7 +102,9 @@ HEADERS  += mainwindow.h \
     ../Engine/Texture.h \
     ../Engine/Transformation2D.h \
     ../Engine/Window.h \
-    editormap.h
+    editormap.h \
+    commands/CInsertTiles.h \
+    historyviewer.h
 
 
 FORMS    += mainwindow.ui \
@@ -139,5 +143,10 @@ DEPENDPATH += $$PWD/../lib/glfw
 
 win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/glfw/glfw3dll.lib
 else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/glfw/libglfw3dll.a
+
+DISTFILES +=
+
+RESOURCES += \
+    ../assets/icons/icons.qrc
 
 

@@ -12,6 +12,7 @@
 #include "Sprite.h"
 #include "Texture.h"
 #include "IRenderable.h"
+#include "commands/CInsertTiles.h"
 
 #include <vector>
 
@@ -174,7 +175,7 @@ namespace talga
     {
       if (e->button() == Qt::LeftButton)
       {
-        if (!mShift)
+        if (!mShift && !(mCurrentSelection.first == "NULL"))
         {
           mStartPos = e->pos();
           vec3 pos = camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
@@ -182,13 +183,12 @@ namespace talga
           if (pos(0) >= 0 && pos(0) < mCurrentMap.getTileWidth() * mCurrentMap.getWidth()
               && pos(1) >= 0 && pos(1) < mCurrentMap.getTileHeight() * mCurrentMap.getHeight())
           {
-            if ( !(mCurrentSelection.first == "NULL") )
-            {
-              mCurrentMap.insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
-            }
+            //mCurrentMap.insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
+            emit sig_addUndoCommand(new CInsertTiles(&mCurrentMap, mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first)),
+                 Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mCurrentSelection.second));
+
 
             update();
-
           }
         }
 

@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>TalgaEditor</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../assets/icons/icons.qrc">
+    <normaloff>:/new/ico/Talgapng.png</normaloff>:/new/ico/Talgapng.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="leftMargin">
@@ -171,6 +175,33 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="windowTitle">
+    <string>History</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="talga::editor::HistoryViewer" name="listView"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionLoad_Assets">
    <property name="text">
     <string>Load Assets</string>
@@ -203,12 +234,23 @@
    <extends>QOpenGLWidget</extends>
    <header>glcontext.h</header>
    <slots>
+    <signal>sig_addUndoCommand(QUndoCommand*)</signal>
     <slot>sl_addAsset(QString)</slot>
     <slot>sl_updateSelection(Selection)</slot>
    </slots>
   </customwidget>
+  <customwidget>
+   <class>talga::editor::HistoryViewer</class>
+   <extends>QListView</extends>
+   <header>historyviewer.h</header>
+   <slots>
+    <slot>sl_addUndoCommand(QUndoCommand*)</slot>
+   </slots>
+  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../assets/icons/icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>assetList</sender>
@@ -271,6 +313,22 @@
     <hint type="destinationlabel">
      <x>346</x>
      <y>589</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openGLWidget</sender>
+   <signal>sig_addUndoCommand(QUndoCommand*)</signal>
+   <receiver>listView</receiver>
+   <slot>sl_addUndoCommand(QUndoCommand*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>819</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>943</x>
+     <y>97</y>
     </hint>
    </hints>
   </connection>

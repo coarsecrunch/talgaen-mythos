@@ -77,21 +77,44 @@ namespace talga
       return;
     }
 
-    void EditorMap::insertTile(Rect selection, Rect dropPos, cpTex tex)
+    void EditorMap::insertIndices(IndicesList tiles, Rect drop)
+    {
+      I32 y = drop.y;
+      for (auto& row : tiles)
+      {
+        I32 x = drop.x;
+        for (auto& index : row)
+        {
+          mMap[y * mWidth + x] = index;
+
+          ++x;
+        }
+
+        ++y;
+      }
+    }
+
+    IndicesList EditorMap::insertTile(Rect selection, Rect dropPos, cpTex tex)
     {
       insertSheet(tex);
 
       I32 offset = getOffset(tex);
+      IndicesList previousIndices;
 
       for (I32 y = selection.y, countY = 0; y < selection.y + selection.h; ++y, ++countY)
       {
+        previousIndices.push_back(std::vector<I32>{});
         for (I32 x = selection.x, countX = 0; x < selection.x + selection.w; ++x, ++countX)
         {
           if (!Exists((I32)dropPos.x + countX, (I32)dropPos.y + countY)) continue;
+          I32 index = offset + (y * (tex->w() / mTileWidth) + x) + 1;
 
-          mMap[ ((I32)dropPos.y + countY)* mWidth + ((I32)dropPos.x + countX)] = offset + (y * (tex->w() / mTileWidth) + x) + 1;
+          previousIndices.back().push_back(mMap[ ((I32)dropPos.y + countY)* mWidth + ((I32)dropPos.x + countX)]);
+          mMap[ ((I32)dropPos.y + countY)* mWidth + ((I32)dropPos.x + countX)] = index;
         }
       }
+
+      return previousIndices;
     }
 
     Tile EditorMap::getTile(I32 x, I32 y, cpTex tex)
@@ -106,6 +129,8 @@ namespace talga
 
       return mTileSet[offset + (y * tileWidth + x)];
     }
+
+
 
     std::vector<Tile> EditorMap::getTiles(Rect tiles, cpTex tex)
     {

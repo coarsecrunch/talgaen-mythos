@@ -13,9 +13,9 @@ namespace talga
   namespace editor
   {
 
+    typedef std::vector<std::vector<I32>> IndicesList;
     class EditorMap : public Map
     {
-      friend class GLContext;
     public:
       EditorMap();
       EditorMap(const EditorMap& cpy);
@@ -27,8 +27,9 @@ namespace talga
       I32 getOffset(cpTex tex);
       Tile getTile(I32 x, I32 y, cpTex tex);
       void insertSheet(cpTex tex);
-      void insertTile(Rect selection, Rect dropPos, cpTex tex);
 
+      IndicesList insertTile(Rect selection, Rect dropPos, cpTex tex);
+      void insertIndices(IndicesList tiles, Rect drop);
       std::vector<Tile> getTiles(Rect tiles, cpTex tex);
     };
 

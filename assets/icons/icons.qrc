@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/new/ico">
+        <file>Talgapng.png</file>
+    </qresource>
+</RCC>

@@ -4,6 +4,7 @@ Release/
 sandbox/
 ipch/
 libtalga/
+editor/
 *.obj
 *.log
 *.pdb
