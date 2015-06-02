@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += console \
     c++11
 
-
 TARGET = TalgaEditor
 TEMPLATE = app
 INCLUDEPATH += ../Engine/ \
@@ -115,40 +114,6 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     wrongextdialog.ui
 
-win32: LIBS += -lOpenGL32
-
-win32: LIBS += -L$$PWD/../lib/glew/ -lglew32
-
-INCLUDEPATH += $$PWD/../lib/glew
-DEPENDPATH += $$PWD/../lib/glew
-
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/glew/glew32.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/glew/libglew32.a
-
-win32: LIBS += -L$$PWD/../lib/glfw/ -lglfw3
-
-INCLUDEPATH += $$PWD/../lib/glfw
-DEPENDPATH += $$PWD/../lib/glfw
-
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/glfw/glfw3.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/glfw/libglfw3.a
-
-win32: LIBS += -L$$PWD/../lib/lua/ -llua53
-
-INCLUDEPATH += $$PWD/../lib/lua
-DEPENDPATH += $$PWD/../lib/lua
-
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/lua/lua53.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/lua/liblua53.a
-
-win32: LIBS += -L$$PWD/../lib/glfw/ -lglfw3dll
-
-INCLUDEPATH += $$PWD/../lib/glfw
-DEPENDPATH += $$PWD/../lib/glfw
-
-win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/glfw/glfw3dll.lib
-else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/glfw/libglfw3dll.a
-
 DISTFILES +=
 
 RESOURCES += \
@@ -167,3 +132,25 @@ INCLUDEPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
 DEPENDPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
 
 unix:!macx: PRE_TARGETDEPS += $$PWD/../../../../usr/lib/x86_64-linux-gnu/liblua5.2.a
+
+win32: LIBS += -L$$PWD/../lib/win64/ -lglew32
+
+INCLUDEPATH += $$PWD/../lib/win64
+DEPENDPATH += $$PWD/../lib/win64
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/glew32.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/libglew32.a
+
+win32: LIBS += -L$$PWD/../lib/win64/ -lglfw3dll
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/glfw3dll.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/libglfw3dll.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../lib/win64/ -llua52
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../lib/win64/ -llua52d
+
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/liblua52.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/liblua52d.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/lua52.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/lua52d.lib
