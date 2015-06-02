@@ -8,7 +8,10 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += console
+CONFIG += console \
+    c++11
+
+
 TARGET = TalgaEditor
 TEMPLATE = app
 INCLUDEPATH += ../Engine/ \
@@ -16,10 +19,12 @@ INCLUDEPATH += ../Engine/ \
     ../include/
 
 DEFINES += GLFW_DLL \
-    TALGA_WINDOWS_BUILD \
     TALGA_ASSERTIONS_ENABLED \
+    TALGA_UBUNTU_BUILD \
     TALGA_WARNINGS_ENABLED \
     TALGA_MESSAGES_ENABLED
+
+
 
 SOURCES += ../TalgaEditor/main.cpp \
         mainwindow.cpp \
@@ -150,3 +155,15 @@ RESOURCES += \
     ../assets/icons/icons.qrc
 
 
+unix:!macx: LIBS += -lGLEW
+
+unix:!macx: LIBS += -lglfw
+
+unix:!macx: LIBS += -llua5.2
+
+unix:!macx: LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/ -llua5.2
+
+INCLUDEPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
+DEPENDPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
+
+unix:!macx: PRE_TARGETDEPS += $$PWD/../../../../usr/lib/x86_64-linux-gnu/liblua5.2.a

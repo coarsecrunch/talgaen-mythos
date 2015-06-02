@@ -1,5 +1,5 @@
-#include "GL\glew.h"
-#include "GLFW\glfw3.h"
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
 #include "Camera.h"
 #include "Game.h"
 #include "Map.h"

@@ -1,6 +1,6 @@
 #include "LuaEngine.h"
 
-#include "lua\lua.hpp"
+#include "lua/lua.hpp"
 #include <iostream>
 
 namespace talga

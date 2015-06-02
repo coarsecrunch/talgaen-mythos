@@ -7,7 +7,7 @@
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
 #include "Math/Vector2.h"
-#include "Animset.h"
+#include "AnimSet.h"
 namespace talga
 {
 	struct VertexData

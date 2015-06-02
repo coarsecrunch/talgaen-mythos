@@ -1,4 +1,4 @@
-#include "Math\Interpolation.h"
+#include "Math/Interpolation.h"
 
 namespace talga
 {

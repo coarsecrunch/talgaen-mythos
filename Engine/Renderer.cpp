@@ -1,4 +1,4 @@
-#include "GL\glew.h"
+#include <GL/glew.h>
 #include "Renderer.h"
 #include "Rendering.h"
 #include "Rectangle.h"
