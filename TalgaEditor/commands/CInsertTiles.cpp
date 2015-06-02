@@ -1,25 +1,34 @@
 #include "CInsertTiles.h"
 #include "editormap.h"
 #include "Texture.h"
+#include "Point.h"
 
 namespace talga
 {
   namespace editor
   {
-    CInsertTiles::CInsertTiles(EditorMap* map, std::vector<Tile> tiles, Rect drop, Rect selection)
+    CInsertTiles::CInsertTiles(EditorMap* map, std::vector<Tile> tiles, Point drop, std::vector<Point> selection)
       : mMap(map)
       , mTiles(tiles)
-      , mDrop(drop)
       , mSelection(selection)
       , mPreviousTiles()
     {
-      TALGA_ASSERT( tiles.size() == selection.w * selection.h, "passed incorrect Rect to CInsertTiles");
+      TALGA_ASSERT( tiles.size() == selection.size(), "passed incorrect Rect to CInsertTiles");
+      TALGA_ASSERT( map, "");
+
       setText("tile insert");
     }
 
     void CInsertTiles::undo()
     {
-      mMap->insertIndices(mPreviousTiles, mDrop);
+      std::vector<Point> shiftedPoints;
+
+      for (const auto& pnt : mSelection)
+      {
+        shiftedPoints.push_back(Point(pnt.x() + mDrop.x(), pnt.y() + mDrop.y()));
+      }
+
+      mMap->insertIndices(mPreviousTiles, shiftedPoints);
     }
 
     void CInsertTiles::redo()
@@ -27,10 +36,10 @@ namespace talga
       I32 tW = mMap->getTileWidth();
       I32 tH = mMap->getTileHeight();
 
-      if (mDrop.x * tW >= 0 && mDrop.x < mMap->getTileWidth() * mMap->getWidth()
-          && mDrop.y * tH >= 0 && mDrop.y * tH < mMap->getTileHeight() * mMap->getHeight())
+      if (mDrop.x() * tW >= 0 && mDrop.x() < mMap->getTileWidth() * mMap->getWidth()
+          && mDrop.y() * tH >= 0 && mDrop.y() * tH < mMap->getTileHeight() * mMap->getHeight())
       {
-        mPreviousTiles = mMap->insertTile(mSelection, Rect{mDrop.x, mDrop.y}, mTiles[0].first);
+        mPreviousTiles = mMap->insertTile(mSelection, mDrop, mTiles[0].first);
       }
 
     }

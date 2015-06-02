@@ -37,6 +37,8 @@ namespace talga
 			return false;
 		}
 
+    TALGA_MSG(std::to_string(channels) + " channels" );
+
 		glGenTextures(1, &mTexture);
 
 		glActiveTexture(GL_TEXTURE0);

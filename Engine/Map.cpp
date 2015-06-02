@@ -48,12 +48,18 @@ namespace talga
 		return *this;
 	}
 
+	const Tile& Map::operator()(I32 x, I32 y) const
+	{
+		TALGA_ASSERT(Exists(x, y), "tried to access non existent tile");
+		return mTileSet[mMap[y * mWidth + x] - 1];
+	}
+
 	void Map::render(Renderer* renderer, const Camera* camera) const
 	{
 		I32 tileY = CartToTile(camera->getBox().getX() - (camera->getBox().getW() * 0.5f), 
-			camera->getBox().getY() - (camera->getBox().getH() * 0.5f)).y;
+      camera->getBox().getY() - (camera->getBox().getH() * 0.5f)).y();
 		I32 tileX = CartToTile(camera->getBox().getX() - (camera->getBox().getW() * 0.5f),
-			camera->getBox().getY() - (camera->getBox().getH() * 0.5f)).x;
+      camera->getBox().getY() - (camera->getBox().getH() * 0.5f)).x();
 
 		Rectangle tempR((I32)mTileWidth, (I32)mTileHeight);
 
@@ -73,7 +79,7 @@ namespace talga
 				tempR.setY( I32(y * mTileHeight + (0.5f * mTileHeight)) );
 				tempR.updateVertsPosition();
 
-				renderer->submit(tempR, TileAt(x, y)->first, 1.0f, TileAt(x, y)->second);
+				renderer->submit(tempR, (*this)(x, y).first, 1.0f, (*this)(x, y).second);
 			}
 		}
 
@@ -95,19 +101,18 @@ namespace talga
 
 	Point Map::CartToTile(I32 x, I32 y) const
 	{
-		return Point{ x / mTileWidth, y / mTileHeight };
+		return Point{ F32 (x / mTileWidth), F32(y / mTileHeight) };
 	}
 
 	Point Map::TileToCart(I32 x, I32 y) const
 	{
-		return Point{ x * mTileWidth, y * mTileHeight };
+		return Point{ F32(x * mTileWidth), F32(y * mTileHeight) };
 	}
 
 	I32 Map::getTileIndex(I32 x, I32 y) const
 	{
 		return mMap[y * mWidth + x];
 	}
-
 
 	bool Map::load(std::string path, AssetManager& manager)
 	{

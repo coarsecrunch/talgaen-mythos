@@ -11,6 +11,7 @@
 #include "Sprite.h"
 #include "editormap.h"
 #include "Rect.h"
+#include "Point.h"
 
 class QDragEnterEvent;
 class QUndoCommand;
@@ -19,7 +20,7 @@ namespace talga
 {
   namespace editor
   {
-    typedef std::pair<std::string, Rect> Selection;
+    typedef std::pair<std::string, std::vector<Point>> Selection;
 
     class GLContext : public QOpenGLWidget
     {
@@ -49,6 +50,7 @@ namespace talga
     public slots:
       void sl_addAsset(QString path);
       void sl_updateSelection(Selection);
+      void sl_updateGL();
 
     protected:
       Camera camera;

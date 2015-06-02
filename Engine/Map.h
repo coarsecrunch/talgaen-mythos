@@ -28,14 +28,14 @@ namespace talga
 		virtual void destroy() override;
 
 		const Map& operator=(const Map& cpy);
-
+		const Tile& operator()(I32 column, I32 row) const;
 
 		const Tile* TileAt(I32 x, I32 y) const;
-		//const Tile& CartToTile(int x, int y);
 		Point CartToTile(I32 x, I32 y) const;
 		Point TileToCart(I32 x, I32 y) const;
 		bool Exists(I32 x, I32 y) const; //nullptr
 		I32 getTileIndex(I32 x, I32 y) const;
+		I32 getTileIndex(const Tile& t) const;
 
 		I32 size() const { return mWidth * mHeight; }
 		I32 tileWidth() const { return mTileWidth; }

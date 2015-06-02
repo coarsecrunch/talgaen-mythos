@@ -37,7 +37,7 @@ namespace talga
       return *this;
     }
 
-    I32 EditorMap::getOffset(cpTex tex)
+    I32 EditorMap::getOffset(cpTex tex) const
     {
       for (I32 i = 0; i < mTileSet.size(); ++i)
       {
@@ -49,6 +49,16 @@ namespace talga
 
       TALGA_WARN(0, std::string("attempted to find the offest of non exsistent texture in map ") + mName );
       return -1;
+    }
+
+    I32 EditorMap::getTileOffset(Tile t) const
+    {
+      I32 texOffset = getOffset(t.first);
+
+      I32 x = I32(t.second[0](0) / (t.first->w() / mTileWidth)) / (t.first->w()/ mTileWidth);
+      I32 y = I32(t.second[0](1) / (t.first->h() / mTileHeight)) / (t.first->h() / mTileHeight);
+
+      return texOffset + y * (t.first->w() / mTileWidth) + x;
     }
 
     void EditorMap::insertSheet(cpTex tex)
@@ -72,46 +82,80 @@ namespace talga
         }
       }
 
-      TALGA_MSG(tex->getName() + std::string(" was sucessfully added to the map ") + mName);
+      TALGA_MSG(tex->getName() + " was sucessfully added to the map " + mName);
 
       return;
     }
 
-    void EditorMap::insertIndices(IndicesList tiles, Rect drop)
+    void EditorMap::insertIndices(std::vector<Tile> tiles, std::vector<Point> drop)
     {
-      I32 y = drop.y;
-      for (auto& row : tiles)
+      //I32 y = drop.y;
+      I32 count = 0;
+      for (const auto& t : tiles)
       {
-        I32 x = drop.x;
-        for (auto& index : row)
-        {
-          mMap[y * mWidth + x] = index;
-
-          ++x;
-        }
-
-        ++y;
+        mMap[drop[count].y() * mWidth + drop[count].x()] = getTileOffset(t);
+        ++count;
       }
     }
 
-    IndicesList EditorMap::insertTile(Rect selection, Rect dropPos, cpTex tex)
+    IndicesList EditorMap::insertTile(std::vector<Point> selection, Point dropPos, cpTex tex)
     {
       insertSheet(tex);
 
       I32 offset = getOffset(tex);
       IndicesList previousIndices;
 
-      for (I32 y = selection.y, countY = 0; y < selection.y + selection.h; ++y, ++countY)
-      {
-        previousIndices.push_back(std::vector<I32>{});
-        for (I32 x = selection.x, countX = 0; x < selection.x + selection.w; ++x, ++countX)
-        {
-          if (!Exists((I32)dropPos.x + countX, (I32)dropPos.y + countY)) continue;
-          I32 index = offset + (y * (tex->w() / mTileWidth) + x) + 1;
+      I32 greatestX = 0;
+      I32 greatestY = 0;
+      I32 smallestX = 100000;
+      I32 smallestY = 100000;
+      I32 greatestXIndex = 0;
+      I32 greatestYIndex = 0;
+      I32 smallestXIndex = 0;
+      I32 smallestYIndex = 0;
+      I32 count = 0;
 
-          previousIndices.back().push_back(mMap[ ((I32)dropPos.y + countY)* mWidth + ((I32)dropPos.x + countX)]);
-          mMap[ ((I32)dropPos.y + countY)* mWidth + ((I32)dropPos.x + countX)] = index;
+      if (selection.size() > 0)
+      {
+        for (const auto& pnt : selection)
+        {
+          if (pnt.x() > greatestX)
+          {
+            greatestX = pnt.x();
+            greatestXIndex = count;
+          }
+
+          if (pnt.y() > greatestY)
+          {
+            greatestY = pnt.y();
+            greatestYIndex = count;
+          }
+
+          if (pnt.x() < smallestX)
+          {
+            smallestX = pnt.x();
+            smallestXIndex = pnt.x();
+          }
+
+          if (pnt.y() < smallestY)
+          {
+            smallestY = pnt.y();
+            smallestYIndex = pnt.y();
+          }
+
+          ++count;
         }
+      }
+
+      for (const auto& point : selection)
+      {
+          if (!Exists((I32)dropPos.x() + point.x(), (I32)dropPos.y() + point.y())) continue;
+
+          previousIndices.push_back(mTileSet[mMap[ (I32)dropPos.y() * mWidth + (I32)dropPos.x()] - 1]);
+
+          I32 index = offset + ( point.y() * (tex->w() / mTileWidth) + point.x()) + 1;
+
+          mMap[ ((I32)dropPos.y() + point.y() - smallestY) * mWidth + ((I32)dropPos.x() + (I32)point.x() - smallestX)] = index;
       }
 
       return previousIndices;
@@ -122,26 +166,22 @@ namespace talga
       I32 offset = getOffset(tex);
       TALGA_ASSERT(offset != -1, "attempted to get offset of nonexistent texture");
 
-      I32 tileWidth = tex->w() / mTileWidth;
-      I32 tileHeight = tex->h() / mTileHeight;
+      I32 textureTileWidth = tex->w() / mTileWidth;
+      I32 textureTileHeight = tex->h() / mTileHeight;
 
-      TALGA_ASSERT( (x >= 0 && x < tileWidth) && (y >= 0 && y < tileHeight), "");
+      TALGA_ASSERT( (x >= 0 && x < textureTileWidth) && (y >= 0 && y < textureTileHeight), "");
 
-      return mTileSet[offset + (y * tileWidth + x)];
+      return mTileSet[offset + (y * textureTileWidth + x)];
     }
 
 
-
-    std::vector<Tile> EditorMap::getTiles(Rect tiles, cpTex tex)
+    std::vector<Tile> EditorMap::getTiles(std::vector<Point> tiles, cpTex tex)
     {
       std::vector<Tile> set;
 
-      for (I32 y = tiles.y; y < tiles.y + tiles.h; ++y)
+      for (const auto& pnt : tiles)
       {
-        for (I32 x = tiles.x; x < tiles.x + tiles.w; ++x)
-        {
-          set.push_back(getTile(x, y, tex));
-        }
+        set.push_back(getTile(pnt.x(), pnt.y(), tex));
       }
 
       return set;

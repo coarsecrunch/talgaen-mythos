@@ -15,6 +15,10 @@ namespace talga
     public:
       HistoryViewer(QWidget* parent = nullptr);
 
+
+      virtual void keyPressEvent(QKeyEvent* e) override;
+      virtual void keyReleaseEvent(QKeyEvent* e) override;
+
     public slots:
       void sl_addUndoCommand(QUndoCommand* c);
 

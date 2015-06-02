@@ -32,7 +32,7 @@ namespace talga
       , mSelectionLayer{nullptr, width(), height()}
       , mManager{}
       , mCurrentMap()
-      , mCurrentSelection{"NULL", Rect{-1,-1,-1,-1}}
+      , mCurrentSelection{"NULL", std::vector<Point>{}}
       , mShift{false}
       , mIsMouseDown{false}
       , mPreviousMousePos{0.0f, 0.0f, 0.0f}
@@ -40,6 +40,7 @@ namespace talga
       QSurfaceFormat format;
       format.setVersion(3, 3);
       format.setProfile(QSurfaceFormat::CoreProfile);
+      setFormat(format);
     }
 
     void GLContext::initializeGL()
@@ -145,6 +146,11 @@ namespace talga
       }
     }
 
+    void GLContext::sl_updateGL()
+    {
+      update();
+    }
+
     void GLContext::paintGL()
     {
       glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -183,9 +189,11 @@ namespace talga
           if (pos(0) >= 0 && pos(0) < mCurrentMap.getTileWidth() * mCurrentMap.getWidth()
               && pos(1) >= 0 && pos(1) < mCurrentMap.getTileHeight() * mCurrentMap.getHeight())
           {
+            std::vector<Point> tiles;
+
             //mCurrentMap.insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
             emit sig_addUndoCommand(new CInsertTiles(&mCurrentMap, mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first)),
-                 Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mCurrentSelection.second));
+                 Point(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
 
 
             update();
@@ -210,7 +218,8 @@ namespace talga
         {
           if ( !(mCurrentSelection.first == "NULL") )
           {
-            mCurrentMap.insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
+            emit sig_addUndoCommand(new CInsertTiles(&mCurrentMap, mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first)),
+                                                    Point(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
           }
 
           update();
@@ -235,23 +244,59 @@ namespace talga
 
         if (mSelectionRender.size() > 0)
         {
-          for (I32 y = 0; y < mCurrentSelection.second.h; ++y)
+          I32 greatestX = 0;
+          I32 greatestY = 0;
+          I32 smallestX = 100000;
+          I32 smallestY = 100000;
+          I32 greatestXIndex = 0;
+          I32 greatestYIndex = 0;
+          I32 smallestXIndex = 0;
+          I32 smallestYIndex = 0;
+          I32 count = 0;
+
+          for (const auto& pnt : mCurrentSelection.second)
           {
-            for (I32 x = 0; x < mCurrentSelection.second.w; ++x)
+            if (pnt.x() > greatestX)
             {
-              vec3 setTo(e->x(), e->y(), 1.0f);
-              setTo = camera.screenToWorld(setTo);
-              setTo[0] -= (I32)setTo(0) % tW - (0.5f * tW);
-              setTo[1] -= (I32)setTo(1) % tH - (0.5f * tH);
-              setTo[0] += x * tW;
-              setTo[1] += y * tH;
-
-              setTo[0] = (I32)setTo(0);
-              setTo[1] = (I32)setTo(1);
-
-              mSelectionRender[y * mCurrentSelection.second.w + x].getBox().setPosition(setTo);
-              mSelectionRender[y * mCurrentSelection.second.w + x].getBox().updateVertsPosition();
+              greatestX = pnt.x();
+              greatestXIndex = count;
             }
+
+            if (pnt.y() > greatestY)
+            {
+              greatestY = pnt.y();
+              greatestYIndex = count;
+            }
+
+            if (pnt.x() < smallestX)
+            {
+              smallestX = pnt.x();
+              smallestXIndex = pnt.x();
+            }
+
+            if (pnt.y() < smallestY)
+            {
+              smallestY = pnt.y();
+              smallestYIndex = pnt.y();
+            }
+
+            ++count;
+          }
+
+          for (const auto& pnt : mCurrentSelection.second)
+          {
+            vec3 setTo(e->x(), e->y(), 1.0f);
+            setTo = camera.screenToWorld(setTo);
+            setTo[0] -= (I32)setTo(0) % tW - (0.5f * tW);
+            setTo[1] -= (I32)setTo(1) % tH - (0.5f * tH);
+            setTo[0] += (pnt.x() - smallestX) * tW;
+            setTo[1] += (pnt.y() - smallestY) * tH;
+
+            setTo[0] = (I32)setTo(0);
+            setTo[1] = (I32)setTo(1);
+
+            mSelectionRender[ (pnt.y() - smallestY) * (greatestX - smallestX + 1) + (pnt.x() - smallestX)].getBox().setPosition(setTo);
+            mSelectionRender[ (pnt.y() - smallestY) * (greatestX - smallestX + 1) + (pnt.x() - smallestX)].getBox().updateVertsPosition();
           }
 
           update();

@@ -13,7 +13,7 @@ namespace talga
   namespace editor
   {
 
-    typedef std::vector<std::vector<I32>> IndicesList;
+    typedef std::vector<Tile> IndicesList;
     class EditorMap : public Map
     {
     public:
@@ -24,13 +24,14 @@ namespace talga
       const EditorMap& operator=(const EditorMap& cpy);
       const EditorMap& operator=(const Map& cpy);
 
-      I32 getOffset(cpTex tex);
+      I32 getOffset(cpTex tex) const;
+      I32 getTileOffset(Tile t) const;
       Tile getTile(I32 x, I32 y, cpTex tex);
       void insertSheet(cpTex tex);
 
-      IndicesList insertTile(Rect selection, Rect dropPos, cpTex tex);
-      void insertIndices(IndicesList tiles, Rect drop);
-      std::vector<Tile> getTiles(Rect tiles, cpTex tex);
+      IndicesList insertTile(std::vector<Point> selection, Point dropPos, cpTex tex);
+      void insertIndices(std::vector<Tile> tiles, std::vector<Point> drop);
+      std::vector<Tile> getTiles(std::vector<Point> tiles, cpTex tex);
     };
 
   }
