@@ -1,5 +1,5 @@
 #include "AssetManager.h"
-#include "GL\glew.h"
+#include <GL/glew.h>
 #include "Rendering.h"
 #include "Camera.h"
 #include "Texture.h"

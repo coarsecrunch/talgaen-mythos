@@ -3,12 +3,15 @@
 #define MAX_STRBFR 50
 #include "tassert.h"
 
+#define TALGA_UBUNTU_BUILD
+
 namespace talga
 {
 	class Texture;
 	class Map;
 	class AnimationSet;
 
+#ifdef TALGA_WINDOWS_BUILD
 	typedef signed __int8 I8;
 	typedef signed __int16 I16;
 	typedef signed __int32 I32;
@@ -20,7 +23,22 @@ namespace talga
 	typedef char C8;
 	typedef wchar_t C16;
 	typedef float F32;
-	typedef double F64;
+    typedef double F64;
+#endif
+#ifdef TALGA_UBUNTU_BUILD
+    typedef signed char I8;
+    typedef signed short I16;
+    typedef signed int I32;
+    typedef signed long long I64;
+    typedef unsigned char U8;
+    typedef unsigned short U16;
+    typedef unsigned int U32;
+    typedef unsigned long long U64;
+    typedef char C8;
+    typedef wchar_t C16;
+    typedef float F32;
+    typedef double F64;
+#endif
 
 	//strings
 	typedef const C8* cStr;

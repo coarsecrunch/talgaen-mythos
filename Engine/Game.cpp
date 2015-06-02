@@ -1,13 +1,13 @@
 #include "Game.h"
-#include "GL\glew.h"
-#include "GLFW\glfw3.h"
+#include <GL/glew.h>
+#include "GLFW/glfw3.h"
 #include "Map.h"
 #include "AssetManager.h"
 #include "Collision.h"
 #include <iostream>
 
 #include "LuaEngine.h"
-#include "LuaBridge\LuaBridge.h"
+#include "LuaBridge/LuaBridge.h"
 
 namespace talga
 {

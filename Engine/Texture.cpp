@@ -1,10 +1,10 @@
 #include "Texture.h"
-#include "GL\glew.h"
+#include <GL/glew.h>
 #include <iostream>
 #include <cstdio>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image\stb_image.h"
+#include "stb_image/stb_image.h"
 
 namespace talga
 {
