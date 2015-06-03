@@ -32,7 +32,7 @@ namespace talga
       , mSelectionLayer{nullptr, width(), height()}
       , mManager{}
       , mCurrentMap()
-      , mCurrentSelection{"NULL", std::vector<Point>{}}
+      , mCurrentSelection{"NULL", std::vector<iPnt>{}}
       , mShift{false}
       , mIsMouseDown{false}
       , mPreviousMousePos{0.0f, 0.0f, 0.0f}
@@ -189,11 +189,11 @@ namespace talga
           if (pos(0) >= 0 && pos(0) < mCurrentMap.getTileWidth() * mCurrentMap.getWidth()
               && pos(1) >= 0 && pos(1) < mCurrentMap.getTileHeight() * mCurrentMap.getHeight())
           {
-            std::vector<Point> tiles;
+            std::vector<iPnt> tiles;
 
             //mCurrentMap.insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
             emit sig_addUndoCommand(new CInsertTiles(&mCurrentMap, mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first)),
-                 Point(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
+                 iPnt(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
 
 
             update();
@@ -219,7 +219,7 @@ namespace talga
           if ( !(mCurrentSelection.first == "NULL") )
           {
             emit sig_addUndoCommand(new CInsertTiles(&mCurrentMap, mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first)),
-                                                    Point(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
+                                                    iPnt(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
           }
 
           update();

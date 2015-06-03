@@ -31,8 +31,8 @@ namespace talga
 		const Tile& operator()(I32 column, I32 row) const;
 
 		const Tile* TileAt(I32 x, I32 y) const;
-		Point CartToTile(I32 x, I32 y) const;
-		Point TileToCart(I32 x, I32 y) const;
+        iPnt CartToTile(I32 x, I32 y) const;
+        iPnt TileToCart(I32 x, I32 y) const;
 		bool Exists(I32 x, I32 y) const; //nullptr
 		I32 getTileIndex(I32 x, I32 y) const;
 		I32 getTileIndex(const Tile& t) const;

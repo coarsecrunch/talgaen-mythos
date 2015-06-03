@@ -55,8 +55,8 @@ namespace talga
     {
       I32 texOffset = getOffset(t.first);
 
-      I32 x = I32(t.second[0](0) / (t.first->w() / mTileWidth)) / (t.first->w()/ mTileWidth);
-      I32 y = I32(t.second[0](1) / (t.first->h() / mTileHeight)) / (t.first->h() / mTileHeight);
+      I32 x = t.second[0](0) * t.first->w() / mTileWidth;
+      I32 y = t.second[0](1) * t.first->h() / mTileHeight;
 
       return texOffset + y * (t.first->w() / mTileWidth) + x;
     }
@@ -87,7 +87,7 @@ namespace talga
       return;
     }
 
-    void EditorMap::insertIndices(std::vector<Tile> tiles, std::vector<Point> drop)
+    void EditorMap::insertIndices(std::vector<Tile> tiles, std::vector<iPnt> drop)
     {
       //I32 y = drop.y;
       I32 count = 0;
@@ -98,7 +98,7 @@ namespace talga
       }
     }
 
-    IndicesList EditorMap::insertTile(std::vector<Point> selection, Point dropPos, cpTex tex)
+    IndicesList EditorMap::insertTile(std::vector<iPnt> selection, iPnt dropPos, cpTex tex)
     {
       insertSheet(tex);
 
@@ -147,15 +147,15 @@ namespace talga
         }
       }
 
-      for (const auto& point : selection)
+      for (const auto& iPnt : selection)
       {
-          if (!Exists((I32)dropPos.x() + point.x(), (I32)dropPos.y() + point.y())) continue;
+          if (!Exists((I32)dropPos.x() + iPnt.x(), (I32)dropPos.y() + iPnt.y())) continue;
 
           previousIndices.push_back(mTileSet[mMap[ (I32)dropPos.y() * mWidth + (I32)dropPos.x()] - 1]);
 
-          I32 index = offset + ( point.y() * (tex->w() / mTileWidth) + point.x()) + 1;
+          I32 index = offset + ( iPnt.y() * (tex->w() / mTileWidth) + iPnt.x()) + 1;
 
-          mMap[ ((I32)dropPos.y() + point.y() - smallestY) * mWidth + ((I32)dropPos.x() + (I32)point.x() - smallestX)] = index;
+          mMap[ ((I32)dropPos.y() + iPnt.y() - smallestY) * mWidth + ((I32)dropPos.x() + (I32)iPnt.x() - smallestX)] = index;
       }
 
       return previousIndices;
@@ -174,8 +174,19 @@ namespace talga
       return mTileSet[offset + (y * textureTileWidth + x)];
     }
 
+    Tile EditorMap::insertTile(const Tile &tile, const iPnt &drop)
+    {
+        Tile previousTile;
+        if (!Exists(drop.x(), drop.y())) return previousTile;
 
-    std::vector<Tile> EditorMap::getTiles(std::vector<Point> tiles, cpTex tex)
+        previousTile = mTileSet[mMap[drop.y() * mWidth + drop.x()]];
+
+        mMap[drop.y() * mWidth + drop.x()] = getTileOffset(tile);
+
+        return previousTile;
+    }
+
+    std::vector<Tile> EditorMap::getTiles(std::vector<iPnt> tiles, cpTex tex)
     {
       std::vector<Tile> set;
 

@@ -79,30 +79,20 @@ namespace talga
             {
               for (I32 x = currentPos.x(); x < mStartPos.x(); x += TILE_WIDTH)
               {
-                s.second.push_back(Point(x, y));
+                s.second.push_back(iPnt{x, y});
               }
             }
-/*
-            s.second.x = currentPos.x() / TILE_WIDTH;
-            s.second.w = (mStartPos.x() / TILE_WIDTH) - (currentPos.x() / TILE_WIDTH) + 1;
-            s.second.y = currentPos.y() / TILE_HEIGHT;
-            s.second.h = (mStartPos.y() / TILE_HEIGHT) - (currentPos.y() / TILE_HEIGHT) + 1;
-  */        }
+      }
           else
           {
             for (I32 y = mStartPos.y(); y < currentPos.y(); y += TILE_HEIGHT)
             {
               for (I32 x = currentPos.x(); x < mStartPos.x(); x += TILE_WIDTH)
               {
-                s.second.push_back(Point(x, y));
+                  s.second.push_back(iPnt{x, y});
               }
             }
-/*
-            s.second.x = currentPos.x() / TILE_WIDTH;
-            s.second.w = (mStartPos.x() / TILE_WIDTH) - (currentPos.x() / TILE_WIDTH) + 1;
-            s.second.y = mStartPos.y() / TILE_HEIGHT;
-            s.second.h = (currentPos.y() / TILE_HEIGHT) - (mStartPos.y() / TILE_HEIGHT) + 1;
-*/          }
+          }
         }
         else
         {
@@ -112,15 +102,9 @@ namespace talga
             {
               for (I32 x = mStartPos.x(); x < currentPos.x(); x += TILE_WIDTH)
               {
-                s.second.push_back(Point(x, y));
+                s.second.push_back(iPnt{x, y});
               }
             }
-/*
-            s.second.x = mStartPos.x() / TILE_WIDTH;
-            s.second.w = ( (currentPos.x() / TILE_WIDTH ) - (mStartPos.x() / TILE_WIDTH) )  + 1;
-            s.second.y = currentPos.y() / TILE_HEIGHT;
-            s.second.h = (mStartPos.y() / TILE_HEIGHT) - (currentPos.y() / TILE_HEIGHT) + 1;
-*/
           }
           else
           {
@@ -128,17 +112,10 @@ namespace talga
             {
               for (I32 x = mStartPos.x() / TILE_WIDTH; x <= currentPos.x() / TILE_WIDTH; ++x)
               {
-                s.second.push_back(Point(x, y));
+                s.second.push_back(iPnt{x, y});
               }
             }
-
-            /*
-            s.second.x = mStartPos.x() / TILE_WIDTH;
-            s.second.w = (currentPos.x() / TILE_WIDTH) - (mStartPos.x() / TILE_WIDTH) + 1;
-            s.second.y = mStartPos.y() / TILE_HEIGHT;
-            s.second.h = (currentPos.y() / TILE_HEIGHT) - (mStartPos.y() / TILE_HEIGHT) + 1;
-            */
-}
+          }
         }
 
         mStartPos.setX(-1);

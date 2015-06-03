@@ -99,14 +99,14 @@ namespace talga
 		return !(x >= mWidth || y >= mHeight || x < 0 || y < 0 );
 	}
 
-	Point Map::CartToTile(I32 x, I32 y) const
+    iPnt Map::CartToTile(I32 x, I32 y) const
 	{
-		return Point{ F32 (x / mTileWidth), F32(y / mTileHeight) };
+        return iPnt{x / mTileWidth, y / mTileHeight };
 	}
 
-	Point Map::TileToCart(I32 x, I32 y) const
+    iPnt Map::TileToCart(I32 x, I32 y) const
 	{
-		return Point{ F32(x * mTileWidth), F32(y * mTileHeight) };
+        return iPnt{ x * mTileWidth, y * mTileHeight };
 	}
 
 	I32 Map::getTileIndex(I32 x, I32 y) const

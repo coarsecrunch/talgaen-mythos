@@ -5,7 +5,7 @@
 #include "Cmn.h"
 #include "Rect.h"
 #include "editormap.h"
-#include "assetManager.h"
+#include "AssetManager.h"
 
 namespace talga
 {
@@ -14,7 +14,7 @@ namespace talga
     class CInsertTiles : public QUndoCommand
     {
     public:
-      CInsertTiles(EditorMap* map, std::vector<Tile> tiles, Point drop, std::vector<Point> selection);
+      CInsertTiles(EditorMap* map, std::vector<Tile> tiles, iPnt drop, std::vector<iPnt> selection);
 
       virtual ~CInsertTiles() {}
 
@@ -28,7 +28,8 @@ namespace talga
       std::vector<Tile> mPreviousTiles;
 
       // should be a list of tiles IN MAP SPACE NOT TEXTURE SPACE
-      std::vector<Point> mSelection;
+      std::vector<iPnt> mDropPositions;
+
     };
   }
 }

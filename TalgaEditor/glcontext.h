@@ -20,7 +20,7 @@ namespace talga
 {
   namespace editor
   {
-    typedef std::pair<std::string, std::vector<Point>> Selection;
+    typedef std::pair<std::string, std::vector<iPnt>> Selection;
 
     class GLContext : public QOpenGLWidget
     {
