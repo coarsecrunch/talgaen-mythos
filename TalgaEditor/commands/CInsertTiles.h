@@ -30,6 +30,9 @@ namespace talga
       // should be a list of tiles IN MAP SPACE NOT TEXTURE SPACE
       std::vector<iPnt> mDropPositions;
 
+      //find the most top left tile and offset the others with that accordingly
+      void offsetTiles(std::vector<iPnt>& tilePositions, iPnt drop);
+
     };
   }
 }

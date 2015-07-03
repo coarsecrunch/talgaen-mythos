@@ -12,8 +12,8 @@ template<typename T>
 		
         T x() const { return mX; }
         T y() const { return mY; }
-        T setX(T value) { mX = value; }
-        T setY(T value) { mY = value; }
+        void setX(T value) { mX = value; }
+        void setY(T value) { mY = value; }
 
 	protected:
         T mX;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Rectangle.h"
-#include "Vector2.h"
+#include "Math/Vector2.h"
 #include "IRenderable.h"
 #include "IDynamic.h"
 #include "AnimSet.h"

@@ -27,10 +27,11 @@ namespace talga
       I32 getOffset(cpTex tex) const;
       I32 getTileOffset(Tile t) const;
       Tile getTile(I32 x, I32 y, cpTex tex);
+      Tile getTileAt(I32 x, I32 y);
       void insertSheet(cpTex tex);
       Tile insertTile(const Tile& tile, const iPnt& drop);
 
-      IndicesList insertTile(std::vector<iPnt> selection, iPnt dropPos, cpTex tex);
+      IndicesList insertTile(std::vector<iPnt> dropPositions, std::vector<Tile> tiles);
       void insertIndices(std::vector<Tile> tiles, std::vector<iPnt> drop);
       std::vector<Tile> getTiles(std::vector<iPnt> tiles, cpTex tex);
     };

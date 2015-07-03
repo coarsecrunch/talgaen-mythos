@@ -114,7 +114,33 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     wrongextdialog.ui
 
-DISTFILES +=
+DISTFILES += \
+    ../assets/sandbox/Archimedes/Archimedes.autosave.scml \
+    ../assets/sandbox/Archimedes/Archimedes.scml \
+    ../assets/sandbox/Archimedes/NewProject.autosave.scml \
+    ../assets/sandbox/Archimedes/Archimedes.fla \
+    ../assets/sandbox/talga/talga.fla \
+    ../assets/sandbox/Archimedes/body_sym.png \
+    ../assets/sandbox/Archimedes/calf.png \
+    ../assets/sandbox/Archimedes/foot.png \
+    ../assets/sandbox/Archimedes/forearm.png \
+    ../assets/sandbox/Archimedes/hand.png \
+    ../assets/sandbox/Archimedes/head_sym.png \
+    ../assets/sandbox/Archimedes/neck_sym.png \
+    ../assets/sandbox/Archimedes/shoulder.png \
+    ../assets/sandbox/Archimedes/thig.png \
+    ../assets/sandbox/blah.png \
+    ../assets/sandbox/scrap4.png \
+    ../assets/charactersheet.png \
+    ../assets/notex.png \
+    ../assets/sprite_sheet.png \
+    ../assets/sprite_sheet2.png \
+    ../assets/talgasheet.png \
+    ../assets/sandbox/whyisthisnotworking.xcf \
+    ../assets/test.map \
+    ../assets/shaders/renderer2d.frag \
+    ../assets/shaders/renderer2d.vert \
+    ../assets/scripts/script.lua
 
 RESOURCES += \
     ../assets/icons/icons.qrc

@@ -37,16 +37,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	kakey = key;
 	acaction = action;
-	/*
-	if (key == GLFW_KEY_0)
-		bob.PlayAnimation(0, 5000, true);
-	else if (key == GLFW_KEY_1)
-		bob.PlayAnimation(1, 1000, false);
-	else if (key == GLFW_KEY_2)
-		bob.PlayAnimation(2, 1000, false);
-	else if (key == GLFW_KEY_3)
-		bob.PlayAnimation(3, 1000, false);
-	*/
 }
 
 /*
@@ -134,6 +124,7 @@ int main(int argc, char** argv)
 	while (!glfwWindowShouldClose(game.getWindow().getWindow()))
 	{
 
+
 		dt = clock.TimePassed() - previousTime;
 		timeSince += dt;
 		previousTime = clock.TimePassed();
@@ -162,7 +153,8 @@ int main(int argc, char** argv)
 
 		//cam.getBox().setX(cam.getBox().getX() - 0.05f);
 		cam.update(0);
-
+		cam.getBox().setX(cam.getBox().getX() + 0.05f);
+		cam.getBox().setY(cam.getBox().getY() + 0.05f);
 		spr->update(dt);
 		sprity->update(dt);
 		game.Update(dt);

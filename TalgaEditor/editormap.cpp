@@ -55,10 +55,10 @@ namespace talga
     {
       I32 texOffset = getOffset(t.first);
 
-      I32 x = t.second[0](0) * t.first->w() / mTileWidth;
-      I32 y = t.second[0](1) * t.first->h() / mTileHeight;
+      I32 x = t.second[0](0) * I32(t.first->w() / mTileWidth);
+      I32 y = t.second[0](1) * I32(t.first->h() / mTileHeight);
 
-      return texOffset + y * (t.first->w() / mTileWidth) + x;
+      return texOffset + (y * ( (I32)t.first->w() / mTileWidth) + x) - 1;
     }
 
     void EditorMap::insertSheet(cpTex tex)
@@ -98,26 +98,26 @@ namespace talga
       }
     }
 
-    IndicesList EditorMap::insertTile(std::vector<iPnt> selection, iPnt dropPos, cpTex tex)
+    IndicesList EditorMap::insertTile(std::vector<iPnt> dropPositions, std::vector<Tile> tiles)
     {
-      insertSheet(tex);
+      insertSheet(tiles[0].first);
 
-      I32 offset = getOffset(tex);
+      I32 offset = getOffset(tiles[0].first);
       IndicesList previousIndices;
 
       I32 greatestX = 0;
       I32 greatestY = 0;
-      I32 smallestX = 100000;
-      I32 smallestY = 100000;
+      I32 smallestX = 1000000;
+      I32 smallestY = 1000000;
       I32 greatestXIndex = 0;
       I32 greatestYIndex = 0;
       I32 smallestXIndex = 0;
       I32 smallestYIndex = 0;
       I32 count = 0;
 
-      if (selection.size() > 0)
+      /*if (selection.size() > 0)
       {
-        for (const auto& pnt : selection)
+        for (const auto& pnt : dropPositions)
         {
           if (pnt.x() > greatestX)
           {
@@ -145,17 +145,22 @@ namespace talga
 
           ++count;
         }
-      }
+      }*/
 
-      for (const auto& iPnt : selection)
+      /*for (const auto& iPnt : dropPositions)
       {
           if (!Exists((I32)dropPos.x() + iPnt.x(), (I32)dropPos.y() + iPnt.y())) continue;
 
           previousIndices.push_back(mTileSet[mMap[ (I32)dropPos.y() * mWidth + (I32)dropPos.x()] - 1]);
 
-          I32 index = offset + ( iPnt.y() * (tex->w() / mTileWidth) + iPnt.x()) + 1;
+          I32 index = offset + ( iPnt.y() * ((I32)tex->w() / (I32)mTileWidth) + iPnt.x()) + 1;
 
-          mMap[ ((I32)dropPos.y() + iPnt.y() - smallestY) * mWidth + ((I32)dropPos.x() + (I32)iPnt.x() - smallestX)] = index;
+          mMap[ (dropPos.y() + iPnt.y() - smallestY) * mWidth + ((I32)dropPos.x() + (I32)iPnt.x() - smallestX)] = index;
+      }*/
+
+      for (I32 i = 0; i < dropPositions.size(); ++i)
+      {
+        mMap[ dropPositions[i].y() * mWidth + dropPositions[i].x() ] = getTileOffset(tiles[i]);
       }
 
       return previousIndices;
@@ -174,14 +179,22 @@ namespace talga
       return mTileSet[offset + (y * textureTileWidth + x)];
     }
 
+    Tile EditorMap::getTileAt(I32 x, I32 y)
+    {
+      TALGA_ASSERT(Exists(x, y), "");
+      I32 num = mMap[y * mWidth + x] - 1;
+      return mTileSet[num];
+    }
+
     Tile EditorMap::insertTile(const Tile &tile, const iPnt &drop)
     {
         Tile previousTile;
         if (!Exists(drop.x(), drop.y())) return previousTile;
 
-        previousTile = mTileSet[mMap[drop.y() * mWidth + drop.x()]];
+        previousTile = getTileAt(drop.x(), drop.y());
 
-        mMap[drop.y() * mWidth + drop.x()] = getTileOffset(tile);
+        I32 t = getTileOffset(tile);
+        mMap[drop.y() * mWidth + drop.x()] = t;
 
         return previousTile;
     }
