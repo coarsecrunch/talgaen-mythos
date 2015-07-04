@@ -91,7 +91,7 @@ namespace talga
 
       std::string assetname = qassetName.toUtf8().constData();
 
-      QString fileEnding = qassetName.split(".").at(qassetName.split(".").size() - 1);
+      QString fileEnding = qassetName.split(".").at(0);
 
       if ( fileEnding == "png" )
       {
@@ -106,11 +106,17 @@ namespace talga
 
     void GLContext::sl_addAsset(QString path)
     {
-      QString fileEnding = path.split(".").at(path.split(".").size() - 1);
+      foreach(QString piece, path.split("."))
+      {
+        TALGA_MSG(std::string("file ending: ") + piece.toStdString());
+      }
+
+      QString fileEnding = path.split(".").at(0);
       QString relPathQstr = QDir(QDir::currentPath()).relativeFilePath(path);
       std::string relPath = relPathQstr.toUtf8().constData();
       QString fileName = path.split("/").at(path.split("/").size() - 1);
 
+      TALGA_MSG(std::string("file ending: ") + fileEnding.toStdString());
       if ( fileEnding == "png" )
       {
         mCurrentMap.insertSheet(mManager.AddTexture(relPath));

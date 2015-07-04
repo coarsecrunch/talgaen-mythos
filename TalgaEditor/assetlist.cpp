@@ -10,6 +10,8 @@
 #include <QMimeData>
 #include "wrongextdialog.h"
 
+#include "Cmn.h"
+
 namespace talga
 {
   namespace editor
@@ -47,7 +49,7 @@ namespace talga
       foreach(QString str, filePaths)
       {
         QString fileName = QFileInfo(QFile(str).fileName()).fileName();
-        QString fileExtension = QFile(str).fileName().split(".",QString::SkipEmptyParts).at(1);
+        QString fileExtension = QFile(str).fileName().split(".").at(QFile(str).fileName().split(".").size() - 1);
 
         mAssets.insert(fileName, new QImage(str));
 

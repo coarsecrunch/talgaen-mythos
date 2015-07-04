@@ -5,6 +5,7 @@ sandbox/
 ipch/
 libtalga/
 editor/
+export/
 *.obj
 *.log
 *.pdb
