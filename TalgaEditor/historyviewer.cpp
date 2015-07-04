@@ -28,6 +28,14 @@ namespace talga
 
     }
 
+    void HistoryViewer::sl_updateHistoryMacro(bool startNewHistoryItem)
+    {
+      if (startNewHistoryItem)
+        mStack->beginMacro("tile placement");
+      else
+        mStack->endMacro();
+    }
+
     void HistoryViewer::sl_addUndoCommand(QUndoCommand *c)
     {
       mStack->push(c);

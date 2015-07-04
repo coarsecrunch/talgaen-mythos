@@ -31,7 +31,7 @@ namespace talga
       void insertSheet(cpTex tex);
       Tile insertTile(const Tile& tile, const iPnt& drop);
 
-      IndicesList insertTile(std::vector<iPnt> dropPositions, std::vector<Tile> tiles);
+      IndicesList insertTile(const std::vector<iPnt>& dropPositions, const std::vector<Tile>& tiles);
       void insertIndices(std::vector<Tile> tiles, std::vector<iPnt> drop);
       std::vector<Tile> getTiles(std::vector<iPnt> tiles, cpTex tex);
     };

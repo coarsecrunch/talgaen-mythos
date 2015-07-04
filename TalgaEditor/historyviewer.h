@@ -21,7 +21,7 @@ namespace talga
 
     public slots:
       void sl_addUndoCommand(QUndoCommand* c);
-
+      void sl_updateHistoryMacro(bool startNewHistoryItem);
     protected:
       QUndoStack* mStack;
     };

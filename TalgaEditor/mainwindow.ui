@@ -175,7 +175,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget">
+  <widget class="QDockWidget" name="historyDock">
    <property name="windowTitle">
     <string>History</string>
    </property>
@@ -197,7 +197,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="talga::editor::HistoryViewer" name="listView">
+      <widget class="talga::editor::HistoryViewer" name="historyView">
        <property name="focusPolicy">
         <enum>Qt::StrongFocus</enum>
        </property>
@@ -239,8 +239,10 @@
    <header>glcontext.h</header>
    <slots>
     <signal>sig_addUndoCommand(QUndoCommand*)</signal>
+    <signal>sig_updateHistoryMacro(bool)</signal>
     <slot>sl_addAsset(QString)</slot>
     <slot>sl_updateSelection(Selection)</slot>
+    <slot>sl_updateGL()</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -249,6 +251,7 @@
    <header>historyviewer.h</header>
    <slots>
     <slot>sl_addUndoCommand(QUndoCommand*)</slot>
+    <slot>sl_updateHistoryMacro(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -280,7 +283,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>187</x>
-     <y>348</y>
+     <y>312</y>
     </hint>
     <hint type="destinationlabel">
      <x>255</x>
@@ -323,7 +326,7 @@
   <connection>
    <sender>openGLWidget</sender>
    <signal>sig_addUndoCommand(QUndoCommand*)</signal>
-   <receiver>listView</receiver>
+   <receiver>historyView</receiver>
    <slot>sl_addUndoCommand(QUndoCommand*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -333,6 +336,22 @@
     <hint type="destinationlabel">
      <x>943</x>
      <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openGLWidget</sender>
+   <signal>sig_updateHistoryMacro(bool)</signal>
+   <receiver>historyView</receiver>
+   <slot>sl_updateHistoryMacro(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>839</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>943</x>
+     <y>176</y>
     </hint>
    </hints>
   </connection>

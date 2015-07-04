@@ -98,69 +98,18 @@ namespace talga
       }
     }
 
-    IndicesList EditorMap::insertTile(std::vector<iPnt> dropPositions, std::vector<Tile> tiles)
+    IndicesList EditorMap::insertTile(const std::vector<iPnt>& dropPositions, const std::vector<Tile>& tiles)
     {
-      insertSheet(tiles[0].first);
+      //insertSheet(tiles[0].first);
 
       I32 offset = getOffset(tiles[0].first);
       IndicesList previousIndices;
 
-      I32 greatestX = 0;
-      I32 greatestY = 0;
-      I32 smallestX = 1000000;
-      I32 smallestY = 1000000;
-      I32 greatestXIndex = 0;
-      I32 greatestYIndex = 0;
-      I32 smallestXIndex = 0;
-      I32 smallestYIndex = 0;
-      I32 count = 0;
-
-      /*if (selection.size() > 0)
-      {
-        for (const auto& pnt : dropPositions)
-        {
-          if (pnt.x() > greatestX)
-          {
-            greatestX = pnt.x();
-            greatestXIndex = count;
-          }
-
-          if (pnt.y() > greatestY)
-          {
-            greatestY = pnt.y();
-            greatestYIndex = count;
-          }
-
-          if (pnt.x() < smallestX)
-          {
-            smallestX = pnt.x();
-            smallestXIndex = pnt.x();
-          }
-
-          if (pnt.y() < smallestY)
-          {
-            smallestY = pnt.y();
-            smallestYIndex = pnt.y();
-          }
-
-          ++count;
-        }
-      }*/
-
-      /*for (const auto& iPnt : dropPositions)
-      {
-          if (!Exists((I32)dropPos.x() + iPnt.x(), (I32)dropPos.y() + iPnt.y())) continue;
-
-          previousIndices.push_back(mTileSet[mMap[ (I32)dropPos.y() * mWidth + (I32)dropPos.x()] - 1]);
-
-          I32 index = offset + ( iPnt.y() * ((I32)tex->w() / (I32)mTileWidth) + iPnt.x()) + 1;
-
-          mMap[ (dropPos.y() + iPnt.y() - smallestY) * mWidth + ((I32)dropPos.x() + (I32)iPnt.x() - smallestX)] = index;
-      }*/
-
       for (I32 i = 0; i < dropPositions.size(); ++i)
       {
+        previousIndices.push_back(getTileAt(dropPositions[i].x(), dropPositions[i].y()));
         mMap[ dropPositions[i].y() * mWidth + dropPositions[i].x() ] = getTileOffset(tiles[i]);
+        TALGA_MSG(std::string("adding map index: ") + std::to_string(getTileOffset(tiles[i])));
       }
 
       return previousIndices;

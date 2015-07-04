@@ -181,6 +181,10 @@ namespace talga
     {
       if (e->button() == Qt::LeftButton)
       {
+        mIsMouseDown = true;
+        mPreviousMousePos = vec3(e->x(), e->y(), 1.0f);
+        mStartNewHistoryItem = true;
+
         if (!mShift && !(mCurrentSelection.first == "NULL"))
         {
           mStartPos = e->pos();
@@ -192,16 +196,12 @@ namespace talga
             std::vector<iPnt> tiles;
 
             //mCurrentMap.insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
+            emit sig_updateHistoryMacro(true);
             emit sig_addUndoCommand(new CInsertTiles(&mCurrentMap, mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first)),
                  iPnt(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
-
-
-            update();
           }
         }
-
-        mIsMouseDown = true;
-        mPreviousMousePos = vec3(e->x(), e->y(), 1.0f);
+        mStartNewHistoryItem = false;
 
       }
     }
@@ -220,6 +220,7 @@ namespace talga
           {
             emit sig_addUndoCommand(new CInsertTiles(&mCurrentMap, mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first)),
                                                     iPnt(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
+
           }
 
           update();
@@ -310,6 +311,7 @@ namespace talga
       if (e->button() == Qt::LeftButton)
       {
         mIsMouseDown = false;
+        emit sig_updateHistoryMacro(false);
       }
     }
 

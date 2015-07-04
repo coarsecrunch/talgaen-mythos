@@ -46,7 +46,7 @@ namespace talga
 
     signals:
       void sig_addUndoCommand(QUndoCommand* c);
-
+      void sig_updateHistoryMacro(bool startNewHistoryItem);
     public slots:
       void sl_addAsset(QString path);
       void sl_updateSelection(Selection);
@@ -68,6 +68,7 @@ namespace talga
       vec3 mPreviousMousePos;
       bool mIsMouseDown;
       bool mShift;
+      bool mStartNewHistoryItem;
       std::vector<Sprite> mSelectionRender;
     private:
 

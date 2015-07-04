@@ -24,6 +24,7 @@ namespace talga
 
     void CInsertTiles::undo()
     {
+      mMap->insertTile(mDropPositions, mPreviousTiles);
      /* std::vector<Point> shiftedPoints;
 
       for (const auto& pnt : mSelection)
@@ -36,24 +37,7 @@ namespace talga
 
     void CInsertTiles::redo()
     {
-      I32 tW = mMap->getTileWidth();
-      I32 tH = mMap->getTileHeight();
-
-      auto dropIter = mDropPositions.begin();
-
-
-      mMap->insertTile(mDropPositions, mTiles);
-
-      /*for (auto tileIter = mTiles.begin(); tileIter != mTiles.end(); ++tileIter, ++dropIter)
-      {
-          mMap->insertTile(*tileIter, *dropIter);
-      }*/
-
-      /*if (mDrop.x() * tW >= 0 && mDrop.x() < mMap->getTileWidth() * mMap->getWidth()
-          && mDrop.y() * tH >= 0 && mDrop.y() * tH < mMap->getTileHeight() * mMap->getHeight())
-      {
-        mPreviousTiles = mMap->insertTile(mSelection, mDrop, mTiles[0].first);
-      }*/
+      mPreviousTiles = mMap->insertTile(mDropPositions, mTiles);
 
     }
 
