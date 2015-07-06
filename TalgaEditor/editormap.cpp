@@ -87,18 +87,7 @@ namespace talga
       return;
     }
 
-    void EditorMap::insertIndices(std::vector<Tile> tiles, std::vector<iPnt> drop)
-    {
-      //I32 y = drop.y;
-      I32 count = 0;
-      for (const auto& t : tiles)
-      {
-        mMap[drop[count].y() * mWidth + drop[count].x()] = getTileOffset(t);
-        ++count;
-      }
-    }
-
-    IndicesList EditorMap::insertTile(const std::vector<iPnt>& dropPositions, const std::vector<Tile>& tiles)
+    IndicesList EditorMap::insertTile(const std::vector<iPnt>& dropPositions, const std::vector<Tile>& tiles, I32 layerIndex)
     {
       //insertSheet(tiles[0].first);
 
@@ -107,15 +96,16 @@ namespace talga
 
       for (I32 i = 0; i < dropPositions.size(); ++i)
       {
-        previousIndices.push_back(getTileAt(dropPositions[i].x(), dropPositions[i].y()));
-        mMap[ dropPositions[i].y() * mWidth + dropPositions[i].x() ] = getTileOffset(tiles[i]);
+        previousIndices.push_back( getTile(dropPositions[i].x(), dropPositions[i].y(), layerIndex) );
+
+        mLayers[layerIndex][ dropPositions[i].y() * mWidth + dropPositions[i].x() ] = getTileOffset(tiles[i]);
         TALGA_MSG(std::string("adding map index: ") + std::to_string(getTileOffset(tiles[i])));
       }
 
       return previousIndices;
     }
 
-    Tile EditorMap::getTile(I32 x, I32 y, cpTex tex)
+    Tile EditorMap::getTileAtSheet(I32 x, I32 y, cpTex tex)
     {
       I32 offset = getOffset(tex);
       TALGA_ASSERT(offset != -1, "attempted to get offset of nonexistent texture");
@@ -128,33 +118,13 @@ namespace talga
       return mTileSet[offset + (y * textureTileWidth + x)];
     }
 
-    Tile EditorMap::getTileAt(I32 x, I32 y)
-    {
-      TALGA_ASSERT(Exists(x, y), "");
-      I32 num = mMap[y * mWidth + x] - 1;
-      return mTileSet[num];
-    }
-
-    Tile EditorMap::insertTile(const Tile &tile, const iPnt &drop)
-    {
-        Tile previousTile;
-        if (!Exists(drop.x(), drop.y())) return previousTile;
-
-        previousTile = getTileAt(drop.x(), drop.y());
-
-        I32 t = getTileOffset(tile);
-        mMap[drop.y() * mWidth + drop.x()] = t;
-
-        return previousTile;
-    }
-
     std::vector<Tile> EditorMap::getTiles(std::vector<iPnt> tiles, cpTex tex)
     {
       std::vector<Tile> set;
 
       for (const auto& pnt : tiles)
       {
-        set.push_back(getTile(pnt.x(), pnt.y(), tex));
+        set.push_back(getTileAtSheet(pnt.x(), pnt.y(), tex));
       }
 
       return set;

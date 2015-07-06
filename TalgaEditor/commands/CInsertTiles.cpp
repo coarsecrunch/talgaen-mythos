@@ -24,21 +24,12 @@ namespace talga
 
     void CInsertTiles::undo()
     {
-      mMap->insertTile(mDropPositions, mPreviousTiles);
-     /* std::vector<Point> shiftedPoints;
-
-      for (const auto& pnt : mSelection)
-      {
-        shiftedPoints.push_back(Point(pnt.x() + mDrop.x(), pnt.y() + mDrop.y()));
-      }
-
-      mMap->insertIndices(mPreviousTiles, shiftedPoints);
-    */}
+      mMap->insertTile(mDropPositions, mPreviousTiles, 0);
+    }
 
     void CInsertTiles::redo()
     {
-      mPreviousTiles = mMap->insertTile(mDropPositions, mTiles);
-
+      mPreviousTiles = mMap->insertTile(mDropPositions, mTiles, 0);
     }
 
     void CInsertTiles::offsetTiles(std::vector<iPnt> &tilePositions, iPnt drop)

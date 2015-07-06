@@ -17,10 +17,10 @@ namespace talga
 		: AAsset()
 		, mWidth{ -1 }
 		, mHeight{ -1 }
-		, mTileSet{ }
+		, mTileSet{}
 		, mTileWidth{ -1 }
 		, mTileHeight{ -1 }
-		, mMap{ }
+		, mLayers{}
 	{
 	}
 
@@ -29,10 +29,36 @@ namespace talga
 		, mTileSet(cpy.mTileSet)
 		, mWidth(cpy.mWidth)
 		, mHeight(cpy.mHeight)
-		, mMap(cpy.mMap)
+		, mLayers(cpy.mLayers)
 		, mTileHeight(cpy.mTileHeight)
 		, mTileWidth(cpy.mTileWidth)
 	{
+	}
+
+	MapLayer::MapLayer(I32 size, std::string layerName)
+		: mIndices(size)
+		, mVisible{ true }
+		, mSolid{ false }
+		, mName( layerName )
+	{
+	}
+
+	MapLayer::MapLayer(const MapLayer& cpy)
+		: mIndices(cpy.mIndices)
+		, mVisible(cpy.mVisible)
+		, mSolid(cpy.mSolid)
+		, mName( cpy.mName )
+	{
+	}
+
+	const MapLayer& MapLayer::operator=(const MapLayer& cpy)
+	{
+		mIndices = cpy.mIndices;
+		mVisible = cpy.mVisible;
+		mSolid = cpy.mSolid;
+		mName = cpy.mName;
+
+		return *this;
 	}
 
 	const Map& Map::operator=(const Map& cpy)
@@ -43,15 +69,9 @@ namespace talga
 		mHeight = cpy.mHeight;
 		mTileHeight = cpy.mTileHeight;
 		mTileWidth = cpy.mTileHeight;
-		mMap = cpy.mMap;
+		mLayers = cpy.mLayers;
 
 		return *this;
-	}
-
-	const Tile& Map::operator()(I32 x, I32 y) const
-	{
-		TALGA_ASSERT(Exists(x, y), "tried to access non existent tile");
-		return mTileSet[mMap[y * mWidth + x] - 1];
 	}
 
 	void Map::render(Renderer* renderer, const Camera* camera) const
@@ -71,28 +91,43 @@ namespace talga
 			{
 				if (!Exists(x, y))
 					continue;
+				tempR.setZ(0.1f);
 
-				if (getTileIndex(x, y) == 0)
-					continue;
+				for (I32 i = 0; i < mLayers.size(); ++i)
+				{
+					//could me much more optimal
+					if (!mLayers[i].isVisible()) 
+						continue;
+					if (getTileIndex(x, y, i) == 0)
+						continue;
+
+					tempR.setX(I32(x * mTileWidth + (0.5f * mTileWidth)));
+					tempR.setY(I32(y * mTileHeight + (0.5f * mTileHeight)));
+					tempR.updateVertsPosition();
+
+					renderer->submit(tempR, getTile(x, y, i).first, 1.0f, getTile(x, y, i).second);
+					tempR.setZ(tempR.getZ() + 0.01f);
+				}
 				
-				tempR.setX( I32(x * mTileWidth + (0.5f * mTileWidth)) );
-				tempR.setY( I32(y * mTileHeight + (0.5f * mTileHeight)) );
-				tempR.updateVertsPosition();
-
-				renderer->submit(tempR, (*this)(x, y).first, 1.0f, (*this)(x, y).second);
 			}
 		}
 
 
 	}
 
-	const Tile* Map::TileAt(I32 x, I32 y) const
+	const Tile& Map::getTile(I32 x, I32 y, I32 layerIndex) const
 	{
-		if (!Exists(x, y))
-			return nullptr;
+		TALGA_ASSERT(Exists(x, y), "tried to access non existent tile");
+		return mTileSet[mLayers[layerIndex][y * mWidth + x] - 1];
 
-		return &mTileSet[mMap[y * mWidth + x] - 1];
 	}
+
+  Tile Map::getTile(I32 x, I32 y, I32 layerIndex)
+  {
+    TALGA_ASSERT(Exists(x, y), "tried to access non existent tile");
+    return mTileSet[mLayers[layerIndex][y * mWidth + x] - 1];
+
+  }
 
 	bool Map::Exists(I32 x, I32 y) const
 	{
@@ -108,12 +143,12 @@ namespace talga
 	{
         return iPnt{ x * mTileWidth, y * mTileHeight };
 	}
-
-	I32 Map::getTileIndex(I32 x, I32 y) const
+	
+	I32 Map::getTileIndex(I32 x, I32 y, I32 layerIndex) const
 	{
-		return mMap[y * mWidth + x];
+		TALGA_ASSERT(Exists(x, y), "tried to get index of non existent tile");
+		return mLayers[layerIndex][y * mWidth + x];
 	}
-
 	bool Map::load(std::string path, AssetManager& manager)
 	{
 		std::ifstream stream;
@@ -141,6 +176,7 @@ namespace talga
 		I32 mapWidth;
 		I32 mapHeight;
 		I32 numTextures;
+		I32 numLayers;
 
 		std::vector<Tile> tiles;
 		std::string tempTex;
@@ -150,6 +186,8 @@ namespace talga
 		stream >> mapWidth; // mapWidth
 		stream >> mapHeight; // mapHeight
 		stream >> numTextures; // numTiles
+		stream >> numLayers;
+
 
 		for (auto i = 0; i < numTextures; ++i)
 		{
@@ -190,19 +228,36 @@ namespace talga
 			}
 		}
 
-		std::vector<I32> mapdata(mapWidth * mapHeight);
+		std::vector<std::string> layerNames(numLayers);
 
-		for (int y = 0; y < mapHeight; ++y)
+		for (I32 i = 0; i < numLayers; ++i)
 		{
-			for (int x = 0; x < mapWidth; ++x)
-			{
-				stream >> mapdata[y * mapWidth + x];
-			}
+			stream >> layerNames[i];
 		}
+
+		std::vector<MapLayer> layers(numLayers);
+
+		I32 tempCount = 0;
+
+		for (auto layerIter = layers.begin(); layerIter != layers.end(); ++layerIter)
+		{
+			(*layerIter) = MapLayer(mapWidth * mapHeight, layerNames[tempCount]);
+
+			for (int y = 0; y < mapHeight; ++y)
+			{
+				for (int x = 0; x < mapWidth; ++x)
+				{
+					stream >> (*layerIter)[y * mapWidth + x];
+				}
+			}
+
+			++tempCount;
+		}
+		
 
 		mName = name;
 		mTileSet = tiles;
-		mMap = mapdata;
+		mLayers = layers;
 		mWidth = mapWidth;
 		mHeight = mapHeight;
 		mTileWidth = tileWidth;

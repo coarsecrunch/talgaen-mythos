@@ -70,7 +70,6 @@ namespace talga
       bool mShift;
       bool mStartNewHistoryItem;
       std::vector<Sprite> mSelectionRender;
-    private:
 
     };
 

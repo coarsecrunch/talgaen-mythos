@@ -62,7 +62,9 @@ SOURCES += ../TalgaEditor/main.cpp \
     ../Engine/Window.cpp \
     editormap.cpp \
     commands/CInsertTiles.cpp \
-    historyviewer.cpp
+    historyviewer.cpp \
+    layerstack.cpp \
+    globals.cpp
 
 HEADERS  += mainwindow.h \
     assetlist.h \
@@ -108,7 +110,9 @@ HEADERS  += mainwindow.h \
     ../Engine/Window.h \
     editormap.h \
     commands/CInsertTiles.h \
-    historyviewer.h
+    historyviewer.h \
+    layerstack.h \
+    globals.h
 
 
 FORMS    += mainwindow.ui \
@@ -180,3 +184,9 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/l
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/liblua52d.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/lua52.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/lua52d.lib
+
+win32:CONFIG(release, debug|release): LIBS += "-L$$PWD/C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/" -lOpenGL32
+else:win32:CONFIG(debug, debug|release): LIBS += "-L$$PWD/C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/" -lOpenGL32d
+
+
+

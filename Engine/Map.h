@@ -15,6 +15,37 @@ namespace talga
 	typedef std::array<vec2, 4> UVFrame;
 	typedef std::pair<cpTex, UVFrame> Tile;
 
+	class MapLayer
+	{
+	public:
+		MapLayer() 
+			: mIndices(), mVisible( true ), mSolid( false ), mName( "default" )
+		{}
+
+		MapLayer(I32 size, std::string layerName);
+		MapLayer(const MapLayer& cpy);
+		
+		I32& operator[](I32 index) { return mIndices[index]; }
+		I32 operator[](I32 index) const { return mIndices[index]; }
+
+		const MapLayer& operator=(const MapLayer& cpy);
+
+		bool isVisible() const { return mVisible; }
+		bool isSolid() const { return mSolid; }
+		std::string getName() const { return mName; }
+
+		void setVisible(bool value) { mVisible = value; }
+		void setSolid(bool value) { mSolid = value; }
+		void resize(I32 size) { mIndices.clear();  mIndices.resize(size); }
+		void setName(std::string value) { mName = value; }
+	protected:
+		std::vector<I32> mIndices;
+		
+		bool mVisible;
+		bool mSolid;
+		std::string mName;
+	};
+
 	class Map : public AAsset, public IRenderable
 	{
 	public:
@@ -28,14 +59,15 @@ namespace talga
 		virtual void destroy() override;
 
 		const Map& operator=(const Map& cpy);
-		const Tile& operator()(I32 column, I32 row) const;
 
-		const Tile* TileAt(I32 x, I32 y) const;
         iPnt CartToTile(I32 x, I32 y) const;
         iPnt TileToCart(I32 x, I32 y) const;
 		bool Exists(I32 x, I32 y) const; //nullptr
-		I32 getTileIndex(I32 x, I32 y) const;
+
+		Tile getTile(I32 x, I32 y, I32 layerIndex);
+		const Tile& getTile(I32 x, I32 y, I32 layerIndex) const;
 		I32 getTileIndex(const Tile& t) const;
+		I32 getTileIndex(I32 x, I32 y, I32 layerIndex) const;
 
 		I32 size() const { return mWidth * mHeight; }
 		I32 tileWidth() const { return mTileWidth; }
@@ -54,7 +86,8 @@ namespace talga
 		I32 mWidth;
 
 		std::vector<Tile> mTileSet;
-		std::vector<I32> mMap;
+		std::vector<MapLayer> mLayers;
+		
 	};
 
 }

@@ -6,6 +6,7 @@ ipch/
 libtalga/
 editor/
 export/
+wiki/
 *.obj
 *.log
 *.pdb
