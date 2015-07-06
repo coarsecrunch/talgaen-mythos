@@ -11,17 +11,17 @@ CChangeWorkingLayer::CChangeWorkingLayer(std::string layerName, EditorMap* map)
   , mMap(map)
   , mPreviousLayerName("broken")
 {
-  setText(QString( "Working layer: " + QString::fromStdString(layerName)));
+  setText(QString( "working layer: " + QString::fromStdString(layerName)));
 }
 
 void CChangeWorkingLayer::redo()
 {
-  mMap->setWorkingLayer(mLayerName);
+  mPreviousLayerName = mMap->setWorkingLayer(mLayerName);
 }
 
 void CChangeWorkingLayer::undo()
 {
-  mPreviousLayerName = mMap->setWorkingLayer(mPreviousLayerName);
+  mMap->setWorkingLayer(mPreviousLayerName);
 }
 
 }

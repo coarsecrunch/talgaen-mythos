@@ -55,6 +55,8 @@ namespace talga
 
     I32 EditorMap::getTileOffset(Tile t) const
     {
+      if (t.first == nullptr)
+        return 0;
       I32 texOffset = getOffset(t.first);
 
       I32 x = t.second[0](0) * I32(t.first->w() / mTileWidth);
@@ -101,7 +103,6 @@ namespace talga
         previousIndices.push_back( getTile(dropPositions[i].x(), dropPositions[i].y(), mWorkingLayerIndex) );
 
         mLayers[mWorkingLayerIndex][ dropPositions[i].y() * mWidth + dropPositions[i].x() ] = getTileOffset(tiles[i]);
-        TALGA_MSG(std::string("adding map index: ") + std::to_string(getTileOffset(tiles[i])));
       }
 
       return previousIndices;
@@ -136,7 +137,7 @@ namespace talga
     {
 
       I32 i = 0;
-      std::string previousName = "null";
+      std::string previousName = layerName;
       if (mWorkingLayer)
           previousName = mWorkingLayer->getName();
 

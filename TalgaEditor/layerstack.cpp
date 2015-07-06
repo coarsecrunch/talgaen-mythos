@@ -33,15 +33,23 @@ void LayerStack::sl_updateLayerStack(EditorMap* map)
 
 void LayerStack::sl_updateItemChanged(QTreeWidgetItem *itm, int column)
 {
-  int id = indexOfTopLevelItem(itm);
-  if (column == 0 && itm->text(0) != "")
+  //name
+  if (column == 0)
   {
+    for (auto itr = mMap->getLayers()->begin();itr != mMap->getLayers()->end(); ++itr)
+    {
+      if ( itm->text(0).toStdString() == itr->getName() || itm->text(0) == "" || itm->text(0).contains(' '))
+      {
+        itm->setText(0, QString::fromStdString((*mMap->getLayers())[indexOfTopLevelItem(itm)].getName()));
+        TALGA_WARN(0, "attempted to set invalid layer name");
+        return;
+      }
+    }
     (*mMap->getLayers())[indexOfTopLevelItem(itm)].setName(itm->text(column).toStdString());
   }
   //Visibility
   else if (column == 1)
   {
-    qDebug() << "old visibilty name: " <<(*mMap->getLayers())[indexOfTopLevelItem(itm)].isVisible();
     if (itm->checkState(column) == Qt::Checked)
     {
       (*mMap->getLayers())[indexOfTopLevelItem(itm)].setVisible(true);
@@ -53,7 +61,6 @@ void LayerStack::sl_updateItemChanged(QTreeWidgetItem *itm, int column)
   }
 
   emit sig_updateGL();
-  qDebug() << "new name: " << itm->text(column);
 }
 
 void LayerStack::sl_changeWorkingLayer(QTreeWidgetItem *itm, int column)

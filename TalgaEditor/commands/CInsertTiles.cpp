@@ -18,7 +18,6 @@ namespace talga
       mDropPositions = selection;
 
       offsetTiles(mDropPositions, drop);
-
       setText("tile insert");
     }
 
@@ -29,7 +28,7 @@ namespace talga
 
     void CInsertTiles::redo()
     {
-      mPreviousTiles = mMap->insertTile(mDropPositions, mTiles);
+       mPreviousTiles = mMap->insertTile(mDropPositions, mTiles);
     }
 
     void CInsertTiles::offsetTiles(std::vector<iPnt> &tilePositions, iPnt drop)
@@ -78,8 +77,8 @@ namespace talga
 
       for (auto& pnt : tilePositions)
       {
-        pnt.setX(pnt.x() + drop.x());
-        pnt.setY(pnt.y() + drop.y());
+        pnt.setX(pnt.x() + drop.x() - smallestX);
+        pnt.setY(pnt.y() + drop.y() - smallestY);
       }
 
     }
