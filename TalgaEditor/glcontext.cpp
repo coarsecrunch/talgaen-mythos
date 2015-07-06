@@ -13,6 +13,7 @@
 #include "Texture.h"
 #include "IRenderable.h"
 #include "commands/CInsertTiles.h"
+#include "commands/cchangeworkinglayer.h"
 
 #include <vector>
 
@@ -36,6 +37,7 @@ namespace talga
       , mShift{false}
       , mIsMouseDown{false}
       , mPreviousMousePos{0.0f, 0.0f, 0.0f}
+      , mCurrentMapLayerIndex{-1}
     {
       QSurfaceFormat format;
       format.setVersion(3, 3);
@@ -68,15 +70,24 @@ namespace talga
 
       mRenderer2D->setCamera(&camera);
 
-      mManager.AddTexture("../../../assets/sprite_sheet.png");
+      //mManager.AddTexture("../../../assets/sprite_sheet.png");
+      emit sig_loadAsset(QString("../../../assets/sprite_sheet.png"));
+
       mCurrentMap = *mManager.AddMap("../../../assets/test.map");
 
       mCurrentMap.insertSheet(mManager.GetTexture("sprite_sheet.png"));
+
+      emit sig_updateLayerStack(&mCurrentMap);
 
       mTileLayer.add(&mCurrentMap);
 
       camera.getBox().setX(100);
       camera.getBox().setY(200);
+
+      if (mCurrentMap.getLayers()->size() > 0)
+      {
+        mCurrentMapLayerIndex = 0;
+      }
     }
 
     void GLContext::dragEnterEvent(QDragEnterEvent *e)
@@ -106,25 +117,24 @@ namespace talga
 
     void GLContext::sl_addAsset(QString path)
     {
-      foreach(QString piece, path.split("."))
-      {
-        TALGA_MSG(std::string("file ending: ") + piece.toStdString());
-      }
-
-      QString fileEnding = path.split(".").at(0);
+      QString fileEnding = path.split(".").at(path.split(".").size() - 1);
       QString relPathQstr = QDir(QDir::currentPath()).relativeFilePath(path);
       std::string relPath = relPathQstr.toUtf8().constData();
-      QString fileName = path.split("/").at(path.split("/").size() - 1);
+
+#ifdef TALGA_WINDOWS_BUILD
+      QString fileName = path.split("\\").at(path.split("\\").size() - 1);
+#endif
 
       TALGA_MSG(std::string("file ending: ") + fileEnding.toStdString());
+
       if ( fileEnding == "png" )
       {
-        mCurrentMap.insertSheet(mManager.AddTexture(relPath));
+        mManager.AddTexture(path.toStdString());
       }
 
       else if (fileEnding == "tmap")
       {
-        mManager.AddMap(relPath);
+        mManager.AddMap(path.toStdString());
       }
 
       else
@@ -150,7 +160,7 @@ namespace talga
         mSelectionRender.push_back(Sprite{t.first, mCurrentMap.getTileWidth(), mCurrentMap.getTileHeight(), 0.5f, t.second});
         mSelectionLayer.add(&mSelectionRender.back());
       }
-    }
+    } 
 
     void GLContext::sl_updateGL()
     {

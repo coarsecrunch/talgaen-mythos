@@ -22,7 +22,7 @@ namespace talga
     public:
       explicit AssetList( QWidget* parent = nullptr);
       ~AssetList();
-      void sl_chooseAssets();
+
 
       //for dragging and dropping items into the GLContext
       void mousePressEvent(QMouseEvent *e);
@@ -34,9 +34,11 @@ namespace talga
       void sig_textureSelected(TextureAsset);
       void sig_mapSelcted();
       void sig_scriptSelected();
+
     public slots:
       void sl_assetSelected(QTreeWidgetItem*, int);
-
+      void sl_chooseAssets();
+      void sl_loadAsset(QString path);
     protected:
       QMap<QString, QImage*> mAssets;
       QTreeWidgetItem* mTexturesFolder;

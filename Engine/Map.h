@@ -46,6 +46,8 @@ namespace talga
 		std::string mName;
 	};
 
+	typedef std::vector<MapLayer> LayerList;
+
 	class Map : public AAsset, public IRenderable
 	{
 	public:
@@ -86,8 +88,7 @@ namespace talga
 		I32 mWidth;
 
 		std::vector<Tile> mTileSet;
-		std::vector<MapLayer> mLayers;
-		
+		LayerList mLayers;
 	};
 
 }

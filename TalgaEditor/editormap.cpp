@@ -10,6 +10,8 @@ namespace talga
 
     EditorMap::EditorMap()
       : Map()
+      , mWorkingLayer{nullptr}
+      , mWorkingLayerIndex{-1}
     {
 
     }
@@ -87,7 +89,7 @@ namespace talga
       return;
     }
 
-    IndicesList EditorMap::insertTile(const std::vector<iPnt>& dropPositions, const std::vector<Tile>& tiles, I32 layerIndex)
+    IndicesList EditorMap::insertTile(const std::vector<iPnt>& dropPositions, const std::vector<Tile>& tiles)
     {
       //insertSheet(tiles[0].first);
 
@@ -96,9 +98,9 @@ namespace talga
 
       for (I32 i = 0; i < dropPositions.size(); ++i)
       {
-        previousIndices.push_back( getTile(dropPositions[i].x(), dropPositions[i].y(), layerIndex) );
+        previousIndices.push_back( getTile(dropPositions[i].x(), dropPositions[i].y(), mWorkingLayerIndex) );
 
-        mLayers[layerIndex][ dropPositions[i].y() * mWidth + dropPositions[i].x() ] = getTileOffset(tiles[i]);
+        mLayers[mWorkingLayerIndex][ dropPositions[i].y() * mWidth + dropPositions[i].x() ] = getTileOffset(tiles[i]);
         TALGA_MSG(std::string("adding map index: ") + std::to_string(getTileOffset(tiles[i])));
       }
 
@@ -128,6 +130,31 @@ namespace talga
       }
 
       return set;
+    }
+
+    std::string EditorMap::setWorkingLayer(std::string layerName)
+    {
+
+      I32 i = 0;
+      std::string previousName = "null";
+      if (mWorkingLayer)
+          previousName = mWorkingLayer->getName();
+
+      for (auto it = mLayers.begin(); it != mLayers.end(); it++)
+      {
+        std::string comp = (*it).getName();
+        if (layerName == comp)
+        {
+          mWorkingLayer = &(*it);
+          mWorkingLayerIndex = i;
+          return previousName;
+        }
+        ++i;
+      }
+
+      TALGA_WARN(0, "searched for layer: " + layerName + " found nothing")
+
+      return previousName;
     }
 
   }

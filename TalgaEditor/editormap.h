@@ -28,9 +28,19 @@ namespace talga
       I32 getTileOffset(Tile t) const;
       Tile getTileAtSheet(I32 x, I32 y, cpTex tex);
       void insertSheet(cpTex tex);
+      void addLayer();
+      void addLayer(const MapLayer& cpy);
 
-      IndicesList insertTile(const std::vector<iPnt>& dropPositions, const std::vector<Tile>& tiles, I32 layerIndex);
+      IndicesList insertTile(const std::vector<iPnt>& dropPositions, const std::vector<Tile>& tiles);
       std::vector<Tile> getTiles(std::vector<iPnt> tiles, cpTex tex);
+      std::vector<MapLayer>* getLayers() { return &mLayers; }
+
+      const MapLayer* getWorkingLayer() const {return mWorkingLayer;}
+      I32 getWorkingLayerIndex() const {return mWorkingLayerIndex;}
+      std::string setWorkingLayer(std::string layerName);
+    private:
+      MapLayer* mWorkingLayer;
+      I32 mWorkingLayerIndex;
     };
 
   }

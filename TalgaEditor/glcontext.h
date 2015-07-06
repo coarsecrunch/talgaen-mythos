@@ -47,6 +47,9 @@ namespace talga
     signals:
       void sig_addUndoCommand(QUndoCommand* c);
       void sig_updateHistoryMacro(bool startNewHistoryItem);
+      void sig_loadAsset(QString path);
+      void sig_updateLayerStack(EditorMap* newLayers);
+
     public slots:
       void sl_addAsset(QString path);
       void sl_updateSelection(Selection);
@@ -71,6 +74,7 @@ namespace talga
       bool mStartNewHistoryItem;
       std::vector<Sprite> mSelectionRender;
 
+      I32 mCurrentMapLayerIndex;
     };
 
   }

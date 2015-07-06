@@ -48,24 +48,28 @@ namespace talga
 
       foreach(QString str, filePaths)
       {
-        QString fileName = QFileInfo(QFile(str).fileName()).fileName();
-        QString fileExtension = QFile(str).fileName().split(".").at(QFile(str).fileName().split(".").size() - 1);
+        sl_loadAsset(str);
+      }
+    }
 
-        mAssets.insert(fileName, new QImage(str));
+    void AssetList::sl_loadAsset(QString path)
+    {
+      QString fileName = QFileInfo(QFile(path).fileName()).fileName();
+      QString fileExtension = QFile(path).fileName().split(".").at(QFile(path).fileName().split(".").size() - 1);
 
-        if (fileExtension == "png")
-        {
-          QTreeWidgetItem* txt = new QTreeWidgetItem(mTexturesFolder);
-          txt->setText(0, fileName);
+      mAssets.insert(fileName, new QImage(path));
 
-          emit sig_assetChosen(str);
-        }
-        else
-        {
-          WrongExtDialog ext;
-          ext.exec();
-        }
+      if (fileExtension == "png")
+      {
+        QTreeWidgetItem* txt = new QTreeWidgetItem(mTexturesFolder);
+        txt->setText(0, fileName);
 
+        emit sig_assetChosen(path);
+      }
+      else
+      {
+        WrongExtDialog ext;
+        ext.exec();
       }
     }
 

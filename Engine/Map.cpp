@@ -125,8 +125,11 @@ namespace talga
   Tile Map::getTile(I32 x, I32 y, I32 layerIndex)
   {
     TALGA_ASSERT(Exists(x, y), "tried to access non existent tile");
-    return mTileSet[mLayers[layerIndex][y * mWidth + x] - 1];
-
+    I32 idx = mLayers[layerIndex][y * mWidth + x] - 1;
+    if (idx >= 0)
+      return mTileSet[idx];
+    else
+      return Tile{nullptr, {vec2{0.0f, 0.0f}, vec2{0.0f, 0.0f},vec2{0.0f, 0.0f},vec2{0.0f, 0.0f}}};
   }
 
 	bool Map::Exists(I32 x, I32 y) const

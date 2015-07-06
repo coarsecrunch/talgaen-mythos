@@ -207,6 +207,9 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="layerStackDock">
+   <property name="windowTitle">
+    <string>Layers</string>
+   </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
@@ -230,37 +233,22 @@
      <item>
       <widget class="talga::editor::LayerStack" name="layerStack">
        <property name="columnCount">
-        <number>0</number>
+        <number>2</number>
        </property>
+       <column>
+        <property name="text">
+         <string notr="true">name</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>visible</string>
+        </property>
+       </column>
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="widget" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <item>
-         <widget class="QCheckBox" name="visiblityCheckbox">
-          <property name="text">
-           <string>Visible</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="layerName"/>
-        </item>
-       </layout>
-      </widget>
+      <widget class="QWidget" name="widget" native="true"/>
      </item>
     </layout>
    </widget>
@@ -290,6 +278,7 @@
     <signal>sig_textureSelected(TextureAsset)</signal>
     <signal>sig_assetChosen(QString)</signal>
     <slot>sl_assetSelected(QTreeWidgetItem*,int)</slot>
+    <slot>sl_loadAsset(QString)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -299,6 +288,8 @@
    <slots>
     <signal>sig_addUndoCommand(QUndoCommand*)</signal>
     <signal>sig_updateHistoryMacro(bool)</signal>
+    <signal>sig_loadAsset(QString)</signal>
+    <signal>sig_updateLayerStack(EditorMap*)</signal>
     <slot>sl_addAsset(QString)</slot>
     <slot>sl_updateSelection(Selection)</slot>
     <slot>sl_updateGL()</slot>
@@ -317,6 +308,13 @@
    <class>talga::editor::LayerStack</class>
    <extends>QTreeWidget</extends>
    <header location="global">layerstack.h</header>
+   <slots>
+    <signal>sig_updateGL()</signal>
+    <signal>sig_addUndoCommand(QUndoCommand*)</signal>
+    <slot>sl_updateLayerStack(EditorMap*)</slot>
+    <slot>sl_updateItemChanged(QTreeWidgetItem*,int)</slot>
+    <slot>sl_changeWorkingLayer(QTreeWidgetItem*,int)</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources>
@@ -416,6 +414,102 @@
     <hint type="destinationlabel">
      <x>943</x>
      <y>176</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openGLWidget</sender>
+   <signal>sig_loadAsset(QString)</signal>
+   <receiver>assetList</receiver>
+   <slot>sl_loadAsset(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>311</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>215</x>
+     <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openGLWidget</sender>
+   <signal>sig_updateLayerStack(EditorMap*)</signal>
+   <receiver>layerStack</receiver>
+   <slot>sl_updateLayerStack(EditorMap*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>838</x>
+     <y>472</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>902</x>
+     <y>457</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>layerStack</sender>
+   <signal>itemChanged(QTreeWidgetItem*,int)</signal>
+   <receiver>layerStack</receiver>
+   <slot>sl_updateItemChanged(QTreeWidgetItem*,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>999</x>
+     <y>389</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>972</x>
+     <y>386</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>layerStack</sender>
+   <signal>sig_updateGL()</signal>
+   <receiver>openGLWidget</receiver>
+   <slot>sl_updateGL()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>910</x>
+     <y>524</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>850</x>
+     <y>527</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>layerStack</sender>
+   <signal>itemClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>layerStack</receiver>
+   <slot>sl_changeWorkingLayer(QTreeWidgetItem*,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1111</x>
+     <y>425</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1110</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>layerStack</sender>
+   <signal>sig_addUndoCommand(QUndoCommand*)</signal>
+   <receiver>historyView</receiver>
+   <slot>sl_addUndoCommand(QUndoCommand*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1144</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1144</x>
+     <y>273</y>
     </hint>
    </hints>
   </connection>
