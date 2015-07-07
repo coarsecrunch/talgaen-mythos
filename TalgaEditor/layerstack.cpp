@@ -2,6 +2,9 @@
 #include <QTreeWidgetItem>
 #include <QDebug>
 #include "commands/cchangeworkinglayer.h"
+#include "commands/caddlayer.h"
+#include "commands/cremovelayer.h"
+
 namespace talga
 {
 namespace editor
@@ -18,17 +21,12 @@ void LayerStack::sl_updateLayerStack(EditorMap* map)
 {
   clear();
   mMap = map;
-  QTreeWidgetItem* topLayer = nullptr;
   for (auto iter = mMap->getLayers()->begin(); iter != mMap->getLayers()->end(); ++iter)
   {
-    QTreeWidgetItem* itm = new QTreeWidgetItem(this);
-    itm->setFlags(itm->flags() | Qt::ItemIsEditable);
-    itm->setText(0, QString::fromStdString( (*iter).getName() ) );
-    itm->setCheckState(1, Qt::Checked);
-    topLayer = itm;
+    sl_addLayerWidget( iter->getName(), topLevelItemCount() );
   }
 
-  sl_changeWorkingLayer(topLayer, 0);
+  //sl_changeWorkingLayer(takeTopLevelItem(topLevelItemCount() - 1), 0);
 }
 
 void LayerStack::sl_updateItemChanged(QTreeWidgetItem *itm, int column)
@@ -63,9 +61,61 @@ void LayerStack::sl_updateItemChanged(QTreeWidgetItem *itm, int column)
   emit sig_updateGL();
 }
 
+void LayerStack::sl_addLayer()
+{ 
+  std::string name = std::string("layer") + std::to_string(topLevelItemCount());
+
+  emit sig_addUndoCommand(new CAddLayer(mMap, name, this, mMap->getWorkingLayerIndex()));
+}
+
+void LayerStack::sl_removeLayer()
+{
+  if(mMap->getWorkingLayer())
+  {
+    std::string previousName = mMap->getWorkingLayer()->getName();
+    emit sig_addUndoCommand(new CRemoveLayer(mMap, previousName, this, mMap->getWorkingLayerIndex()));
+  }
+}
+
+void LayerStack::sl_addLayerWidget(std::string name, I32 idx)
+{
+  QTreeWidgetItem* itm = new QTreeWidgetItem();
+
+  itm->setFlags(itm->flags() | Qt::ItemIsEditable);
+  itm->setText(0, QString::fromStdString(name));
+  itm->setCheckState(1, Qt::Checked);
+
+  insertTopLevelItem(idx, itm);
+  //sl_changeWorkingLayer(itm, 0);
+}
+
+void LayerStack::sl_removeLayerWidget(std::string name)
+{
+  QTreeWidgetItemIterator it(this);
+  while (*it)
+  {
+    std::string tempStr = (*it)->text(0).toStdString();
+
+    if (name == (*it)->text(0).toStdString())
+    {
+
+      mMap->setWorkingLayer("null");
+
+      delete *it;
+      return;
+    }
+
+    ++it;
+  }
+}
+
 void LayerStack::sl_changeWorkingLayer(QTreeWidgetItem *itm, int column)
 {
-  if (indexOfTopLevelItem(itm) == mMap->getWorkingLayerIndex()) return;
+
+  if (mMap->getWorkingLayer())
+  {
+    if (itm->text(0).toStdString() == mMap->getWorkingLayer()->getName()) return;
+  }
 
   emit sig_addUndoCommand(new CChangeWorkingLayer(itm->text(0).toStdString(), mMap));
 }

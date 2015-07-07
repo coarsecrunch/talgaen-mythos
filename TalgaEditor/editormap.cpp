@@ -7,13 +7,12 @@ namespace talga
 {
   namespace editor
   {
-
     EditorMap::EditorMap()
       : Map()
       , mWorkingLayer{nullptr}
       , mWorkingLayerIndex{-1}
     {
-
+      mLayers.reserve(MAX_LAYERS);
     }
 
     EditorMap::~EditorMap()
@@ -91,12 +90,57 @@ namespace talga
       return;
     }
 
+    MapLayer EditorMap::addLayer(const MapLayer &cpy, I32 index)
+    {
+      mLayers.insert(mLayers.begin() + index, cpy);
+      setWorkingLayer(mLayers[index].getName());
+
+      std::cout << "size: " << mLayers.size() << std::endl;
+      std::cout << "capacity: " << mLayers.capacity() << std::endl;
+      return cpy;
+    }
+
+    MapLayer EditorMap::addLayer(std::string layerName, I32 index)
+    {
+      MapLayer temp = MapLayer((mWidth * mHeight), layerName);
+      if (mLayers.size() >= MAX_LAYERS)
+        return temp;
+
+
+      mLayers.insert(mLayers.begin() + index, temp);
+      setWorkingLayer(mLayers[index].getName());
+
+      std::cout << "size: " << mLayers.size() << std::endl;
+      std::cout << "capacity: " << mLayers.capacity() << std::endl;
+      return temp;
+    }
+
+    MapLayer EditorMap::deleteLayer(std::string name)
+    {
+      MapLayer temp;
+      for (auto it = mLayers.begin(); it != mLayers.end(); ++it)
+      {
+        if (name == it->getName())
+        {
+          temp = *it;
+          mLayers.erase(it);
+          return temp;
+        }
+      }
+
+      return temp;
+    }
+
     IndicesList EditorMap::insertTile(const std::vector<iPnt>& dropPositions, const std::vector<Tile>& tiles)
     {
+
       //insertSheet(tiles[0].first);
 
       I32 offset = getOffset(tiles[0].first);
       IndicesList previousIndices;
+
+      if (!mWorkingLayer)
+        return previousIndices;
 
       for (I32 i = 0; i < tiles.size(); ++i)
       {
@@ -139,12 +183,16 @@ namespace talga
 
     std::string EditorMap::setWorkingLayer(std::string layerName)
     {
-
       I32 i = 0;
       std::string previousName = layerName;
       if (mWorkingLayer)
           previousName = mWorkingLayer->getName();
 
+      if (layerName == "null")
+      {
+        mWorkingLayer = nullptr;
+        return previousName;
+      }
       for (auto it = mLayers.begin(); it != mLayers.end(); it++)
       {
         std::string comp = (*it).getName();

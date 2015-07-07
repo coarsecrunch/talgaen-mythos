@@ -38,6 +38,7 @@ namespace talga
       , mIsMouseDown{false}
       , mPreviousMousePos{0.0f, 0.0f, 0.0f}
       , mCurrentMapLayerIndex{-1}
+      , mStartNewHistoryItem(true)
     {
       QSurfaceFormat format;
       format.setVersion(3, 3);
@@ -201,7 +202,7 @@ namespace talga
         mPreviousMousePos = vec3(e->x(), e->y(), 1.0f);
         mStartNewHistoryItem = true;
 
-        if (!mShift && !(mCurrentSelection.first == "NULL"))
+        if (!mShift && !(mCurrentSelection.first == "NULL") && mCurrentMap.getWorkingLayer())
         {
           mStartPos = e->pos();
           vec3 pos = camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
@@ -212,19 +213,21 @@ namespace talga
             std::vector<iPnt> tiles;
 
             //mCurrentMap.insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
-            emit sig_updateHistoryMacro(true);
+            emit sig_updateHistoryMacro(mStartNewHistoryItem);
             emit sig_addUndoCommand(new CInsertTiles(&mCurrentMap, mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first)),
                  iPnt(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
+
+            mStartNewHistoryItem = false;
           }
         }
-        mStartNewHistoryItem = false;
+
 
       }
     }
 
     void GLContext::mouseMoveEvent(QMouseEvent *e)
     {
-      if (mIsMouseDown && !mShift)
+      if (mIsMouseDown && !mShift && mCurrentMap.getWorkingLayer())
       {
         mStartPos = e->pos();
         vec3 pos = camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
@@ -234,6 +237,12 @@ namespace talga
         {
           if ( !(mCurrentSelection.first == "NULL") )
           {
+            if (mStartNewHistoryItem)
+            {
+              emit sig_updateHistoryMacro(mStartNewHistoryItem);
+              mStartNewHistoryItem = false;
+            }
+
             emit sig_addUndoCommand(new CInsertTiles(&mCurrentMap, mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first)),
                                                     iPnt(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
 
@@ -327,8 +336,13 @@ namespace talga
       if (e->button() == Qt::LeftButton)
       {
         mIsMouseDown = false;
-        emit sig_updateHistoryMacro(false);
       }
+      if (e->button() == Qt::LeftButton && mCurrentMap.getWorkingLayer())
+      {
+        emit sig_updateHistoryMacro(false);
+        mStartNewHistoryItem = true;
+      }
+
     }
 
     void GLContext::wheelEvent(QWheelEvent *e)

@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/new/ico">
         <file>Talgapng.png</file>
+        <file>minus_button.png</file>
+        <file>plus_button.png</file>
     </qresource>
 </RCC>

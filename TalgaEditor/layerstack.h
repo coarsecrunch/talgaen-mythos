@@ -24,6 +24,11 @@ signals:
 public slots:
   void sl_updateLayerStack(EditorMap* map);
   void sl_updateItemChanged(QTreeWidgetItem* itm, int column);
+  void sl_addLayer();
+  void sl_removeLayer();
+
+  void sl_addLayerWidget(std::string name, I32 idx);
+  void sl_removeLayerWidget(std::string name);
 private slots:
   void sl_changeWorkingLayer(QTreeWidgetItem* itm, int column);
 private:

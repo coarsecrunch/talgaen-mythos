@@ -67,7 +67,9 @@ SOURCES += ../TalgaEditor/main.cpp \
     historyviewer.cpp \
     layerstack.cpp \
     globals.cpp \
-    commands/cchangeworkinglayer.cpp
+    commands/cchangeworkinglayer.cpp \
+    commands/caddlayer.cpp \
+    commands/cremovelayer.cpp
 
 HEADERS  += mainwindow.h \
     assetlist.h \
@@ -116,7 +118,9 @@ HEADERS  += mainwindow.h \
     historyviewer.h \
     layerstack.h \
     globals.h \
-    commands/cchangeworkinglayer.h
+    commands/cchangeworkinglayer.h \
+    commands/caddlayer.h \
+    commands/cremovelayer.h
 
 
 FORMS    += mainwindow.ui \

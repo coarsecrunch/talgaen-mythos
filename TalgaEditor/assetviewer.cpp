@@ -150,12 +150,12 @@ namespace talga
 
       for (int x = 0; x <= imageWidth / TILE_WIDTH; x++ )
       {
-        pmImageViewScene->addLine(x * TILE_WIDTH, 0, x * TILE_WIDTH, imageHeight, lineProperties);
+        //pmImageViewScene->addLine(x * TILE_WIDTH, 0, x * TILE_WIDTH, imageHeight, lineProperties);
       }
 
       for (int y = 0; y <= imageHeight / TILE_HEIGHT; y++)
       {
-        pmImageViewScene->addLine(0, y * TILE_HEIGHT, imageWidth, y * TILE_HEIGHT, lineProperties);
+        //pmImageViewScene->addLine(0, y * TILE_HEIGHT, imageWidth, y * TILE_HEIGHT, lineProperties);
       }
     }
 
