@@ -36,6 +36,16 @@ namespace talga
         mStack->endMacro();
     }
 
+    void HistoryViewer::sl_undoLast()
+    {
+      mStack->undo();
+    }
+
+    void HistoryViewer::sl_redoLast()
+    {
+      mStack->redo();
+    }
+
     void HistoryViewer::sl_addUndoCommand(QUndoCommand *c)
     {
       mStack->push(c);

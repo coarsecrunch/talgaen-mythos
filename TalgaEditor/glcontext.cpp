@@ -356,6 +356,16 @@ namespace talga
         mShift = true;
         QApplication::setOverrideCursor(Qt::PointingHandCursor);
       }
+
+      if ((e->key() == Qt::Key_Z)  && (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)))
+      {
+        emit sig_ctrlz();
+      }
+
+      if ((e->key() == Qt::Key_Y)  && (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)))
+      {
+        emit sig_ctrly();
+      }
     }
 
     void GLContext::keyReleaseEvent(QKeyEvent *e)

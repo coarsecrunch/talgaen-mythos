@@ -290,6 +290,8 @@
     <signal>sig_updateHistoryMacro(bool)</signal>
     <signal>sig_loadAsset(QString)</signal>
     <signal>sig_updateLayerStack(EditorMap*)</signal>
+    <signal>sig_ctrlz()</signal>
+    <signal>sig_ctrly()</signal>
     <slot>sl_addAsset(QString)</slot>
     <slot>sl_updateSelection(Selection)</slot>
     <slot>sl_updateGL()</slot>
@@ -302,6 +304,8 @@
    <slots>
     <slot>sl_addUndoCommand(QUndoCommand*)</slot>
     <slot>sl_updateHistoryMacro(bool)</slot>
+    <slot>sl_undoLast()</slot>
+    <slot>sl_redoLast()</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -510,6 +514,38 @@
     <hint type="destinationlabel">
      <x>1144</x>
      <y>273</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openGLWidget</sender>
+   <signal>sig_ctrlz()</signal>
+   <receiver>historyView</receiver>
+   <slot>sl_undoLast()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>889</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>905</x>
+     <y>72</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>openGLWidget</sender>
+   <signal>sig_ctrly()</signal>
+   <receiver>historyView</receiver>
+   <slot>sl_redoLast()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>882</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>916</x>
+     <y>59</y>
     </hint>
    </hints>
   </connection>

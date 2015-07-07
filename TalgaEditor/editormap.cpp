@@ -98,8 +98,9 @@ namespace talga
       I32 offset = getOffset(tiles[0].first);
       IndicesList previousIndices;
 
-      for (I32 i = 0; i < dropPositions.size(); ++i)
+      for (I32 i = 0; i < tiles.size(); ++i)
       {
+        if (!Exists(dropPositions[i].x(), dropPositions[i].y())) continue;
         previousIndices.push_back( getTile(dropPositions[i].x(), dropPositions[i].y(), mWorkingLayerIndex) );
 
         mLayers[mWorkingLayerIndex][ dropPositions[i].y() * mWidth + dropPositions[i].x() ] = getTileOffset(tiles[i]);
@@ -116,7 +117,10 @@ namespace talga
       I32 textureTileWidth = tex->w() / mTileWidth;
       I32 textureTileHeight = tex->h() / mTileHeight;
 
-      TALGA_ASSERT( (x >= 0 && x < textureTileWidth) && (y >= 0 && y < textureTileHeight), "");
+      if (!((x >= 0 && x < textureTileWidth) && (y >= 0 && y < textureTileHeight)))
+      {
+        return BLANK_TILE;
+      }
 
       return mTileSet[offset + (y * textureTileWidth + x)];
     }

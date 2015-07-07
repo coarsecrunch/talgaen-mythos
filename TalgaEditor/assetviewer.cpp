@@ -6,6 +6,7 @@
 #include <QBrush>
 #include "mainwindow.h"
 #include <QDockWidget>
+#include "Math/Operations.h"
 
 namespace talga
 {
@@ -20,6 +21,11 @@ namespace talga
       , pmImageViewScene(new QGraphicsScene)
       , mCurrentImage{"", nullptr}
       , mStartPos{-1,-1}
+      , mEndPos{-1, -1}
+      , mFill(QColor(50, 50, 50, 150))
+      , mLineProperties(Qt::NoPen)
+      , mSelectBox{nullptr}
+      , mLeftButtonIsDown{false}
     {
       setScene(pmImageViewScene);
 
@@ -27,12 +33,6 @@ namespace talga
 
       QBrush fillproperties(color);
       QPen lineProperties(Qt::NoPen);
-
-      mSelectBox = new QGraphicsRectItem( 0, 0, 0 + TILE_WIDTH, 0 + TILE_HEIGHT);
-      mSelectBox->setBrush(fillproperties);
-      mSelectBox->setPen(Qt::NoPen);
-
-      pmImageViewScene->addItem(mSelectBox);
     }
 
     AssetViewer::~AssetViewer()
@@ -41,10 +41,6 @@ namespace talga
       delete pmImageViewScene;
     }
 
-    void AssetViewer::mouseMoveEvent(QMouseEvent* e)
-    {
-      updateBox(e->x(), e->y());
-    }
 
     void AssetViewer::mousePressEvent(QMouseEvent *e)
     {
@@ -57,6 +53,17 @@ namespace talga
         {
           mStartPos = e->pos();
         }
+
+        mLeftButtonIsDown = true;
+      }
+    }
+
+    void AssetViewer::mouseMoveEvent(QMouseEvent *e)
+    {
+      if (mLeftButtonIsDown)
+      {
+        mEndPos = e->pos();
+        updateBox();
       }
     }
 
@@ -65,7 +72,7 @@ namespace talga
       if (mStartPos.x() != -1 && e->button() == Qt::LeftButton)
       {
         QPoint currentPos = e->pos();
-
+        QPoint mEndPos = e->pos();
         Selection s;
 
         s.first = mCurrentImage.first.toUtf8().constData();
@@ -75,19 +82,19 @@ namespace talga
         {
           if (mStartPos.y() > currentPos.y())
           {
-            for (I32 y = currentPos.y(); y < mStartPos.y(); y += TILE_HEIGHT)
+            for (I32 y = currentPos.y() / TILE_HEIGHT; y <= mStartPos.y() / TILE_HEIGHT; ++y)
             {
-              for (I32 x = currentPos.x(); x < mStartPos.x(); x += TILE_WIDTH)
+              for (I32 x = currentPos.x() / TILE_WIDTH; x <= mStartPos.x() / TILE_WIDTH; ++x)
               {
                 s.second.push_back(iPnt{x, y});
               }
             }
-      }
+          }
           else
           {
-            for (I32 y = mStartPos.y(); y < currentPos.y(); y += TILE_HEIGHT)
+            for (I32 y = mStartPos.y() / TILE_HEIGHT; y <= currentPos.y() / TILE_HEIGHT; ++y)
             {
-              for (I32 x = currentPos.x(); x < mStartPos.x(); x += TILE_WIDTH)
+              for (I32 x = currentPos.x() / TILE_WIDTH; x <= mStartPos.x() / TILE_WIDTH; ++x)
               {
                   s.second.push_back(iPnt{x, y});
               }
@@ -98,9 +105,9 @@ namespace talga
         {
           if (mStartPos.y() > currentPos.y())
           {
-            for (I32 y = currentPos.y(); y < mStartPos.y(); y += TILE_HEIGHT)
+            for (I32 y = currentPos.y() / TILE_HEIGHT; y <= mStartPos.y() / TILE_HEIGHT; ++y)
             {
-              for (I32 x = mStartPos.x(); x < currentPos.x(); x += TILE_WIDTH)
+              for (I32 x = mStartPos.x() / TILE_WIDTH; x <= currentPos.x() / TILE_WIDTH; ++x)
               {
                 s.second.push_back(iPnt{x, y});
               }
@@ -118,8 +125,9 @@ namespace talga
           }
         }
 
-        mStartPos.setX(-1);
-        mStartPos.setY(-1);
+        updateBox();
+        mStartPos = mEndPos;
+        mLeftButtonIsDown = false;
 
         emit sig_updateSelection(s);
       }
@@ -128,7 +136,6 @@ namespace talga
 
     void AssetViewer::sl_updateTexture(TextureAsset pix)
     {
-      pmImageViewScene->removeItem(mSelectBox);
       pmImageViewScene->clear();
 
 
@@ -150,20 +157,53 @@ namespace talga
       {
         pmImageViewScene->addLine(0, y * TILE_HEIGHT, imageWidth, y * TILE_HEIGHT, lineProperties);
       }
+    }
 
+    void AssetViewer::updateBox()
+    {
+      if (mSelectBox)
+      {
+        pmImageViewScene->removeItem(mSelectBox);
+        delete mSelectBox;
+      }
+
+
+      int boxX = 0;
+      int boxY = 0;
+      int boxW = 0;
+      int boxH = 0;
+
+      if (mStartPos.x() < mEndPos.x())
+      {
+        boxX = (mStartPos.x() / TILE_WIDTH) * TILE_WIDTH;
+        boxW = (((mEndPos.x() - boxX) / TILE_WIDTH) + 1)* TILE_WIDTH;
+      }
+      else
+      {
+        boxX = (mEndPos.x() / TILE_WIDTH) * TILE_WIDTH;
+        boxW = (((mStartPos.x() - boxX) / TILE_WIDTH) + 1) * TILE_WIDTH;
+      }
+
+      if (mStartPos.y() < mEndPos.y())
+      {
+        boxY = (mStartPos.y() / TILE_HEIGHT) * TILE_HEIGHT;
+        boxH = (((mEndPos.y() - boxY) / TILE_HEIGHT) + 1) * TILE_HEIGHT;
+      }
+      else
+      {
+        boxY = (mEndPos.y() / TILE_HEIGHT) * TILE_HEIGHT;
+        boxH = (((mStartPos.y() - boxY) / TILE_HEIGHT) + 1) * TILE_HEIGHT;
+      }
+      if (boxX < 0)
+        boxX = 0;
+      if (boxY < 0)
+        boxY = 0;
+
+      mSelectBox = new QGraphicsRectItem(boxX, boxY, boxW, boxH);
+      mSelectBox->setPen(mLineProperties);
+      mSelectBox->setBrush(mFill);
       pmImageViewScene->addItem(mSelectBox);
     }
-
-    void AssetViewer::updateBox(int mX, int mY)
-    {
-      int boxX = mX - mX % TILE_WIDTH;
-      int boxY = mY - mY % TILE_HEIGHT;
-
-      mSelectBox->setX(boxX);
-      mSelectBox->setY(boxY);
-    }
-
-
 
   }
 }

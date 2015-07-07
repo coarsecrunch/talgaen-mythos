@@ -49,7 +49,8 @@ namespace talga
       void sig_updateHistoryMacro(bool startNewHistoryItem);
       void sig_loadAsset(QString path);
       void sig_updateLayerStack(EditorMap* newLayers);
-
+      void sig_ctrlz();
+      void sig_ctrly();
     public slots:
       void sl_addAsset(QString path);
       void sl_updateSelection(Selection);

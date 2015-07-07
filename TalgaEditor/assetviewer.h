@@ -24,8 +24,8 @@ namespace talga
       AssetViewer(QWidget* );
       ~AssetViewer();
 
-      virtual void mouseMoveEvent(QMouseEvent *event) override;
       virtual void mousePressEvent(QMouseEvent* e) override;
+      virtual void mouseMoveEvent(QMouseEvent* e) override;
       virtual void mouseReleaseEvent(QMouseEvent* e) override;
     signals:
       void sig_updateSelection(Selection);
@@ -37,9 +37,13 @@ namespace talga
       QGraphicsScene* pmImageViewScene;
       QGraphicsRectItem* mSelectBox;
       TextureAsset mCurrentImage;
-      void updateBox(int, int);
 
+      bool mLeftButtonIsDown;
       QPoint mStartPos;
+      QPoint mEndPos;
+      QBrush mFill;
+      QPen mLineProperties;
+      void updateBox();
     };
 
   }
