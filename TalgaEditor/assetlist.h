@@ -14,6 +14,7 @@ namespace talga
   namespace editor
   {
     typedef QPair<QString, QImage*> TextureAsset;
+    class EditorMap;
 
     class AssetList : public QTreeWidget
     {
@@ -39,11 +40,13 @@ namespace talga
       void sl_assetSelected(QTreeWidgetItem*, int);
       void sl_chooseAssets();
       void sl_loadAsset(QString path);
+      void sl_updateChangedMap(EditorMap*);
     protected:
       QMap<QString, QImage*> mAssets;
       QTreeWidgetItem* mTexturesFolder;
       QTreeWidgetItem* mMapsFolder;
       QTreeWidgetItem* mScriptsFolder;
+      QTreeWidgetItem* mLevelFolder;
 
       QPoint dragStartPosition;
     };

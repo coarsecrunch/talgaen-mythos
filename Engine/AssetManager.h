@@ -24,7 +24,8 @@ namespace talga
 		cpTex GetTexture(std::string name) const;
 		cpMap GetMap(std::string name) const;
 
-
+		const std::vector<Texture>& getTextures() const { return mTextures; }
+		const std::vector<Map>& getMaps() const { return mMaps; }
 		cpTex NO_TEXTURE;
 	private:
 

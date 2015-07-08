@@ -15,6 +15,7 @@ namespace talga
 		virtual ~AAsset() {}
 
 		virtual bool load(std::string path, AssetManager& manager) = 0;
+		virtual bool save(std::string path, AssetManager& manager) = 0;
 		virtual void destroy() = 0;
 
 		std::string getName() const { return mName; }

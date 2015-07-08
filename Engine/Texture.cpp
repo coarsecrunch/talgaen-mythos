@@ -70,6 +70,11 @@ namespace talga
 		imgFile = nullptr;
 	}
 
+	bool Texture::save(std::string path, AssetManager& manager)
+	{
+		return true;
+	}
+
 	void Texture::bind() const
 	{
 		glActiveTexture(GL_TEXTURE0);

@@ -11,6 +11,8 @@
 #include "wrongextdialog.h"
 
 #include "Cmn.h"
+#include "editormap.h"
+#include "Texture.h"
 
 namespace talga
 {
@@ -23,11 +25,10 @@ namespace talga
       , mMapsFolder(nullptr)
       , mScriptsFolder(nullptr)
     {
-      mTexturesFolder = new QTreeWidgetItem(this);
-      mTexturesFolder->setText(0, "textures");
-      mMapsFolder = new QTreeWidgetItem(this);
-      mMapsFolder->setText(0, "maps");
-      mScriptsFolder = new QTreeWidgetItem(this);
+      mLevelFolder = new QTreeWidgetItem(this);
+      mTexturesFolder = new QTreeWidgetItem(mLevelFolder);
+      mTexturesFolder->setText(0, "tile sheets");
+      mScriptsFolder = new QTreeWidgetItem(mLevelFolder);
       mScriptsFolder->setText(0, "scripts");
     }
 
@@ -70,6 +71,22 @@ namespace talga
       {
         WrongExtDialog ext;
         ext.exec();
+      }
+    }
+
+    void AssetList::sl_updateChangedMap(EditorMap * map)
+    {
+      mLevelFolder->setText(0, QString::fromStdString(map->getName()));
+
+      for (I32 i = 0; i < mTexturesFolder->childCount(); ++i)
+      {
+        mTexturesFolder->removeChild(mTexturesFolder->child(i));
+      }
+
+      for (auto it = map->getTileSheets().begin(); it != map->getTileSheets().end(); ++it)
+      {
+        QTreeWidgetItem* temp = new QTreeWidgetItem(mTexturesFolder);
+        temp->setText(0, QString::fromStdString( (*it)->getName()));
       }
     }
 

@@ -511,22 +511,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>openGLWidget</sender>
-   <signal>sig_updateLayerStack(EditorMap*)</signal>
-   <receiver>layerStack</receiver>
-   <slot>sl_updateLayerStack(EditorMap*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>838</x>
-     <y>472</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>902</x>
-     <y>457</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>layerStack</sender>
    <signal>itemChanged(QTreeWidgetItem*,int)</signal>
    <receiver>layerStack</receiver>

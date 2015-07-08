@@ -32,7 +32,7 @@ namespace talga
 
     public slots:
       void sl_updateTexture(TextureAsset);
-
+      void sl_updateChangedMap(EditorMap* map);
     protected:
       QGraphicsScene* pmImageViewScene;
       QGraphicsRectItem* mSelectBox;

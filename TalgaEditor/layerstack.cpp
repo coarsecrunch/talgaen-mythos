@@ -17,7 +17,7 @@ LayerStack::LayerStack(QWidget* parent)
 {
 }
 
-void LayerStack::sl_updateLayerStack(EditorMap* map)
+void LayerStack::sl_updateChangedMap(EditorMap* map)
 {
   clear();
   mMap = map;
@@ -25,8 +25,6 @@ void LayerStack::sl_updateLayerStack(EditorMap* map)
   {
     sl_addLayerWidget( iter->getName(), topLevelItemCount() );
   }
-
-  //sl_changeWorkingLayer(takeTopLevelItem(topLevelItemCount() - 1), 0);
 }
 
 void LayerStack::sl_updateItemChanged(QTreeWidgetItem *itm, int column)

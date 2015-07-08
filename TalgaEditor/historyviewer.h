@@ -9,6 +9,8 @@ namespace talga
 {
   namespace editor
   {
+    class EditorMap;
+
     class HistoryViewer : public QUndoView
     {
       Q_OBJECT
@@ -24,6 +26,7 @@ namespace talga
       void sl_updateHistoryMacro(bool startNewHistoryItem);
       void sl_undoLast();
       void sl_redoLast();
+      void sl_updateChangedMap(EditorMap* map);
     protected:
       QUndoStack* mStack;
     };

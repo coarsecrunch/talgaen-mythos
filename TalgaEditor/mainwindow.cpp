@@ -7,6 +7,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include  "assetlist.h"
+#include "gdata.h"
 namespace talga
 {
   namespace editor
@@ -24,6 +25,13 @@ namespace talga
 
       //for updating the display every time you undo or redo
       connect(ui->historyView->stack(), SIGNAL(indexChanged(int)), ui->openGLWidget, SLOT(sl_updateGL()));
+
+      //for when maps are loaded
+      connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->openGLWidget, SLOT(sl_updateChangedMap(EditorMap*)));
+      connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->historyView, SLOT(sl_updateChangedMap(EditorMap*)));
+      connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->layerStack, SLOT(sl_updateChangedMap(EditorMap*)));
+      connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->assetList, SLOT(sl_updateChangedMap(EditorMap*)));
+      connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->imageView, SLOT(sl_updateChangedMap(EditorMap*)));
     }
 
     MainWindow::~MainWindow()

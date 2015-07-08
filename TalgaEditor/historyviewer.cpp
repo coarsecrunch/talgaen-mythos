@@ -46,6 +46,11 @@ namespace talga
       mStack->redo();
     }
 
+    void HistoryViewer::sl_updateChangedMap(EditorMap *map)
+    {
+      mStack->clear();
+    }
+
     void HistoryViewer::sl_addUndoCommand(QUndoCommand *c)
     {
       mStack->push(c);

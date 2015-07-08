@@ -22,6 +22,7 @@ namespace talga
 		, mTileHeight{ -1 }
 		, mLayers{}
 	{
+    mLayers.reserve(MAX_LAYERS);
 	}
 
 	Map::Map(const Map& cpy)
@@ -170,6 +171,8 @@ namespace talga
 		while (cc != '\\' && cc != '/')
 		{
 			--index;
+
+      if (index < 0) break;
 			cc = path.at(index);
 		}
 
@@ -194,7 +197,7 @@ namespace talga
 		stream >> numTextures; // numTiles
 		stream >> numLayers;
 
-
+		
 		for (auto i = 0; i < numTextures; ++i)
 		{
 			stream >> tempTex;
@@ -205,10 +208,11 @@ namespace talga
 				manager.AddTexture(RELATIVE_ASSETS_PATH + tempTex);
 				tex = manager.GetTexture(tempTex);
 			}
-
-
+			
+			
 			if (tex)
 			{
+				mTileSheets.push_back(tex);
 				I32 framesPerRow = tex->w() / tileWidth;
 				I32 framesPerColumn = tex->h() / tileHeight;
 
@@ -260,7 +264,7 @@ namespace talga
 			++tempCount;
 		}
 		
-
+		mNumSheets = numTextures;
 		mName = name;
 		mTileSet = tiles;
 		mLayers = layers;
@@ -268,10 +272,69 @@ namespace talga
 		mHeight = mapHeight;
 		mTileWidth = tileWidth;
 		mTileHeight = tileHeight;
-
+		
+		
+		stream.close();
 		return true;
 	}
+	bool Map::save(std::string path, AssetManager& manager)
+	{
+		std::ofstream stream;
 
+		stream.open(path);
+		TALGA_ASSERT(stream.is_open(), "failed to write file");
+
+		stream << mTileWidth << std::endl;
+		stream << mTileHeight << std::endl;
+		stream << mWidth << std::endl;
+		stream << mHeight << std::endl;
+		
+
+		std::string lastTex = "";
+		std::vector<std::string> sheetNames;
+		I32 numSheets = 0;
+		for (auto it = mTileSet.begin(); it != mTileSet.end(); ++it)
+		{
+			if (it->first->getName() != lastTex)
+			{
+				lastTex = it->first->getName();
+				++numSheets;
+				sheetNames.push_back(lastTex);
+			}
+		}
+
+		stream << numSheets << std::endl;
+		stream << mLayers.size() << std::endl;
+
+		for (auto it = sheetNames.begin(); it != sheetNames.end(); ++it)
+		{
+			stream << *it << std::endl;
+		}
+
+		for (auto it = mLayers.begin(); it != mLayers.end(); ++it)
+		{
+			stream << it->getName() << std::endl;
+		}
+
+		for (auto it = mLayers.begin(); it != mLayers.end(); ++it)
+		{
+			for (I32 y = 0; y < mHeight; ++y)
+			{
+				for (I32 x = 0; x < mWidth; ++x)
+				{
+					stream << (*it)[y * mWidth + x] << " ";
+				}
+
+				stream << std::endl;
+			}
+			stream << std::endl;
+		}
+
+		stream.close();
+
+		TALGA_MSG(path + " was sucessfully saved");
+		return true;
+	}
 	void Map::destroy()
 	{
 	}

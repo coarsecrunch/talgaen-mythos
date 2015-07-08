@@ -14,10 +14,9 @@
 #include "IRenderable.h"
 #include "commands/CInsertTiles.h"
 #include "commands/cchangeworkinglayer.h"
+#include "gdata.h"
 
 #include <vector>
-
-
 
 namespace talga
 {
@@ -31,8 +30,7 @@ namespace talga
       , mTileLayer{nullptr, width(), height()}
       , mSpriteLayer{nullptr, width(), height()}
       , mSelectionLayer{nullptr, width(), height()}
-      , mManager{}
-      , mCurrentMap()
+      , mCurrentMap{nullptr}
       , mCurrentSelection{"NULL", std::vector<iPnt>{}}
       , mShift{false}
       , mIsMouseDown{false}
@@ -71,24 +69,20 @@ namespace talga
 
       mRenderer2D->setCamera(&camera);
 
-      //mManager.AddTexture("../../../assets/sprite_sheet.png");
+      GData::getInstance()->getManager()->AddTexture("../../../assets/sprite_sheet.png");
       emit sig_loadAsset(QString("../../../assets/sprite_sheet.png"));
 
-      mCurrentMap = *mManager.AddMap("../../../assets/test.map");
+      GData::getInstance()->sl_loadMap();
+      mCurrentMap = GData::getInstance()->getCurrentMap();
 
-      mCurrentMap.insertSheet(mManager.GetTexture("sprite_sheet.png"));
+      mCurrentMap->insertSheet(GData::getInstance()->getManager()->GetTexture("sprite_sheet.png"));
 
-      emit sig_updateLayerStack(&mCurrentMap);
+      emit sig_updateLayerStack(mCurrentMap);
 
-      mTileLayer.add(&mCurrentMap);
+      mTileLayer.add(mCurrentMap);
 
       camera.getBox().setX(100);
       camera.getBox().setY(200);
-
-      if (mCurrentMap.getLayers()->size() > 0)
-      {
-        mCurrentMapLayerIndex = 0;
-      }
     }
 
     void GLContext::dragEnterEvent(QDragEnterEvent *e)
@@ -107,7 +101,7 @@ namespace talga
 
       if ( fileEnding == "png" )
       {
-        mSpriteLayer.add(new Sprite(mManager.GetTexture(assetname)));
+        mSpriteLayer.add(new Sprite(GData::getInstance()->getManager()->GetTexture(assetname)));
         update();
       }
       else if (fileEnding == "tmap")
@@ -130,12 +124,12 @@ namespace talga
 
       if ( fileEnding == "png" )
       {
-        mManager.AddTexture(path.toStdString());
+        GData::getInstance()->getManager()->AddTexture(path.toStdString());
       }
 
       else if (fileEnding == "tmap")
       {
-        mManager.AddMap(path.toStdString());
+        GData::getInstance()->getManager()->AddMap(path.toStdString());
       }
 
       else
@@ -144,21 +138,21 @@ namespace talga
 
     void GLContext::sl_updateSelection(Selection selection)
     {
-      auto tex = mManager.GetTexture(selection.first);
+      auto tex = GData::getInstance()->getManager()->GetTexture(selection.first);
 
       if (!tex) return;
 
-      mCurrentMap.insertSheet(tex);
+      mCurrentMap->insertSheet(tex);
       mCurrentSelection = selection;
 
-      auto tiles = mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first));
+      auto tiles = mCurrentMap->getTiles(mCurrentSelection.second, GData::getInstance()->getManager()->GetTexture(mCurrentSelection.first));
 
       mSelectionLayer.clear();
       mSelectionRender.clear();
       mSelectionRender.reserve(tiles.size());
       for (auto& t : tiles)
       {
-        mSelectionRender.push_back(Sprite{t.first, mCurrentMap.getTileWidth(), mCurrentMap.getTileHeight(), 0.5f, t.second});
+        mSelectionRender.push_back(Sprite{t.first, mCurrentMap->getTileWidth(), mCurrentMap->getTileHeight(), 0.5f, t.second});
         mSelectionLayer.add(&mSelectionRender.back());
       }
     } 
@@ -166,6 +160,12 @@ namespace talga
     void GLContext::sl_updateGL()
     {
       update();
+    }
+
+    void GLContext::sl_updateChangedMap(EditorMap *newMap)
+    {
+      mCurrentMap = newMap;
+      sl_updateGL();
     }
 
     void GLContext::paintGL()
@@ -202,38 +202,37 @@ namespace talga
         mPreviousMousePos = vec3(e->x(), e->y(), 1.0f);
         mStartNewHistoryItem = true;
 
-        if (!mShift && !(mCurrentSelection.first == "NULL") && mCurrentMap.getWorkingLayer())
+        if (!mShift && !(mCurrentSelection.first == "NULL") && mCurrentMap->getWorkingLayer())
         {
           mStartPos = e->pos();
           vec3 pos = camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
 
-          if (pos(0) >= 0 && pos(0) < mCurrentMap.getTileWidth() * mCurrentMap.getWidth()
-              && pos(1) >= 0 && pos(1) < mCurrentMap.getTileHeight() * mCurrentMap.getHeight())
+          if (pos(0) >= 0 && pos(0) < mCurrentMap->getTileWidth() * mCurrentMap->getWidth()
+              && pos(1) >= 0 && pos(1) < mCurrentMap->getTileHeight() * mCurrentMap->getHeight())
           {
             std::vector<iPnt> tiles;
 
-            //mCurrentMap.insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
+            //mCurrentMap->insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap->getTileWidth(), pos(1) / mCurrentMap->getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
             emit sig_updateHistoryMacro(mStartNewHistoryItem);
-            emit sig_addUndoCommand(new CInsertTiles(&mCurrentMap, mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first)),
-                 iPnt(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
+            emit sig_addUndoCommand(new CInsertTiles(mCurrentMap, mCurrentMap->getTiles(mCurrentSelection.second, GData::getInstance()->getManager()->GetTexture(mCurrentSelection.first)),
+                 iPnt(pos(0) / mCurrentMap->getTileWidth(), pos(1) / mCurrentMap->getTileHeight()), mCurrentSelection.second));
 
             mStartNewHistoryItem = false;
           }
         }
-
 
       }
     }
 
     void GLContext::mouseMoveEvent(QMouseEvent *e)
     {
-      if (mIsMouseDown && !mShift && mCurrentMap.getWorkingLayer())
+      if (mIsMouseDown && !mShift && mCurrentMap->getWorkingLayer())
       {
         mStartPos = e->pos();
         vec3 pos = camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
 
-        if (pos(0) >= 0 && pos(0) < mCurrentMap.getTileWidth() * mCurrentMap.getWidth()
-            && pos(1) >= 0 && pos(1) < mCurrentMap.getTileHeight() * mCurrentMap.getHeight())
+        if (pos(0) >= 0 && pos(0) < mCurrentMap->getTileWidth() * mCurrentMap->getWidth()
+            && pos(1) >= 0 && pos(1) < mCurrentMap->getTileHeight() * mCurrentMap->getHeight())
         {
           if ( !(mCurrentSelection.first == "NULL") )
           {
@@ -243,8 +242,8 @@ namespace talga
               mStartNewHistoryItem = false;
             }
 
-            emit sig_addUndoCommand(new CInsertTiles(&mCurrentMap, mCurrentMap.getTiles(mCurrentSelection.second, mManager.GetTexture(mCurrentSelection.first)),
-                                                    iPnt(pos(0) / mCurrentMap.getTileWidth(), pos(1) / mCurrentMap.getTileHeight()), mCurrentSelection.second));
+            emit sig_addUndoCommand(new CInsertTiles(mCurrentMap, mCurrentMap->getTiles(mCurrentSelection.second, GData::getInstance()->getManager()->GetTexture(mCurrentSelection.first)),
+                                                    iPnt(pos(0) / mCurrentMap->getTileWidth(), pos(1) / mCurrentMap->getTileHeight()), mCurrentSelection.second));
 
           }
 
@@ -265,8 +264,8 @@ namespace talga
       // show transparent selection under mouse
       if ( !(mCurrentSelection.first == "NULL"))
       {
-        I32 tW = mCurrentMap.getTileWidth();
-        I32 tH = mCurrentMap.getTileHeight();
+        I32 tW = mCurrentMap->getTileWidth();
+        I32 tH = mCurrentMap->getTileHeight();
 
         if (mSelectionRender.size() > 0)
         {
@@ -337,7 +336,7 @@ namespace talga
       {
         mIsMouseDown = false;
       }
-      if (e->button() == Qt::LeftButton && mCurrentMap.getWorkingLayer())
+      if (e->button() == Qt::LeftButton && mCurrentMap->getWorkingLayer())
       {
         emit sig_updateHistoryMacro(false);
         mStartNewHistoryItem = true;

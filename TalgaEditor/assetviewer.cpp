@@ -159,6 +159,11 @@ namespace talga
       }
     }
 
+    void AssetViewer::sl_updateChangedMap(EditorMap* map)
+    {
+      pmImageViewScene->clear();
+    }
+
     void AssetViewer::updateBox()
     {
       if (mSelectBox)

@@ -22,7 +22,7 @@ signals:
   void sig_addUndoCommand(QUndoCommand* cmd);
   void sig_updateGL();
 public slots:
-  void sl_updateLayerStack(EditorMap* map);
+  void sl_updateChangedMap(EditorMap* map);
   void sl_updateItemChanged(QTreeWidgetItem* itm, int column);
   void sl_addLayer();
   void sl_removeLayer();

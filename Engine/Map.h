@@ -60,6 +60,7 @@ namespace talga
 		virtual void render(Renderer* renderer, const Camera* camera) const override;
 
 		virtual bool load(std::string path, AssetManager& manager) override;
+		virtual bool save(std::string path, AssetManager& manager) override;
 		virtual void destroy() override;
 
 		const Map& operator=(const Map& cpy);
@@ -82,6 +83,7 @@ namespace talga
 		I32 getTileHeight() const { return mTileHeight; }
 		I32 getTileWidth() const { return mTileWidth; }
 		
+		const std::vector<cpTex>& getTileSheets() const { return mTileSheets; }
 	protected:
 		I32 mTileWidth;
 		I32 mTileHeight;
@@ -90,6 +92,8 @@ namespace talga
 		I32 mWidth;
 
 		std::vector<Tile> mTileSet;
+		std::vector<cpTex> mTileSheets;
+		I32 mNumSheets;
 		LayerList mLayers;
 	};
 

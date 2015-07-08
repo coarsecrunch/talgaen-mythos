@@ -14,6 +14,7 @@ namespace talga
 		virtual ~Texture();
 
 		virtual bool load(std::string path, AssetManager& manager) override;
+		virtual bool save(std::string path, AssetManager& manager) override;
 		virtual void destroy() override;
 
 		void bind() const;

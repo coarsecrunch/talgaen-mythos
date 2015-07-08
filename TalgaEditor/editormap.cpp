@@ -12,7 +12,6 @@ namespace talga
       , mWorkingLayer{nullptr}
       , mWorkingLayerIndex{-1}
     {
-      mLayers.reserve(MAX_LAYERS);
     }
 
     EditorMap::~EditorMap()

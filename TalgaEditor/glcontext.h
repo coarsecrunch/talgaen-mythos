@@ -55,6 +55,7 @@ namespace talga
       void sl_addAsset(QString path);
       void sl_updateSelection(Selection);
       void sl_updateGL();
+      void sl_updateChangedMap(EditorMap* newMap);
 
     protected:
       Camera camera;
@@ -63,8 +64,7 @@ namespace talga
       Layer mSpriteLayer;
       Layer mSelectionLayer;
       Renderer* mRenderer2D;
-      AssetManager mManager;
-      EditorMap mCurrentMap;
+      EditorMap* mCurrentMap;
 
       //tracking
       Selection mCurrentSelection;
