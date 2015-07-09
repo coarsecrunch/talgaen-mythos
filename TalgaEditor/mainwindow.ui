@@ -60,6 +60,8 @@
      <string>File</string>
     </property>
     <addaction name="actionLoad_Assets"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionOpen"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -327,6 +329,16 @@
   <action name="actionLoad_Assets">
    <property name="text">
     <string>Load Assets</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
    </property>
   </action>
  </widget>

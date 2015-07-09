@@ -32,6 +32,10 @@ namespace talga
 
       void on_actionLoad_Assets_triggered();
 
+      void on_actionSave_triggered();
+
+      void on_actionOpen_triggered();
+
     protected:
       Ui::MainWindow *ui;
 

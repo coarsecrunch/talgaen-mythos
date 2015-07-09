@@ -19,8 +19,8 @@ public:
   void destroy();
 
 public slots:
-   void sl_saveMap();
-   void sl_loadMap();
+   void sl_saveMap(std::string path);
+   void sl_loadMap(std::string path);
 
 signals:
   void sig_mapChanged(EditorMap* map);

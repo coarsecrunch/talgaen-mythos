@@ -52,3 +52,21 @@ void talga::editor::MainWindow::on_actionLoad_Assets_triggered()
 {
   ui->assetList->sl_chooseAssets();
 }
+
+void talga::editor::MainWindow::on_actionSave_triggered()
+{
+  QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                             "untitled.tmap",
+                             tr("Talga map (*.tmap)"));
+    GData::getInstance()->sl_saveMap(fileName.toStdString());
+}
+
+void talga::editor::MainWindow::on_actionOpen_triggered()
+{
+  QString files = QFileDialog::getOpenFileName(
+                          this,
+                          "Select one or more files to open",
+                          "/home",
+                          "Talga map (*.tmap)");
+    GData::getInstance()->sl_loadMap(files.toStdString());
+}

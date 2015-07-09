@@ -72,7 +72,7 @@ namespace talga
       GData::getInstance()->getManager()->AddTexture("../../../assets/sprite_sheet.png");
       emit sig_loadAsset(QString("../../../assets/sprite_sheet.png"));
 
-      GData::getInstance()->sl_loadMap();
+      GData::getInstance()->sl_loadMap("baldbelly.tmap");
       mCurrentMap = GData::getInstance()->getCurrentMap();
 
       mCurrentMap->insertSheet(GData::getInstance()->getManager()->GetTexture("sprite_sheet.png"));

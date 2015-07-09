@@ -1,6 +1,10 @@
 #include "gdata.h"
 #include "editormap.h"
 #include "AssetManager.h"
+
+#include <QFileDialog>
+#include <QString>
+
 namespace talga
 {
 namespace editor
@@ -33,15 +37,15 @@ void GData::destroy()
   delete mCurrentMap;
 }
 
-void GData::sl_saveMap()
+void GData::sl_saveMap(std::string path)
 {
-  mCurrentMap->save("baldbelly.tmap", *mManager);
+  mCurrentMap->save(path, *mManager);
 }
 
-void GData::sl_loadMap()
+void GData::sl_loadMap(std::string path)
 {
   *mCurrentMap = EditorMap();
-  mCurrentMap->load("baldbelly.tmap", *mManager);
+  mCurrentMap->load(path, *mManager);
 
   emit sig_mapChanged(mCurrentMap);
 }
