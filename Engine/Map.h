@@ -40,10 +40,13 @@ namespace talga
 		void setSolid(bool value) { mSolid = value; }
 		void resize(I32 size) { mIndices.clear();  mIndices.resize(size); }
 		void setName(std::string value) { mName = value; }
+
+
 	protected:
 		std::vector<I32> mIndices;
 		
 		bool mVisible;
+
 		bool mSolid;
 		std::string mName;
 	};
@@ -62,6 +65,8 @@ namespace talga
 		virtual bool load(std::string path, AssetManager& manager) override;
 		virtual bool save(std::string path, AssetManager& manager) override;
 		virtual void destroy() override;
+
+    static Map createEmptyMap(I32 tW, I32 tH, I32 w, I32 h, const std::string& name);
 
 		const Map& operator=(const Map& cpy);
 
@@ -84,10 +89,11 @@ namespace talga
 		I32 getTileWidth() const { return mTileWidth; }
 		
 		const std::vector<cpTex>& getTileSheets() const { return mTileSheets; }
+    bool hasBeenSaved() const { return mIsSaved; }
 	protected:
 		I32 mTileWidth;
 		I32 mTileHeight;
-
+    bool mIsSaved;
 		I32 mHeight;
 		I32 mWidth;
 
@@ -96,5 +102,4 @@ namespace talga
 		I32 mNumSheets;
 		LayerList mLayers;
 	};
-
 }

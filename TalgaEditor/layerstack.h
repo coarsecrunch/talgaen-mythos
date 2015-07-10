@@ -29,6 +29,9 @@ public slots:
 
   void sl_addLayerWidget(std::string name, I32 idx);
   void sl_removeLayerWidget(std::string name);
+  void sl_swapLayerWidgets(I32 idx1, I32 idx2);
+  void sl_moveWorkingLayerDown();
+  void sl_moveWorkingLayerUp();
 private slots:
   void sl_changeWorkingLayer(QTreeWidgetItem* itm, int column);
 private:

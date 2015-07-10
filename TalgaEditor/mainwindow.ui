@@ -59,9 +59,10 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionLoad_Assets"/>
-    <addaction name="actionSave"/>
     <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_as"/>
+    <addaction name="actionLoad_Assets"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -308,6 +309,40 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../assets/icons/icons.qrc">
+            <normaloff>:/new/ico/layer_up_button.png</normaloff>:/new/ico/layer_up_button.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_3">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../assets/icons/icons.qrc">
+            <normaloff>:/new/ico/layer_down _button.png</normaloff>:/new/ico/layer_down _button.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -328,17 +363,22 @@
   </widget>
   <action name="actionLoad_Assets">
    <property name="text">
-    <string>Load Assets</string>
+    <string>Load Assets...</string>
    </property>
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>Save</string>
+    <string> Save...</string>
    </property>
   </action>
   <action name="actionOpen">
    <property name="text">
     <string>Open</string>
+   </property>
+  </action>
+  <action name="actionSave_as">
+   <property name="text">
+    <string>Save as...</string>
    </property>
   </action>
  </widget>
@@ -403,6 +443,8 @@
     <slot>sl_changeWorkingLayer(QTreeWidgetItem*,int)</slot>
     <slot>sl_addLayer()</slot>
     <slot>sl_removeLayer()</slot>
+    <slot>sl_moveWorkingLayerUp()</slot>
+    <slot>sl_moveWorkingLayerDown()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -647,6 +689,38 @@
     <hint type="destinationlabel">
      <x>946</x>
      <y>625</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>layerStack</receiver>
+   <slot>sl_moveWorkingLayerUp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>979</x>
+     <y>644</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>975</x>
+     <y>583</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>layerStack</receiver>
+   <slot>sl_moveWorkingLayerDown()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1010</x>
+     <y>645</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1011</x>
+     <y>597</y>
     </hint>
    </hints>
   </connection>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-
+#include "Map.h"
 namespace talga
 {
   class AssetManager;
@@ -14,14 +14,14 @@ class GData : public QObject
 public:
 
   static GData* getInstance();
-  EditorMap* getCurrentMap();
+  const EditorMap* getCurrentMap();
   AssetManager* getManager();
   void destroy();
-
+  void setCurrentMap(const Map& map);
 public slots:
-   void sl_saveMap(std::string path);
-   void sl_loadMap(std::string path);
-
+   void sl_saveMap();
+   void sl_loadMap(const std::string& path);
+   void sl_saveAs(const std::string& path);
 signals:
   void sig_mapChanged(EditorMap* map);
 

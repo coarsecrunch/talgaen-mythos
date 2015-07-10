@@ -8,8 +8,7 @@ namespace talga
 {
 	AnimationSet::AnimationSet(cpTex tex)
 		: mTex(tex)
-		, mAnims({AnimSetPair("default",
-	 UVAnimation{ UVFrame{ { vec2(0, 1), vec2(1, 1), vec2(1, 0), vec2(0, 0) } } }) })
+		, mAnims({AnimSetPair("default", UVAnimation{ WHOLE_TEXTURE }) })
 	{
 		// Sweet baby talga this is ridiculous
 	}
@@ -32,14 +31,21 @@ namespace talga
 		UVAnimation anim;
 		for (const auto& rectFrame : frames)
 		{
-			UVFrame frame;
-			
-			frame[0] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y, mTex->h());
-			frame[1] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y, mTex->h());
-			frame[2] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
-			frame[3] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
+			if (mTex)
+			{
+				UVFrame frame;
 
-			anim.push_back(frame);
+				frame[0] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y, mTex->h());
+				frame[1] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y, mTex->h());
+				frame[2] = GET_UV(rectFrame.x + rectFrame.w, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
+				frame[3] = GET_UV(rectFrame.x, mTex->w(), rectFrame.y + rectFrame.h, mTex->h());
+
+				anim.push_back(frame);
+			}
+			else
+			{
+				anim.push_back(WHOLE_TEXTURE);
+			}
 		}
 
 		mAnims.push_back(AnimSetPair(name, anim));

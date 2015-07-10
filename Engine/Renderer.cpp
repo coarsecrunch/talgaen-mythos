@@ -3,6 +3,7 @@
 #include "Rendering.h"
 #include "Rectangle.h"
 #include "Texture.h"
+#include "AssetManager.h"
 #include <iostream>
 
 namespace talga
@@ -118,6 +119,10 @@ namespace talga
 
 		float texId = -1;
 		bool found = false;
+		
+		//if (!tex) 
+			//tex = AssetManager::NO_TEXTURE;
+		
 		if (tex)
 		{
 			if (tex->id() > 0)
@@ -209,6 +214,21 @@ namespace talga
 	void Renderer::tStackPop()
 	{
 		mTransformationStack.pop();
+	}
+
+	bool Renderer::load(std::string path, AssetManager& manager)
+	{
+		return false;
+	}
+
+	bool Renderer::save(std::string path, AssetManager& manager)
+	{
+		return false;
+	}
+
+	void Renderer::destroy()
+	{
+
 	}
 
 	Renderer::~Renderer()

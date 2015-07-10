@@ -41,6 +41,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Rendering.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="sys.cpp" />
     <ClCompile Include="talgamain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transformation2D.cpp" />
@@ -53,6 +54,7 @@
     <ClInclude Include="ESubject.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Observer.h" />
+    <ClInclude Include="sys.h" />
     <ClInclude Include="tassert.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Camera.h" />

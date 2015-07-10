@@ -54,7 +54,7 @@ namespace talga
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      mRenderer2D = new Renderer("../../../assets/shaders/renderer2d.vert", "../../../assets/shaders/renderer2d.frag");
+      mRenderer2D = new Renderer("../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag");
 
       mSpriteLayer.setRenderer(mRenderer2D);
       mSpriteLayer.setProjectionMatrix(width(), height());
@@ -68,16 +68,6 @@ namespace talga
       camera.update(0);
 
       mRenderer2D->setCamera(&camera);
-
-      GData::getInstance()->getManager()->AddTexture("../../../assets/sprite_sheet.png");
-      emit sig_loadAsset(QString("../../../assets/sprite_sheet.png"));
-
-      GData::getInstance()->sl_loadMap("baldbelly.tmap");
-      mCurrentMap = GData::getInstance()->getCurrentMap();
-
-      mCurrentMap->insertSheet(GData::getInstance()->getManager()->GetTexture("sprite_sheet.png"));
-
-      emit sig_updateLayerStack(mCurrentMap);
 
       mTileLayer.add(mCurrentMap);
 
@@ -159,12 +149,25 @@ namespace talga
 
     void GLContext::sl_updateGL()
     {
-      update();
+      if (mCurrentMap)
+      {
+        update();
+      }
     }
 
     void GLContext::sl_updateChangedMap(EditorMap *newMap)
     {
+      mTileLayer.clear();
+      mSpriteLayer.clear();
+      mSelectionLayer.clear();
+
       mCurrentMap = newMap;
+
+      if (newMap)
+      {
+        mTileLayer.add(mCurrentMap);
+      }
+
       sl_updateGL();
     }
 
@@ -226,7 +229,7 @@ namespace talga
 
     void GLContext::mouseMoveEvent(QMouseEvent *e)
     {
-      if (mIsMouseDown && !mShift && mCurrentMap->getWorkingLayer())
+      if (mIsMouseDown && !mShift && mCurrentMap && mCurrentMap->getWorkingLayer())
       {
         mStartPos = e->pos();
         vec3 pos = camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
@@ -336,7 +339,7 @@ namespace talga
       {
         mIsMouseDown = false;
       }
-      if (e->button() == Qt::LeftButton && mCurrentMap->getWorkingLayer())
+      if (e->button() == Qt::LeftButton && mCurrentMap && mCurrentMap->getWorkingLayer())
       {
         emit sig_updateHistoryMacro(false);
         mStartNewHistoryItem = true;

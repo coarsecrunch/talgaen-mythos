@@ -24,7 +24,7 @@ namespace talga
 		glfwMakeContextCurrent(mWindow);
 		glfwSetKeyCallback(mWindow, nullptr);
 		glfwSetWindowSizeCallback(mWindow, nullptr);
-		glfwSwapInterval(0);
+		glfwSwapInterval(1);
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);

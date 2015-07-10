@@ -17,12 +17,16 @@ INCLUDEPATH += ../Engine/ \
     ../Engine/Math/ \
     ../include/
 
+DEFINES -= UNICODE
+
 DEFINES += GLFW_DLL \
     TALGA_ASSERTIONS_ENABLED \
     TALGA_WARNINGS_ENABLED \
-    TALGA_MESSAGES_ENABLED
+    TALGA_MESSAGES_ENABLED \
+    TALGA_QT_BUILD \
 
 win32: DEFINES += TALGA_WINDOWS_BUILD
+win32: DEFINES += _CRT_SECURE_NO_WARNINGS
 unix:!macx: DEFINES += TALGA_UBUNTU_BUILD
 
 
@@ -31,7 +35,6 @@ SOURCES += ../TalgaEditor/main.cpp \
         mainwindow.cpp \
     assetlist.cpp \
     assetviewer.cpp \
-    wrongextdialog.cpp \
     glcontext.cpp \
     ../Engine/Math/Matrix3x3.cpp \
     ../Engine/Math/Matrix4x4.cpp \
@@ -69,12 +72,13 @@ SOURCES += ../TalgaEditor/main.cpp \
     commands/cchangeworkinglayer.cpp \
     commands/caddlayer.cpp \
     commands/cremovelayer.cpp \
-    gdata.cpp
+    gdata.cpp \
+    commands/cchangelayerorder.cpp \
+    ../Engine/sys.cpp
 
 HEADERS  += mainwindow.h \
     assetlist.h \
     assetviewer.h \
-    wrongextdialog.h \
     glcontext.h \
     ../Engine/Math/Interpolation.h \
     ../Engine/Math/MathCommon.h \
@@ -120,11 +124,13 @@ HEADERS  += mainwindow.h \
     commands/cchangeworkinglayer.h \
     commands/caddlayer.h \
     commands/cremovelayer.h \
-    gdata.h
+    gdata.h \
+    commands/cchangelayerorder.h \
+    ../Engine/sys.h \
+    ../Engine/AAsset.h
 
 
-FORMS    += mainwindow.ui \
-    wrongextdialog.ui
+FORMS    += mainwindow.ui
 
 DISTFILES += \
     ../assets/sandbox/Archimedes/Archimedes.autosave.scml \

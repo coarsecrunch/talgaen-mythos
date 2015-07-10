@@ -1,3 +1,4 @@
+#define _GLFW_USE_DWM_SWAP_INTERVAL 1
 #include "Cmn.h"
 #include "Rendering.h"
 #include "Map.h"
@@ -23,6 +24,7 @@
 #include "Sprite.h"
 #include "AnimSet.h"
 #include "Math/RandomGen.h"
+#include "sys.h"
 
 using namespace talga;
 
@@ -60,6 +62,8 @@ void resize_window_callback(GLFWwindow* window, int w, int h)
 int main(int argc, char** argv)
 {
 
+	std::cout << getRelFromAbs("C:/talga/assets/foosrawd", "C:/talga/textures/jiggle/") << std::endl;
+
 	Clock clock;
 	clock.Init();
 	Game game;
@@ -71,19 +75,17 @@ int main(int argc, char** argv)
 
 	game.Init(WIDTH, HEIGHT, "hello talga");
 	AssetManager manager;
-	//manager.AddTexture("../assets/charactersheet.png");
-	manager.AddTexture("../assets/sprite_sheet.png");
-	manager.AddTexture("../assets/talgasheet.png");
-	manager.AddMap("../assets/test.map");
-
-	
+	manager.AddTexture("../assets/charactersheet.png");
+	//manager.AddTexture("../assets/talgasheet.png");
+	manager.AddMap("../assets/test.tmap");
 
 	U32 previousTime = 0;
 	U32 dt = 0;
 	U32 fps = 0;
 	U32 timeSince = 0;
-	
+
 	glfwSetWindowSizeCallback(game.getWindow().getWindow(), resize_window_callback);
+	
 	AnimationSet set{ manager.GetTexture("talgasheet.png") };
 
 	game.getCamera().getBox().setX(0);
@@ -94,7 +96,7 @@ int main(int argc, char** argv)
 
 	set.addAnim("talgaStandL", talgaStandL);
 
-	Renderer renderer("..\\assets\\shaders\\renderer2d.vert", "..\\assets\\shaders\\renderer2d.frag");
+	Renderer renderer("../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag");
 	renderer.setCamera(&game.getCamera());
 
 	Layer layer{&renderer, (F32)WIDTH, (F32)HEIGHT};
@@ -104,27 +106,18 @@ int main(int argc, char** argv)
 
 	AnimSprite* spr = new AnimSprite { &set };
 
-	Sprite* sprity = new Sprite( manager.GetTexture("sprite_sheet.png") );
-	sprity->getBox().setX(300);
-
-	cpMap testMap = manager.GetMap("test.map");
+	cpMap testMap = manager.GetMap("test.tmap");
 
 	layer.add(static_cast<const IRenderable*>(testMap));
 	layer.add(spr);
-	layer.add(sprity);
 
 	spr->playAnimation("talgaStandL", 1000, true);
 
 	spr->getBox().setX(200);
 	spr->getBox().setY(200);
-	
-	sprity->getBox().setX(100);
-	sprity->getBox().setY(400);
 
 	while (!glfwWindowShouldClose(game.getWindow().getWindow()))
 	{
-
-
 		dt = clock.TimePassed() - previousTime;
 		timeSince += dt;
 		previousTime = clock.TimePassed();
@@ -153,10 +146,9 @@ int main(int argc, char** argv)
 
 		//cam.getBox().setX(cam.getBox().getX() - 0.05f);
 		cam.update(0);
-		cam.getBox().setX(cam.getBox().getX() + 0.05f);
-		cam.getBox().setY(cam.getBox().getY() + 0.05f);
+		cam.getBox().setX(cam.getBox().getX() + 0.05f * 20 * abs(sin(clock.TimePassed())));
+		cam.getBox().setY(cam.getBox().getY() + 0.05f * 20 * abs(sin(clock.TimePassed())));
 		spr->update(dt);
-		sprity->update(dt);
 		game.Update(dt);
 		game.ResolveCollisions();
 		//game.Render(&manager);

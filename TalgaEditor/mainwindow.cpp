@@ -8,6 +8,7 @@
 #include "ui_mainwindow.h"
 #include  "assetlist.h"
 #include "gdata.h"
+#include "map.h"
 namespace talga
 {
   namespace editor
@@ -39,6 +40,7 @@ namespace talga
       pmImageViewScene->clear();
       delete pmImageViewScene;
 
+      GData::getInstance()->destroy();
       qDeleteAll(mTextures.values());
       mTextures.clear();
 
@@ -55,10 +57,16 @@ void talga::editor::MainWindow::on_actionLoad_Assets_triggered()
 
 void talga::editor::MainWindow::on_actionSave_triggered()
 {
-  QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                             "untitled.tmap",
-                             tr("Talga map (*.tmap)"));
-    GData::getInstance()->sl_saveMap(fileName.toStdString());
+  if (GData::getInstance()->getCurrentMap()->getWorkingLayerIndex() == -1) return;
+
+  if (GData::getInstance()->getCurrentMap())
+  {
+    GData::getInstance()->sl_saveMap();
+  }
+  else
+  {
+    on_actionSave_as_triggered();
+  }
 }
 
 void talga::editor::MainWindow::on_actionOpen_triggered()
@@ -68,5 +76,22 @@ void talga::editor::MainWindow::on_actionOpen_triggered()
                           "Select one or more files to open",
                           "/home",
                           "Talga map (*.tmap)");
+  if (files != "")
+  {
     GData::getInstance()->sl_loadMap(files.toStdString());
+  }
+}
+
+void talga::editor::MainWindow::on_actionSave_as_triggered()
+{
+  if (!GData::getInstance()->getCurrentMap()) return;
+
+  QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                             "untitled",
+                             tr("Talga map (*.tmap)"));
+
+  if (fileName != "")
+  {
+    GData::getInstance()->getInstance()->sl_saveAs(fileName.toStdString());
+  }
 }

@@ -19,19 +19,18 @@ namespace talga
 	const I32 MAX_ANIMATIONS = 100;
 	const I32 MAX_TEXTURES = 1000;
 	const I32 MAX_MAPS = 50;
-
+	cpTex AssetManager::NO_TEXTURE = nullptr;
 
 	AssetManager::AssetManager()
 		: mTextures{}
 		, mMaps{}
 		, mAnimationSets{}
-		, NO_TEXTURE{ nullptr }
 	{
 		mAnimationSets.reserve(MAX_ANIMATIONS);
 		mTextures.reserve(MAX_TEXTURES);
 		mMaps.reserve(MAX_MAPS);
 
-		//AddTexture(RELATIVE_ASSETS_PATH + "notex.png");
+		//AddTexture("../assets/notex.png");
 		//NO_TEXTURE = GetTexture("notex.png");
 	}
 
@@ -42,12 +41,18 @@ namespace talga
 		if (tex.load(path, *this))
 		{
 			TALGA_MSG(path + " was successfully loaded");
+			
+			cpTex exists = static_cast<cpTex>(assetExists(tex.getName()));
+			if (exists)
+				return exists;
+
 			mTextures.push_back(tex);
 			return &mTextures.back();
 		}
 		else
 		{
 			TALGA_WARN(0, path + " could not be loaded");
+			tex.destroy();
 			return nullptr;
 		}
 		
@@ -59,6 +64,10 @@ namespace talga
 
 		if (map.load(path, *this))
 		{
+			cpMap exists = static_cast<cpMap>(assetExists(map.getName()));
+			if (exists)
+				return exists;
+
 			TALGA_MSG(path + " was successfully loaded");
 			mMaps.push_back(map);
       return &mMaps.back();
@@ -99,6 +108,28 @@ namespace talga
 		TALGA_WARN(0, std::string("failed to find texture ") + name);
 		return nullptr;
 	}
+
+	const AAsset* AssetManager::assetExists(const std::string& name) const
+	{
+		for (auto it = mTextures.begin(); it != mTextures.end(); ++it)
+		{
+			if (it->getName() == name)
+			{
+				return &(*it);
+			}
+		}
+
+		for (auto it = mMaps.begin(); it != mMaps.end(); ++it)
+		{
+			if (it->getName() == name)
+			{
+				return &(*it);
+			}
+		}
+
+		return nullptr;
+	}
+
 	AssetManager::~AssetManager()
 	{
 		for (Texture& tex : mTextures)

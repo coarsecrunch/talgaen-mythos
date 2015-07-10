@@ -45,6 +45,7 @@ namespace talga
 		mRenderer->begin();
 		for (const IRenderable* rdr : mRenderList)
     {
+      if (!rdr) continue;
 			rdr->render(mRenderer, mRenderer->getCamera());
 		}
 		mRenderer->end();
@@ -69,11 +70,5 @@ namespace talga
 
 	Layer::~Layer()
 	{
-		//TODO: get rid of this nonsense
-		for (auto iter = mRenderList.begin(); iter != mRenderList.end(); ++iter)
-			if (dynamic_cast<const Sprite*>(*iter))
-				delete *iter;
-			else if (dynamic_cast<const AnimSprite*>(*iter))
-				delete *iter;
 	}
 }

@@ -9,7 +9,9 @@ namespace talga
 	class AnimationSet;
 	class Texture;
 	class Map;
+	class AAsset;
 	struct Rect;
+
 
 	class AssetManager
 	{
@@ -26,8 +28,10 @@ namespace talga
 
 		const std::vector<Texture>& getTextures() const { return mTextures; }
 		const std::vector<Map>& getMaps() const { return mMaps; }
-		cpTex NO_TEXTURE;
+		static cpTex NO_TEXTURE;
 	private:
+		const AAsset* assetExists(const std::string& name) const;
+
 
 		std::vector<Texture> mTextures;
 		std::vector<AnimationSet> mAnimationSets;

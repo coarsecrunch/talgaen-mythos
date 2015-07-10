@@ -3,6 +3,7 @@
 #include "AssetManager.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QString>
 
 namespace talga
@@ -13,6 +14,7 @@ GData::GData()
  : mManager(new AssetManager())
  , mCurrentMap(new EditorMap())
 {
+
 }
 
 GData* GData::getInstance()
@@ -21,7 +23,7 @@ GData* GData::getInstance()
   return data;
 }
 
-EditorMap *GData::getCurrentMap()
+const EditorMap *GData::getCurrentMap()
 {
   return mCurrentMap;
 }
@@ -37,17 +39,44 @@ void GData::destroy()
   delete mCurrentMap;
 }
 
-void GData::sl_saveMap(std::string path)
+void GData::setCurrentMap(const Map& map)
 {
-  mCurrentMap->save(path, *mManager);
+  *mCurrentMap = map;
+  emit sig_mapChanged(mCurrentMap);
 }
 
-void GData::sl_loadMap(std::string path)
+void GData::sl_saveMap()
 {
-  *mCurrentMap = EditorMap();
-  mCurrentMap->load(path, *mManager);
+  if (mCurrentMap)
+  {
+    mCurrentMap->save(mCurrentMap->getPath() + mCurrentMap->getName(), *mManager);
+  }
+}
 
-  emit sig_mapChanged(mCurrentMap);
+void GData::sl_saveAs(const std::string& path)
+{
+  if (mCurrentMap)
+  {
+    mCurrentMap->save(path, *mManager);
+  }
+}
+
+void GData::sl_loadMap(const std::string& path)
+{
+  if(mCurrentMap->load(path, *mManager))
+  {
+    emit sig_mapChanged(mCurrentMap);
+  }
+  else
+  {
+    QMessageBox msgBox;
+    msgBox.setText(QString::fromStdString("map " + path + " is corrupted, or does not exist"));
+    msgBox.exec();
+
+    emit sig_mapChanged(nullptr);
+  }
+
+
 }
 
 

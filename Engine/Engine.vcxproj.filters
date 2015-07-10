@@ -141,6 +141,9 @@
     <ClCompile Include="talgamain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sys.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\include\Math\Interpolation.h">
@@ -258,6 +261,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AAsset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

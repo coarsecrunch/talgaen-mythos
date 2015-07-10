@@ -46,13 +46,18 @@ namespace talga
 		, isLoop(false)
 		, mCurrentAnimation(nullptr)
 	{
-		if (mAnims)
+		if (mAnims && mAnims->tex())
 		{
 			mImageBox.setW(mAnims->tex()->w());
 			mImageBox.setH(mAnims->tex()->h());
 		}
-		else
+		else if (mAnims && !mAnims->tex())
+		{
+			mImageBox.setW(32);
+			mImageBox.setH(32);
 			TALGA_WARN(0, "Invalid texture was passed to animated sprite");
+		}
+			
 
 	}
 
@@ -95,7 +100,7 @@ namespace talga
 
 	void AnimSprite::playAnimation(const std::string& animName, I32 speed, bool loop) // in Milliseconds
 	{
-		if (!isAnimated)
+		if (!isAnimated || !mAnims->tex())
 			return;
 
 		mCurrentAnimation = mAnims->getAnim(animName);

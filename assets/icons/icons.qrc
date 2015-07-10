@@ -3,5 +3,8 @@
         <file>Talgapng.png</file>
         <file>minus_button.png</file>
         <file>plus_button.png</file>
+        <file>layer_down _button.png</file>
+        <file>layer_up_button.png</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

@@ -16,11 +16,12 @@ namespace talga
 
     EditorMap::~EditorMap()
     {
-
     }
 
     EditorMap::EditorMap(const EditorMap &cpy)
       : Map (cpy)
+      , mWorkingLayer(cpy.mWorkingLayer)
+      , mWorkingLayerIndex(cpy.mWorkingLayerIndex)
     {
 
     }
@@ -28,6 +29,9 @@ namespace talga
     const EditorMap &EditorMap::operator=(const EditorMap &cpy)
     {
       Map::operator =(cpy);
+      mWorkingLayer = cpy.mWorkingLayer;
+      mWorkingLayerIndex = cpy.mWorkingLayerIndex;
+
       return *this;
     }
 
@@ -85,7 +89,7 @@ namespace talga
       }
 
       TALGA_MSG(tex->getName() + " was sucessfully added to the map " + mName);
-
+      mIsSaved = false;
       return;
     }
 
@@ -96,6 +100,7 @@ namespace talga
 
       std::cout << "size: " << mLayers.size() << std::endl;
       std::cout << "capacity: " << mLayers.capacity() << std::endl;
+      mIsSaved = false;
       return cpy;
     }
 
@@ -111,6 +116,7 @@ namespace talga
 
       std::cout << "size: " << mLayers.size() << std::endl;
       std::cout << "capacity: " << mLayers.capacity() << std::endl;
+      mIsSaved = false;
       return temp;
     }
 
@@ -126,7 +132,7 @@ namespace talga
           return temp;
         }
       }
-
+      mIsSaved = false;
       return temp;
     }
 
@@ -148,6 +154,7 @@ namespace talga
 
         mLayers[mWorkingLayerIndex][ dropPositions[i].y() * mWidth + dropPositions[i].x() ] = getTileOffset(tiles[i]);
       }
+      mIsSaved = false;
 
       return previousIndices;
     }
@@ -205,7 +212,7 @@ namespace talga
       }
 
       TALGA_WARN(0, "searched for layer: " + layerName + " found nothing")
-
+      mIsSaved = false;
       return previousName;
     }
 

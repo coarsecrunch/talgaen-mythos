@@ -8,6 +8,7 @@
 #include <fstream>
 #include "Math/RandomGen.h"
 #include "Math/Operations.h"
+#include "sys.h"
 
 #define RELATIVE_ASSETS_PATH std::string("../assets/")
 
@@ -21,6 +22,8 @@ namespace talga
 		, mTileWidth{ -1 }
 		, mTileHeight{ -1 }
 		, mLayers{}
+		, mTileSheets{}
+    , mIsSaved{false}
 	{
     mLayers.reserve(MAX_LAYERS);
 	}
@@ -33,6 +36,8 @@ namespace talga
 		, mLayers(cpy.mLayers)
 		, mTileHeight(cpy.mTileHeight)
 		, mTileWidth(cpy.mTileWidth)
+		, mTileSheets(cpy.mTileSheets)
+    , mIsSaved{cpy.mIsSaved}
 	{
 	}
 
@@ -71,7 +76,8 @@ namespace talga
 		mTileHeight = cpy.mTileHeight;
 		mTileWidth = cpy.mTileHeight;
 		mLayers = cpy.mLayers;
-
+    mTileSheets = cpy.mTileSheets;
+    mIsSaved = cpy.mIsSaved;
 		return *this;
 	}
 
@@ -105,7 +111,7 @@ namespace talga
 					tempR.setX(I32(x * mTileWidth + (0.5f * mTileWidth)));
 					tempR.setY(I32(y * mTileHeight + (0.5f * mTileHeight)));
 					tempR.updateVertsPosition();
-          tempR.setColor(vec4{1.0f, 0.0f, 0.1f, 0.2f});
+					tempR.setColor(vec4{1.0f, 0.0f, 0.1f, 0.2f});
 
 					renderer->submit(tempR, getTile(x, y, i).first, 1.0f, getTile(x, y, i).second);
 					tempR.setZ(tempR.getZ() + 0.01f);
@@ -120,8 +126,9 @@ namespace talga
 	const Tile& Map::getTile(I32 x, I32 y, I32 layerIndex) const
 	{
 		TALGA_ASSERT(Exists(x, y), "tried to access non existent tile");
-		return mTileSet[mLayers[layerIndex][y * mWidth + x] - 1];
-
+		I32 idx = mLayers[layerIndex][y * mWidth + x] - 1;
+		//if (idx <= 0 || idx >= mTileSet.size()) return BLANK_TILE;
+		return mTileSet[idx];
 	}
 
   Tile Map::getTile(I32 x, I32 y, I32 layerIndex)
@@ -158,6 +165,7 @@ namespace talga
 	}
 	bool Map::load(std::string path, AssetManager& manager)
 	{
+    *this = createEmptyMap(-1,-1,-1,-1, "null");
 		std::ifstream stream;
 
 		stream.open(path);
@@ -165,22 +173,14 @@ namespace talga
 		if (!stream.is_open())
 			return false;
 
-		char cc = '\0';
-		I32 index = path.size();
+		std::string tempName = getFileNameFromPath(path);
+    std::string tempPath;
+    if (!isAbs(path))
+      tempPath = getAbsFromRel(getWorkingDirectory(), getPathFromFilePath(path));
+    else
+      tempPath = getPathFromFilePath(path);
 
-		while (cc != '\\' && cc != '/')
-		{
-			--index;
-
-      if (index < 0) break;
-			cc = path.at(index);
-		}
-
-		I32 startIndex = index + 1;
-		I32 length = (path.size() - startIndex);
-		std::string name = path.substr(startIndex, length);
-
-		I32 tileWidth;
+    I32 tileWidth;
 		I32 tileHeight;
 		I32 mapWidth;
 		I32 mapHeight;
@@ -188,7 +188,7 @@ namespace talga
 		I32 numLayers;
 
 		std::vector<Tile> tiles;
-		std::string tempTex;
+		std::string tempTexPath;
 
 		stream >> tileWidth;
 		stream >> tileHeight; // tileHeight
@@ -200,16 +200,11 @@ namespace talga
 		
 		for (auto i = 0; i < numTextures; ++i)
 		{
-			stream >> tempTex;
-			cpTex tex = manager.GetTexture(tempTex);
+			stream >> tempTexPath;
 
-			if (!tex)
-			{
-				manager.AddTexture(RELATIVE_ASSETS_PATH + tempTex);
-				tex = manager.GetTexture(tempTex);
-			}
-			
-			
+      std::string tName = getAbsFromRel(tempPath, getPathFromFilePath(tempTexPath)) + getFileNameFromPath(tempTexPath);
+			cpTex tex = manager.AddTexture(tName);
+
 			if (tex)
 			{
 				mTileSheets.push_back(tex);
@@ -234,6 +229,7 @@ namespace talga
 			}
 			else // push back default UVs for the NO_TEXTURE texture
 			{
+        return false;
 				tiles.push_back(Tile{ tex, UVFrame{ { vec2{ 0.0f, 1.0f }, vec2{ 1.0f, 1.0f }, vec2{ 1.0f, 0.0f }, vec2{ 0.0f, 0.0f } } } });
 			}
 		}
@@ -265,7 +261,8 @@ namespace talga
 		}
 		
 		mNumSheets = numTextures;
-		mName = name;
+		mName = tempName;
+		mPath = tempPath;
 		mTileSet = tiles;
 		mLayers = layers;
 		mWidth = mapWidth;
@@ -282,8 +279,13 @@ namespace talga
 		std::ofstream stream;
 
 		stream.open(path);
-		TALGA_ASSERT(stream.is_open(), "failed to write file");
 
+    if (!stream.is_open()) return false;
+
+    if (!isAbs(path))
+      mPath = getAbsFromRel(getWorkingDirectory(), getPathFromFilePath(path));
+    else
+      mPath = getPathFromFilePath(path);
 		stream << mTileWidth << std::endl;
 		stream << mTileHeight << std::endl;
 		stream << mWidth << std::endl;
@@ -292,6 +294,7 @@ namespace talga
 
 		std::string lastTex = "";
 		std::vector<std::string> sheetNames;
+    std::vector<std::string> sheetPaths;
 		I32 numSheets = 0;
 		for (auto it = mTileSet.begin(); it != mTileSet.end(); ++it)
 		{
@@ -299,16 +302,17 @@ namespace talga
 			{
 				lastTex = it->first->getName();
 				++numSheets;
-				sheetNames.push_back(lastTex);
+        std::string s = getRelFromAbs(getPath(), it->first->getPath()) + lastTex;
+        sheetNames.push_back(s );
 			}
 		}
 
 		stream << numSheets << std::endl;
 		stream << mLayers.size() << std::endl;
 
-		for (auto it = sheetNames.begin(); it != sheetNames.end(); ++it)
+    for (auto it = sheetNames.begin(); it != sheetNames.end(); ++it)
 		{
-			stream << *it << std::endl;
+      stream << *it << std::endl;
 		}
 
 		for (auto it = mLayers.begin(); it != mLayers.end(); ++it)
@@ -332,9 +336,27 @@ namespace talga
 
 		stream.close();
 
+    mIsSaved = true;
 		TALGA_MSG(path + " was sucessfully saved");
 		return true;
 	}
+
+  Map Map::createEmptyMap(I32 tW, I32 tH, I32 w, I32 h, const std::string& name)
+  {
+    Map map;
+
+    map.mTileWidth = tW;
+    map.mTileHeight = tH;
+    map.mWidth = w;
+    map.mHeight = h;
+    map.mName = name;
+    map.mPath = "";
+    map.mLayers.push_back(MapLayer(w * h, "layer0"));
+    map.mIsSaved = false;
+
+    return map;
+  }
+
 	void Map::destroy()
 	{
 	}

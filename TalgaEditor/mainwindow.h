@@ -36,6 +36,8 @@ namespace talga
 
       void on_actionOpen_triggered();
 
+      void on_actionSave_as_triggered();
+
     protected:
       Ui::MainWindow *ui;
 

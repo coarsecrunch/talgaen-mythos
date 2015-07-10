@@ -14,7 +14,7 @@ namespace talga
 	{
 	public:
 		virtual ~Rectangle();
-		Rectangle(F32 width, F32 height, vec3 position = vec3(), vec4 color = vec4(0.0, 1.0, 0.0, 1.0), F32 orientation = 0.0f, F32 scaleX = 1.0f, F32 scaleY = 1.0f);
+		Rectangle(F32 width, F32 height, vec3 position = vec3(), vec4 color = vec4(0.0f, 1.0f, 1.0f, 1.0f), F32 orientation = 0.0f, F32 scaleX = 1.0f, F32 scaleY = 1.0f);
 
 		Rectangle(const Rectangle& cpy);
 		

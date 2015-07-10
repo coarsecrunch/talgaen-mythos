@@ -8,6 +8,8 @@
 #include "Math/Vector4.h"
 #include "Math/Vector2.h"
 #include "AnimSet.h"
+#include "AAsset.h"
+
 namespace talga
 {
 	struct VertexData
@@ -36,7 +38,7 @@ namespace talga
 	class Rectangle;
 	class Camera;
 
-	class Renderer
+	class Renderer : public AAsset
 	{
 	public:
 		Renderer(const char* vertexShaderPath, const char* fragmentShaderPath);
@@ -48,6 +50,10 @@ namespace talga
 		void submit(const Rectangle& imageBox, cpTex texture = nullptr, F32 transparencyScale = 1.0f, UVFrame frame = UVFrame());
 		void render();
 		void end();
+
+		virtual bool load(std::string path, AssetManager& manager) override;
+		virtual bool save(std::string path, AssetManager& manager) override;
+		virtual void destroy() override;
 
 		size_t tStackSize() const { return mTransformationStack.size(); }
 		void tStackPush(const mat4& mat);

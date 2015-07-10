@@ -39,9 +39,11 @@ namespace talga
       const MapLayer* getWorkingLayer() const {return mWorkingLayer;}
       I32 getWorkingLayerIndex() const {return mWorkingLayerIndex;}
       std::string setWorkingLayer(std::string layerName);
+
     private:
       MapLayer* mWorkingLayer;
       I32 mWorkingLayerIndex;
+
     };
 
   }

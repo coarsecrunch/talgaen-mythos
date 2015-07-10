@@ -21,6 +21,7 @@ namespace talga
 
 		I32 id() const { return mTexture; }
 		I32 w() const { return mWidth; }
+
 		I32 h() const { return mHeight; }
 		U32 texture() const { return mTexture; }
 

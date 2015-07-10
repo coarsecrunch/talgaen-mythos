@@ -8,7 +8,7 @@
 #include <QFileDialog>
 #include <QDrag>
 #include <QMimeData>
-#include "wrongextdialog.h"
+#include <QMessageBox>
 
 #include "Cmn.h"
 #include "editormap.h"
@@ -24,12 +24,8 @@ namespace talga
       , mTexturesFolder(nullptr)
       , mMapsFolder(nullptr)
       , mScriptsFolder(nullptr)
+      , mLevelFolder{nullptr}
     {
-      mLevelFolder = new QTreeWidgetItem(this);
-      mTexturesFolder = new QTreeWidgetItem(mLevelFolder);
-      mTexturesFolder->setText(0, "tile sheets");
-      mScriptsFolder = new QTreeWidgetItem(mLevelFolder);
-      mScriptsFolder->setText(0, "scripts");
     }
 
     AssetList::~AssetList()
@@ -69,30 +65,42 @@ namespace talga
       }
       else
       {
-        WrongExtDialog ext;
-        ext.exec();
+        QMessageBox msgBox;
+        msgBox.setText(QString::fromStdString("invalid file"));
+        msgBox.exec();
       }
     }
 
     void AssetList::sl_updateChangedMap(EditorMap * map)
     {
-      mLevelFolder->setText(0, QString::fromStdString(map->getName()));
+      if (mLevelFolder)
+        delete mLevelFolder;
 
-      for (I32 i = 0; i < mTexturesFolder->childCount(); ++i)
+      qDeleteAll(mAssets);
+
+      if (map)
       {
-        mTexturesFolder->removeChild(mTexturesFolder->child(i));
+        mLevelFolder = new QTreeWidgetItem(this);
+        mLevelFolder->setText(0, QString::fromStdString(map->getName()));
+
+        mTexturesFolder = new QTreeWidgetItem(mLevelFolder);
+        mTexturesFolder->setText(0, "tile sheets");
+        mScriptsFolder = new QTreeWidgetItem(mLevelFolder);
+        mScriptsFolder->setText(0, "scripts");
+
+        for (auto it = map->getTileSheets().begin(); it != map->getTileSheets().end(); ++it)
+        {
+          QTreeWidgetItem* temp = new QTreeWidgetItem(mTexturesFolder);
+          temp->setText(0, QString::fromStdString( (*it)->getName()));
+          mAssets.insert(QString::fromStdString((*it)->getName()), new QImage(QString::fromStdString((*it)->getPath() + (*it)->getName())));
+        }
       }
 
-      for (auto it = map->getTileSheets().begin(); it != map->getTileSheets().end(); ++it)
-      {
-        QTreeWidgetItem* temp = new QTreeWidgetItem(mTexturesFolder);
-        temp->setText(0, QString::fromStdString( (*it)->getName()));
-      }
     }
 
     void AssetList::sl_assetSelected(QTreeWidgetItem* item, int column)
     {
-      if (item == mTexturesFolder || item == mMapsFolder || item == mScriptsFolder)
+      if (item == mTexturesFolder || item == mMapsFolder || item == mScriptsFolder || item == mLevelFolder)
         return;
 
       emit sig_textureSelected(TextureAsset(item->text(column), mAssets[item->text(column)]));

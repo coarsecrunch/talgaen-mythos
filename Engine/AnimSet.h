@@ -17,6 +17,8 @@ namespace talga
 	typedef std::vector<Rect> RectList;
 	typedef std::pair<std::string, UVAnimation> AnimSetPair;
 
+	const UVFrame WHOLE_TEXTURE{ { vec2(0, 1), vec2(1, 1), vec2(1, 0), vec2(0, 0) } };
+
 	class AnimationSet
 	{
 	public:

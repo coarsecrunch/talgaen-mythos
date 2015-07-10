@@ -4,6 +4,8 @@
 #include "commands/cchangeworkinglayer.h"
 #include "commands/caddlayer.h"
 #include "commands/cremovelayer.h"
+#include "commands/cchangelayerorder.h"
+#include <algorithm>
 
 namespace talga
 {
@@ -21,9 +23,12 @@ void LayerStack::sl_updateChangedMap(EditorMap* map)
 {
   clear();
   mMap = map;
-  for (auto iter = mMap->getLayers()->begin(); iter != mMap->getLayers()->end(); ++iter)
+  if (map)
   {
-    sl_addLayerWidget( iter->getName(), topLevelItemCount() );
+    for (auto iter = mMap->getLayers()->begin(); iter != mMap->getLayers()->end(); ++iter)
+    {
+      sl_addLayerWidget( iter->getName(), topLevelItemCount() );
+    }
   }
 }
 
@@ -60,15 +65,17 @@ void LayerStack::sl_updateItemChanged(QTreeWidgetItem *itm, int column)
 }
 
 void LayerStack::sl_addLayer()
-{ 
+{
+  if (!mMap) return;
+
   std::string name = std::string("layer") + std::to_string(topLevelItemCount());
 
-  emit sig_addUndoCommand(new CAddLayer(mMap, name, this, mMap->getWorkingLayerIndex()));
+  emit sig_addUndoCommand(new CAddLayer(mMap, name, this, mMap->getLayers()->size()));
 }
 
 void LayerStack::sl_removeLayer()
 {
-  if(mMap->getWorkingLayer())
+  if(mMap && mMap->getWorkingLayer())
   {
     std::string previousName = mMap->getWorkingLayer()->getName();
     emit sig_addUndoCommand(new CRemoveLayer(mMap, previousName, this, mMap->getWorkingLayerIndex()));
@@ -107,9 +114,37 @@ void LayerStack::sl_removeLayerWidget(std::string name)
   }
 }
 
+void LayerStack::sl_swapLayerWidgets(I32 idx1, I32 idx2)
+{
+  QTreeWidgetItem* temp = new QTreeWidgetItem();
+  *temp = *topLevelItem(idx1);
+  *topLevelItem(idx1) = *topLevelItem(idx2);
+  *topLevelItem(idx2) = *temp;
+
+  addTopLevelItem(temp);
+  delete temp;
+}
+
+void LayerStack::sl_moveWorkingLayerDown()
+{
+  if (mMap && mMap->getWorkingLayer() && mMap->getWorkingLayerIndex() < mMap->getLayers()->size() - 1)
+  {
+    emit sig_addUndoCommand(new CChangeLayerOrder(mMap, this, CChangeLayerOrder::DOWN));
+    emit sig_updateGL();
+  }
+}
+
+void LayerStack::sl_moveWorkingLayerUp()
+{
+  if (mMap && mMap->getWorkingLayer() && mMap->getWorkingLayerIndex() > 0)
+  {
+    emit sig_addUndoCommand(new CChangeLayerOrder(mMap, this, CChangeLayerOrder::UP));
+    emit sig_updateGL();
+  }
+}
+
 void LayerStack::sl_changeWorkingLayer(QTreeWidgetItem *itm, int column)
 {
-
   if (mMap->getWorkingLayer())
   {
     if (itm->text(0).toStdString() == mMap->getWorkingLayer()->getName()) return;
