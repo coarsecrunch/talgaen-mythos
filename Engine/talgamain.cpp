@@ -1,4 +1,5 @@
 #define _GLFW_USE_DWM_SWAP_INTERVAL 1
+#define CHIPMUNK_FFI
 #include "Cmn.h"
 #include "Rendering.h"
 #include "Map.h"
@@ -25,6 +26,7 @@
 #include "AnimSet.h"
 #include "Math/RandomGen.h"
 #include "sys.h"
+#include "chipmunk/chipmunk.h"
 
 using namespace talga;
 
@@ -61,23 +63,25 @@ void resize_window_callback(GLFWwindow* window, int w, int h)
 
 int main(int argc, char** argv)
 {
+	cpVect gravity = cpv(0, 100);
 
-	std::cout << getRelFromAbs("C:/talga/assets/foosrawd", "C:/talga/textures/jiggle/") << std::endl;
+	cpSpace* space = cpSpaceNew();
+	cpSpaceSetGravity(space, gravity);
 
+	//cpShape* ground = cpSegmentShapeNew(space->, cpv(0, 32 * 5), cpv(20 * 32, 32 * 5), 0);
+
+
+	TALGA_MSG("working directory: " + getWorkingDirectory());
 	Clock clock;
 	clock.Init();
 	Game game;
 
-	LuaEngine luaEngine;
-	luaEngine.Init();
-
-	Game::LUA_REGISTER(&luaEngine);
-
 	game.Init(WIDTH, HEIGHT, "hello talga");
 	AssetManager manager;
 	manager.AddTexture("../assets/charactersheet.png");
+	manager.AddTexture("../assets/textures/talgasheet.png");
 	//manager.AddTexture("../assets/talgasheet.png");
-	manager.AddMap("../assets/test.tmap");
+	manager.AddMap("../assets/maps/sandboxx.tmap");
 
 	U32 previousTime = 0;
 	U32 dt = 0;
@@ -106,15 +110,15 @@ int main(int argc, char** argv)
 
 	AnimSprite* spr = new AnimSprite { &set };
 
-	cpMap testMap = manager.GetMap("test.tmap");
+	cpMap testMap = manager.GetMap("sandboxx.tmap");
 
 	layer.add(static_cast<const IRenderable*>(testMap));
 	layer.add(spr);
 
 	spr->playAnimation("talgaStandL", 1000, true);
 
-	spr->getBox().setX(200);
-	spr->getBox().setY(200);
+	spr->getBox().setX(100);
+	spr->getBox().setY(100);
 
 	while (!glfwWindowShouldClose(game.getWindow().getWindow()))
 	{
@@ -144,10 +148,9 @@ int main(int argc, char** argv)
 
 		Camera& cam = game.getCamera();
 
-		//cam.getBox().setX(cam.getBox().getX() - 0.05f);
 		cam.update(0);
-		cam.getBox().setX(cam.getBox().getX() + 0.05f * 20 * abs(sin(clock.TimePassed())));
-		cam.getBox().setY(cam.getBox().getY() + 0.05f * 20 * abs(sin(clock.TimePassed())));
+		//cam.getBox().setX(cam.getBox().getX() + 0.05f * 20 * abs(sin(clock.TimePassed())));
+		//cam.getBox().setY(cam.getBox().getY() + 0.05f * 20 * abs(sin(clock.TimePassed())));
 		spr->update(dt);
 		game.Update(dt);
 		game.ResolveCollisions();

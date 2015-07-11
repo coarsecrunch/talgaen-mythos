@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1154</width>
-    <height>686</height>
+    <width>1151</width>
+    <height>649</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1154</width>
+     <width>1151</width>
      <height>21</height>
     </rect>
    </property>
@@ -59,6 +59,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
@@ -69,8 +70,18 @@
      <string>Edit</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionAssetManager"/>
+    <addaction name="actionAssetViewer"/>
+    <addaction name="actionHistory"/>
+    <addaction name="actionLayers"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -138,6 +149,12 @@
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>80</width>
+     <height>100</height>
+    </size>
    </property>
    <property name="windowTitle">
     <string>Viewer</string>
@@ -285,8 +302,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>16</width>
+            <height>16</height>
            </size>
           </property>
          </widget>
@@ -302,8 +319,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>16</width>
+            <height>16</height>
            </size>
           </property>
          </widget>
@@ -319,8 +336,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>16</width>
+            <height>16</height>
            </size>
           </property>
          </widget>
@@ -336,8 +353,8 @@
           </property>
           <property name="iconSize">
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>16</width>
+            <height>16</height>
            </size>
           </property>
          </widget>
@@ -368,17 +385,66 @@
   </action>
   <action name="actionSave">
    <property name="text">
-    <string> Save...</string>
+    <string>Save...</string>
    </property>
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>Open</string>
+    <string>Open...</string>
    </property>
   </action>
   <action name="actionSave_as">
    <property name="text">
     <string>Save as...</string>
+   </property>
+  </action>
+  <action name="actionAssetManager">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>AssetManager</string>
+   </property>
+  </action>
+  <action name="actionAssetViewer">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>AssetViewer</string>
+   </property>
+  </action>
+  <action name="actionHistory">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>History</string>
+   </property>
+  </action>
+  <action name="actionLayers">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Layers</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New...</string>
    </property>
   </action>
  </widget>
@@ -476,11 +542,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>187</x>
-     <y>312</y>
+     <y>300</y>
     </hint>
     <hint type="destinationlabel">
-     <x>255</x>
-     <y>664</y>
+     <x>223</x>
+     <y>564</y>
     </hint>
    </hints>
   </connection>
@@ -507,12 +573,12 @@
    <slot>sl_updateSelection(Selection)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>226</x>
-     <y>583</y>
+     <x>223</x>
+     <y>564</y>
     </hint>
     <hint type="destinationlabel">
      <x>346</x>
-     <y>589</y>
+     <y>564</y>
     </hint>
    </hints>
   </connection>
@@ -523,7 +589,7 @@
    <slot>sl_addUndoCommand(QUndoCommand*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>819</x>
+     <x>755</x>
      <y>228</y>
     </hint>
     <hint type="destinationlabel">
@@ -539,7 +605,7 @@
    <slot>sl_updateHistoryMacro(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
+     <x>755</x>
      <y>176</y>
     </hint>
     <hint type="destinationlabel">
@@ -587,11 +653,11 @@
    <slot>sl_updateGL()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>910</x>
+     <x>943</x>
      <y>524</y>
     </hint>
     <hint type="destinationlabel">
-     <x>850</x>
+     <x>755</x>
      <y>527</y>
     </hint>
    </hints>
@@ -603,12 +669,12 @@
    <slot>sl_changeWorkingLayer(QTreeWidgetItem*,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1111</x>
-     <y>425</y>
+     <x>1012</x>
+     <y>417</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1110</x>
-     <y>430</y>
+     <x>1012</x>
+     <y>422</y>
     </hint>
    </hints>
   </connection>
@@ -619,11 +685,11 @@
    <slot>sl_addUndoCommand(QUndoCommand*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1144</x>
-     <y>395</y>
+     <x>1012</x>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1144</x>
+     <x>1012</x>
      <y>273</y>
     </hint>
    </hints>
@@ -635,11 +701,11 @@
    <slot>sl_undoLast()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>889</x>
+     <x>755</x>
      <y>75</y>
     </hint>
     <hint type="destinationlabel">
-     <x>905</x>
+     <x>943</x>
      <y>72</y>
     </hint>
    </hints>
@@ -651,11 +717,11 @@
    <slot>sl_redoLast()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>882</x>
+     <x>755</x>
      <y>47</y>
     </hint>
     <hint type="destinationlabel">
-     <x>916</x>
+     <x>943</x>
      <y>59</y>
     </hint>
    </hints>
@@ -667,12 +733,12 @@
    <slot>sl_addLayer()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>912</x>
-     <y>644</y>
+     <x>895</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
-     <x>916</x>
-     <y>588</y>
+     <x>943</x>
+     <y>541</y>
     </hint>
    </hints>
   </connection>
@@ -683,12 +749,12 @@
    <slot>sl_removeLayer()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>955</x>
-     <y>648</y>
+     <x>927</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
-     <x>946</x>
-     <y>625</y>
+     <x>943</x>
+     <y>540</y>
     </hint>
    </hints>
   </connection>
@@ -699,12 +765,12 @@
    <slot>sl_moveWorkingLayerUp()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>979</x>
-     <y>644</y>
+     <x>959</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
-     <x>975</x>
-     <y>583</y>
+     <x>943</x>
+     <y>538</y>
     </hint>
    </hints>
   </connection>
@@ -715,14 +781,84 @@
    <slot>sl_moveWorkingLayerDown()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1010</x>
-     <y>645</y>
+     <x>991</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1011</x>
-     <y>597</y>
+     <x>943</x>
+     <y>536</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>assetManagerDock</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_actionAssetManager_triggered(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>200</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>257</x>
+     <y>36</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>viewerDock</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_actionAssetViewer_triggered(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>183</x>
+     <y>341</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>257</x>
+     <y>347</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>layerStackDock</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_actionLayers_triggered(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>928</x>
+     <y>324</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>895</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>historyDock</sender>
+   <signal>visibilityChanged(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_actionHistory_triggered(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>927</x>
+     <y>35</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>895</x>
+     <y>37</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>on_actionAssetManager_triggered(bool)</slot>
+  <slot>on_actionAssetViewer_triggered(bool)</slot>
+  <slot>on_actionLayers_triggered(bool)</slot>
+  <slot>on_actionHistory_triggered(bool)</slot>
+ </slots>
 </ui>

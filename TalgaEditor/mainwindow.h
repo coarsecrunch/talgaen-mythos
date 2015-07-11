@@ -38,6 +38,16 @@ namespace talga
 
       void on_actionSave_as_triggered();
 
+      void on_actionAssetManager_triggered(bool checked);
+
+      void on_actionAssetViewer_triggered(bool checked);
+
+      void on_actionHistory_triggered(bool checked);
+
+      void on_actionLayers_triggered(bool checked);
+
+      void on_actionNew_triggered();
+
     protected:
       Ui::MainWindow *ui;
 

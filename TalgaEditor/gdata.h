@@ -18,6 +18,7 @@ public:
   AssetManager* getManager();
   void destroy();
   void setCurrentMap(const Map& map);
+  bool hasMap() const {return mHasMap;}
 public slots:
    void sl_saveMap();
    void sl_loadMap(const std::string& path);
@@ -28,6 +29,7 @@ signals:
 private:
   EditorMap* mCurrentMap;
   AssetManager* mManager;
+  bool mHasMap;
 
   GData();
 };

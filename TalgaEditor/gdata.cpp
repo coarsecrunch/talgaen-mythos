@@ -13,8 +13,8 @@ namespace editor
 GData::GData()
  : mManager(new AssetManager())
  , mCurrentMap(new EditorMap())
+ , mHasMap{false}
 {
-
 }
 
 GData* GData::getInstance()
@@ -41,6 +41,7 @@ void GData::destroy()
 
 void GData::setCurrentMap(const Map& map)
 {
+  mHasMap = true;
   *mCurrentMap = map;
   emit sig_mapChanged(mCurrentMap);
 }
@@ -50,6 +51,7 @@ void GData::sl_saveMap()
   if (mCurrentMap)
   {
     mCurrentMap->save(mCurrentMap->getPath() + mCurrentMap->getName(), *mManager);
+    emit sig_mapChanged(mCurrentMap);
   }
 }
 
@@ -65,6 +67,7 @@ void GData::sl_loadMap(const std::string& path)
 {
   if(mCurrentMap->load(path, *mManager))
   {
+    mHasMap = true;
     emit sig_mapChanged(mCurrentMap);
   }
   else

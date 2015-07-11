@@ -3,12 +3,13 @@
 #include <QGraphicsPixmapItem>
 #include <QListWidgetItem>
 #include <QUndoStack>
-
+#include "newmapdialog.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include  "assetlist.h"
 #include "gdata.h"
 #include "map.h"
+
 namespace talga
 {
   namespace editor
@@ -57,13 +58,11 @@ void talga::editor::MainWindow::on_actionLoad_Assets_triggered()
 
 void talga::editor::MainWindow::on_actionSave_triggered()
 {
-  if (GData::getInstance()->getCurrentMap()->getWorkingLayerIndex() == -1) return;
-
-  if (GData::getInstance()->getCurrentMap())
+  if (GData::getInstance()->hasMap() && GData::getInstance()->getCurrentMap()->getPath() != "")
   {
     GData::getInstance()->sl_saveMap();
   }
-  else
+  else if (GData::getInstance()->hasMap())
   {
     on_actionSave_as_triggered();
   }
@@ -84,7 +83,7 @@ void talga::editor::MainWindow::on_actionOpen_triggered()
 
 void talga::editor::MainWindow::on_actionSave_as_triggered()
 {
-  if (!GData::getInstance()->getCurrentMap()) return;
+  if (!GData::getInstance()->getCurrentMap() || !GData::getInstance()->hasMap()) return;
 
   QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                              "untitled",
@@ -94,4 +93,69 @@ void talga::editor::MainWindow::on_actionSave_as_triggered()
   {
     GData::getInstance()->getInstance()->sl_saveAs(fileName.toStdString());
   }
+}
+
+void talga::editor::MainWindow::on_actionAssetManager_triggered(bool checked)
+{
+    if (checked)
+    {
+      ui->assetManagerDock->show();
+      ui->actionAssetManager->setChecked(true);
+    }
+    else
+    {
+      ui->assetManagerDock->hide();
+      ui->actionAssetManager->setChecked(false);
+    }
+}
+
+void talga::editor::MainWindow::on_actionAssetViewer_triggered(bool checked)
+{
+  if (checked)
+  {
+    ui->viewerDock->show();
+    ui->actionAssetViewer->setChecked(true);
+  }
+  else
+  {
+    ui->actionAssetViewer->setChecked(false);
+    ui->viewerDock->hide();
+  }
+}
+
+void talga::editor::MainWindow::on_actionHistory_triggered(bool checked)
+{
+  if (checked)
+  {
+    ui->actionHistory->setChecked(true);
+    ui->historyDock->show();
+  }
+  else
+  {
+    ui->actionHistory->setChecked(false);
+    ui->historyDock->hide();
+  }
+}
+
+void talga::editor::MainWindow::on_actionLayers_triggered(bool checked)
+{
+  if (checked)
+  {
+    ui->actionLayers->setChecked(true);
+    ui->layerStackDock->show();
+  }
+  else
+  {
+    ui->actionLayers->setChecked(false);
+    ui->layerStackDock->hide();
+  }
+}
+
+void talga::editor::MainWindow::on_actionNew_triggered()
+{
+  NewMapDialog dialog;
+  dialog.exec();
+
+  if(dialog.result() == QDialog::Accepted)
+    GData::getInstance()->setCurrentMap(dialog.getData());
 }

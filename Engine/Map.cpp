@@ -165,7 +165,7 @@ namespace talga
 	}
 	bool Map::load(std::string path, AssetManager& manager)
 	{
-    *this = createEmptyMap(-1,-1,-1,-1, "null");
+    *this = createEmptyMap(-1,-1,-1,-1, "");
 		std::ifstream stream;
 
 		stream.open(path);
@@ -282,6 +282,7 @@ namespace talga
 
     if (!stream.is_open()) return false;
 
+    mName = getFileNameFromPath(path);
     if (!isAbs(path))
       mPath = getAbsFromRel(getWorkingDirectory(), getPathFromFilePath(path));
     else

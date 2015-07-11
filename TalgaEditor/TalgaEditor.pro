@@ -74,7 +74,8 @@ SOURCES += ../TalgaEditor/main.cpp \
     commands/cremovelayer.cpp \
     gdata.cpp \
     commands/cchangelayerorder.cpp \
-    ../Engine/sys.cpp
+    ../Engine/sys.cpp \
+    newmapdialog.cpp
 
 HEADERS  += mainwindow.h \
     assetlist.h \
@@ -127,10 +128,12 @@ HEADERS  += mainwindow.h \
     gdata.h \
     commands/cchangelayerorder.h \
     ../Engine/sys.h \
-    ../Engine/AAsset.h
+    ../Engine/AAsset.h \
+    newmapdialog.h
 
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    newmapdialog.ui
 
 DISTFILES += \
     ../assets/sandbox/Archimedes/Archimedes.autosave.scml \

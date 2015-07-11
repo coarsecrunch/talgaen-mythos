@@ -14,7 +14,7 @@ namespace talga
 	class Renderer;
 	typedef std::array<vec2, 4> UVFrame;
 	typedef std::pair<cpTex, UVFrame> Tile;
-	const Tile BLANK_TILE{nullptr, {vec2{0.0f, 0.0f},vec2{0.0f, 0.0f},vec2{0.0f, 0.0f},vec2{0.0f, 0.0f}}};
+	const Tile BLANK_TILE{ nullptr, { { vec2{ 0.0f, 0.0f }, vec2{ 0.0f, 0.0f }, vec2{ 0.0f, 0.0f }, vec2{ 0.0f, 0.0f } } } };
 	
 	const I32 MAX_LAYERS = 15;
 	class MapLayer

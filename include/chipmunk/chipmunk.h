@@ -30,8 +30,8 @@
 	#include <malloc.h>
 	#define CP_EXPORT __declspec(dllexport)
 #else
-	#include <alloca.h>
-	#define CP_EXPORT
+	#include <malloc.h>
+	#define CP_EXPORT __declspec(dllexport)
 #endif
 
 #ifdef __cplusplus

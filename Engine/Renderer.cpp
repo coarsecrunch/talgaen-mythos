@@ -75,12 +75,6 @@ namespace talga
 		I32 tidOffset = offsetof(VertexData, VertexData::tid);
 		I32 transparencyOffset = offsetof(VertexData, VertexData::transparencyScale);
 
-		TALGA_WARN(0, std::to_string( posOffset) + " position offset");
-		TALGA_WARN(0, std::to_string(colorOffset) + " color offset");
-		TALGA_WARN(0, std::to_string(uvOffset) + " UV offset");
-		TALGA_WARN(0, std::to_string(tidOffset) + " TID offset");
-		TALGA_WARN(0, std::to_string(sizeof(VertexData)) + " total size");
-
 		glVertexAttribPointer(SHADER_POSITION_LOC, 3, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (const void*)posOffset);
 		glVertexAttribPointer(SHADER_COLOR_LOC, 4, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (const void*)colorOffset);
 		glVertexAttribPointer(SHADER_UV_LOC, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (const void*)uvOffset);
