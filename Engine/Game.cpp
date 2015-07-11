@@ -27,6 +27,7 @@ namespace talga
 	Game::Game()
 		: mCamera(800, 600)
 		, mWindow(800, 600)
+		, layer{ nullptr, -1, -1 }
 	{
 	}
 

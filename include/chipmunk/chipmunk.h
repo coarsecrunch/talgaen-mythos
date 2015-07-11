@@ -18,12 +18,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 #ifndef CHIPMUNK_H
 #define CHIPMUNK_H
 
 #include <stdlib.h>
 #include <math.h>
+
+#define WIN32
 
 #ifdef WIN32
 	// For alloca().
@@ -31,7 +32,7 @@
 	#define CP_EXPORT __declspec(dllexport)
 #else
 	#include <malloc.h>
-	#define CP_EXPORT __declspec(dllexport)
+	#define CP_EXPORT
 #endif
 
 #ifdef __cplusplus
@@ -113,6 +114,7 @@ typedef struct cpContactPointSet cpContactPointSet;
 typedef struct cpArbiter cpArbiter;
 
 typedef struct cpSpace cpSpace;
+
 
 #include "cpVect.h"
 #include "cpBB.h"
