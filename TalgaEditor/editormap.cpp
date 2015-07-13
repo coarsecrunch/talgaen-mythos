@@ -61,10 +61,11 @@ namespace talga
         return 0;
       I32 texOffset = getOffset(t.first);
 
-      I32 x = t.second[0](0) * I32(t.first->w() / mTileWidth);
-      I32 y = t.second[0](1) * I32(t.first->h() / mTileHeight);
+      I32 x = t.second[3](0) * t.first->w() / mTileWidth;
+      I32 y = t.second[3](1) * t.first->h() / mTileHeight;
 
-      return texOffset + (y * ( (I32)t.first->w() / mTileWidth) + x) - 1;
+
+      return texOffset + (y * ((F32)t.first->w() / mTileWidth) + x) + 1;
     }
 
     void EditorMap::insertSheet(cpTex tex)

@@ -12,13 +12,9 @@ namespace talga
 {
   namespace editor
   {
-
-    const int TILE_WIDTH = 32;
-    const int TILE_HEIGHT = 32;
-
     AssetViewer::AssetViewer(QWidget* parent)
       : QGraphicsView(parent)
-      , pmImageViewScene(new QGraphicsScene)
+      , pmImageViewScene(new QGraphicsScene())
       , mCurrentImage{"", nullptr}
       , mStartPos{-1,-1}
       , mEndPos{-1, -1}
@@ -26,6 +22,7 @@ namespace talga
       , mLineProperties(Qt::NoPen)
       , mSelectBox{nullptr}
       , mLeftButtonIsDown{false}
+      , mMap{nullptr}
     {
       setScene(pmImageViewScene);
 
@@ -82,9 +79,9 @@ namespace talga
         {
           if (mStartPos.y() > currentPos.y())
           {
-            for (I32 y = currentPos.y() / TILE_HEIGHT; y <= mStartPos.y() / TILE_HEIGHT; ++y)
+            for (I32 y = currentPos.y() / mMap->getTileHeight(); y <= mStartPos.y() / mMap->getTileHeight(); ++y)
             {
-              for (I32 x = currentPos.x() / TILE_WIDTH; x <= mStartPos.x() / TILE_WIDTH; ++x)
+              for (I32 x = currentPos.x() / mMap->getTileWidth(); x <= mStartPos.x() / mMap->getTileWidth(); ++x)
               {
                 s.second.push_back(iPnt{x, y});
               }
@@ -92,9 +89,9 @@ namespace talga
           }
           else
           {
-            for (I32 y = mStartPos.y() / TILE_HEIGHT; y <= currentPos.y() / TILE_HEIGHT; ++y)
+            for (I32 y = mStartPos.y() / mMap->getTileHeight(); y <= currentPos.y() / mMap->getTileHeight(); ++y)
             {
-              for (I32 x = currentPos.x() / TILE_WIDTH; x <= mStartPos.x() / TILE_WIDTH; ++x)
+              for (I32 x = currentPos.x() / mMap->getTileWidth(); x <= mStartPos.x() / mMap->getTileWidth(); ++x)
               {
                   s.second.push_back(iPnt{x, y});
               }
@@ -105,9 +102,9 @@ namespace talga
         {
           if (mStartPos.y() > currentPos.y())
           {
-            for (I32 y = currentPos.y() / TILE_HEIGHT; y <= mStartPos.y() / TILE_HEIGHT; ++y)
+            for (I32 y = currentPos.y() / mMap->getTileHeight(); y <= mStartPos.y() / mMap->getTileHeight(); ++y)
             {
-              for (I32 x = mStartPos.x() / TILE_WIDTH; x <= currentPos.x() / TILE_WIDTH; ++x)
+              for (I32 x = mStartPos.x() / mMap->getTileWidth(); x <= currentPos.x() / mMap->getTileWidth(); ++x)
               {
                 s.second.push_back(iPnt{x, y});
               }
@@ -115,9 +112,9 @@ namespace talga
           }
           else
           {
-            for (I32 y = mStartPos.y() / TILE_HEIGHT; y <= currentPos.y() / TILE_HEIGHT; ++y)
+            for (I32 y = mStartPos.y() / mMap->getTileHeight(); y <= currentPos.y() / mMap->getTileHeight(); ++y)
             {
-              for (I32 x = mStartPos.x() / TILE_WIDTH; x <= currentPos.x() / TILE_WIDTH; ++x)
+              for (I32 x = mStartPos.x() / mMap->getTileWidth(); x <= currentPos.x() / mMap->getTileWidth(); ++x)
               {
                 s.second.push_back(iPnt{x, y});
               }
@@ -136,6 +133,7 @@ namespace talga
 
     void AssetViewer::sl_updateTexture(TextureAsset pix)
     {
+      if (!mMap) return;
       pmImageViewScene->clear();
 
 
@@ -148,20 +146,21 @@ namespace talga
       int imageWidth = pix.second->width();
       int imageHeight = pix.second->height();
 
-      for (int x = 0; x <= imageWidth / TILE_WIDTH; x++ )
+      for (int x = 0; x <= imageWidth / mMap->getTileWidth(); x++ )
       {
-        //pmImageViewScene->addLine(x * TILE_WIDTH, 0, x * TILE_WIDTH, imageHeight, lineProperties);
+        //pmImageViewScene->addLine(x * mMap->getTileWidth(), 0, x * mMap->getTileWidth(), imageHeight, lineProperties);
       }
 
-      for (int y = 0; y <= imageHeight / TILE_HEIGHT; y++)
+      for (int y = 0; y <= imageHeight / mMap->getTileHeight(); y++)
       {
-        //pmImageViewScene->addLine(0, y * TILE_HEIGHT, imageWidth, y * TILE_HEIGHT, lineProperties);
+        //pmImageViewScene->addLine(0, y * mMap->getTileHeight(), imageWidth, y * mMap->getTileHeight(), lineProperties);
       }
     }
 
     void AssetViewer::sl_updateChangedMap(EditorMap* map)
     {
       pmImageViewScene->clear();
+      mMap = map;
     }
 
     void AssetViewer::updateBox()
@@ -180,24 +179,24 @@ namespace talga
 
       if (mStartPos.x() < mEndPos.x())
       {
-        boxX = (mStartPos.x() / TILE_WIDTH) * TILE_WIDTH;
-        boxW = (((mEndPos.x() - boxX) / TILE_WIDTH) + 1)* TILE_WIDTH;
+        boxX = (mStartPos.x() / mMap->getTileWidth()) * mMap->getTileWidth();
+        boxW = (((mEndPos.x() - boxX) / mMap->getTileWidth()) + 1)* mMap->getTileWidth();
       }
       else
       {
-        boxX = (mEndPos.x() / TILE_WIDTH) * TILE_WIDTH;
-        boxW = (((mStartPos.x() - boxX) / TILE_WIDTH) + 1) * TILE_WIDTH;
+        boxX = (mEndPos.x() / mMap->getTileWidth()) * mMap->getTileWidth();
+        boxW = (((mStartPos.x() - boxX) / mMap->getTileWidth()) + 1) * mMap->getTileWidth();
       }
 
       if (mStartPos.y() < mEndPos.y())
       {
-        boxY = (mStartPos.y() / TILE_HEIGHT) * TILE_HEIGHT;
-        boxH = (((mEndPos.y() - boxY) / TILE_HEIGHT) + 1) * TILE_HEIGHT;
+        boxY = (mStartPos.y() / mMap->getTileHeight()) * mMap->getTileHeight();
+        boxH = (((mEndPos.y() - boxY) / mMap->getTileHeight()) + 1) * mMap->getTileHeight();
       }
       else
       {
-        boxY = (mEndPos.y() / TILE_HEIGHT) * TILE_HEIGHT;
-        boxH = (((mStartPos.y() - boxY) / TILE_HEIGHT) + 1) * TILE_HEIGHT;
+        boxY = (mEndPos.y() / mMap->getTileHeight()) * mMap->getTileHeight();
+        boxH = (((mStartPos.y() - boxY) / mMap->getTileHeight()) + 1) * mMap->getTileHeight();
       }
       if (boxX < 0)
         boxX = 0;

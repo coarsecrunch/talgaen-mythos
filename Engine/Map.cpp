@@ -216,7 +216,7 @@ namespace talga
 					for (auto x = 0; x < framesPerRow; ++x)
 					{
 						//TL TR BR BL
-
+            //REAL BL BR TR TL
 						tiles.push_back(Tile{ tex, UVFrame{ {
 								GET_UV((F32)tileWidth * x, tex->w(), (F32)tileHeight * y + tileHeight, tex->h()),
 								GET_UV((F32)tileWidth * x + tileWidth, tex->w(), (F32)tileHeight * y + tileHeight, tex->h()),

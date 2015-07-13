@@ -44,6 +44,7 @@ namespace talga
       QBrush mFill;
       QPen mLineProperties;
       void updateBox();
+      EditorMap* mMap;
     };
 
   }

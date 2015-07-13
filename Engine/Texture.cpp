@@ -29,13 +29,20 @@ namespace talga
 
 		if (!imgFile)
 		{
+			TALGA_WARN(0, "couldn't open texture " + path);
+			stbi_image_free((void*)data);
+			fclose(imgFile);
 			return false;
+			
 		}
 		
 		data = stbi_load_from_file(imgFile, &imgW, &imgH, &channels, 0);
 
 		if (!data)
 		{
+			TALGA_WARN(0, "stbi could no load data on texture " + path);
+			stbi_image_free((void*)data);
+			fclose(imgFile);
 			return false;
 		}
 
@@ -71,6 +78,8 @@ namespace talga
 		stbi_image_free((void*)data);
 		fclose(imgFile);
 		imgFile = nullptr;
+
+		return true;
 	}
 
 	bool Texture::save(std::string path, AssetManager& manager)

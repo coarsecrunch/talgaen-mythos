@@ -25,6 +25,7 @@ namespace talga
       , mMapsFolder(nullptr)
       , mScriptsFolder(nullptr)
       , mLevelFolder{nullptr}
+      , mMap{nullptr}
     {
     }
 
@@ -73,6 +74,7 @@ namespace talga
 
     void AssetList::sl_updateChangedMap(EditorMap * map)
     {
+      mMap = map;
       if (mLevelFolder)
         delete mLevelFolder;
 

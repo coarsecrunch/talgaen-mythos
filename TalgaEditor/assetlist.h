@@ -49,6 +49,7 @@ namespace talga
       QTreeWidgetItem* mLevelFolder;
 
       QPoint dragStartPosition;
+      EditorMap* mMap;
     };
 
   }
