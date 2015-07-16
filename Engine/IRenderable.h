@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 namespace talga
 {
@@ -12,4 +13,7 @@ namespace talga
 
 		virtual ~IRenderable() {}
 	};
+
+	typedef std::shared_ptr<IRenderable> SharedRdrPtr;
+	typedef std::shared_ptr<const IRenderable> cSharedRdrPtr;
 }

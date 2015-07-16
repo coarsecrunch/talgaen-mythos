@@ -32,3 +32,6 @@
 #else
 #define TALGA_MSG(message) {}
 #endif
+
+#define TALGA_PRVAL(variable) \
+	std::cout << #variable << ": " << variable << std::endl;

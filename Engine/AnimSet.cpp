@@ -20,7 +20,7 @@ namespace talga
 				return &(*iter).second;
 
 		std::cout << "Could not find animation: " << name << std::endl;
-		return nullptr;
+		return &mAnims.back().second;
 	}
 
 	/* Takes a list of Rectangles using pixel coordinates and converts them

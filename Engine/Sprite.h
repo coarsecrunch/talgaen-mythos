@@ -43,7 +43,7 @@ namespace talga
 
 		Rectangle& getBox() { return mImageBox; }
 
-		
+
 	protected:
 		void setUVFrame();
 		Rectangle mImageBox;
@@ -58,6 +58,6 @@ namespace talga
 		F32 mTimeSince;
 		F32 mFrameSpeed;
 		I32 mCurrentFrame;
-		
+
 	};
 }

@@ -9,6 +9,7 @@
 #include "Math/Vector2.h"
 #include "AnimSet.h"
 #include "AAsset.h"
+#include "Point.h"
 
 namespace talga
 {
@@ -47,7 +48,11 @@ namespace talga
 		void Init();
 
 		void begin();
+		//draw 
 		void submit(const Rectangle& imageBox, cpTex texture = nullptr, F32 transparencyScale = 1.0f, UVFrame frame = UVFrame());
+
+		//draw line
+		//void submit(const fPnt& pnt1, const fPnt& pnt2);
 		void render();
 		void end();
 

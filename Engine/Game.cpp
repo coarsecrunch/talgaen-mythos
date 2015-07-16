@@ -8,10 +8,14 @@
 
 #include "LuaEngine.h"
 #include "LuaBridge/LuaBridge.h"
+#include "GameObject.h"
+#include "chipmunk/chipmunk_private.h"
+#include "collisiontypes.h"
+
 
 namespace talga
 {
-	const int MAX_GAMEOBJECTS = 1000;
+	const int MAX_GAMEOBJECTS = 3000;
 
 	void Game::LUA_REGISTER(LuaEngine* engine)
 	{
@@ -27,89 +31,179 @@ namespace talga
 	Game::Game()
 		: mCamera(800, 600)
 		, mWindow(800, 600)
-		, layer{ nullptr, -1, -1 }
+		, mMapLayer{ nullptr, -1, -1 }
+		, mObjectsLayer{ nullptr, -1, -1 }
+		, mGameObjects( )
+		, mRenderer( nullptr )
+		, mManager()
+		, mKeyCallbacks()
 	{
+		mGameObjects.reserve(MAX_GAMEOBJECTS);
 	}
 
 
 	int Game::Init(int width, int height, const char* name)
 	{
-		//Camera::InitRendering(width, height);
-		//Window::initGL();
-
 		mCamera.getBox().setW(width);
 		mCamera.getBox().setH(height);
+
+		mRenderer = std::shared_ptr<Renderer>(new Renderer{ "../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag" });
+		mManager.AddTexture("../assets/textures/testblock.png");
+		mManager.AddTexture("../assets/textures/talgasheet.png");
+		mManager.AddMap("../assets/maps/sandboxx.tmap");
+
+		mMapLayer = Layer{ mRenderer, 800, 600 };
+		mObjectsLayer = Layer{ mRenderer, 800, 600 };
+		
+		cpVect gravity = cpv(0, -300);
+
+		mSpace = cpSpaceNew();
+		cpSpaceSetGravity(mSpace, gravity);
+		cpSpaceSetIterations(mSpace, 10);
+
+		cpShape* ground = cpSegmentShapeNew(mSpace->staticBody, cpv(0, -5 * 32), cpv(20 * 32, -5 * 32), 0);
+		cpShapeSetFriction(ground, 0.97f);
+		cpShapeSetCollisionType(ground, COLL_MAPGEOM);
+		cpSpaceAddShape(mSpace, ground);
+
+		mRenderer->setCamera(&mCamera);
+
+		mMapLayer.add(mManager.GetMap("sandboxx.tmap"));
+
+		
 
 		return 0;
 	}
 
-	void Game::Update(F32 dt)
+	void Game::addObj(GameObject* obj)
 	{
-		mCamera.update(dt);
+		obj->GAME = this;
+		mGameObjects.push_back(obj);
+		mObjectsLayer.add(obj->pmRenderable.get());
+		cpSpaceAddBody(mSpace, obj->mBody);
+		cpSpaceAddShape(mSpace, obj->mShape);
 		
-		/*for (auto obj = mActors.begin(); obj != mActors.end(); ++obj)
-		{
-			(*(*obj)).Update(dt);
-		}*/
+		TALGA_PRVAL(cpShapeGetCollisionType(obj->mShape));
+
+		if (obj->stagedFunc)
+			obj->stagedFunc(obj);
+
+		TALGA_MSG("Game object has been added")
 	}
 
-	void Game::ResolveCollisions()
+	void Game::addKeyCallback(char c, GameObject* obj, KeyCallback callback)
 	{
-		/*
-		for (auto obj = mActors.begin(); obj != mActors.end(); ++obj)
-		{
-			if (!(**obj).checkCollisions())
-				continue;
-
-			for (auto staticObj = mStaticActors.begin(); staticObj != mStaticActors.end(); ++staticObj)
-			{
-				FindResCollision(**obj, (**staticObj).getCollider());
-			}
-		}
-
-		for (auto obj = mActors.begin(); obj != mActors.end(); ++obj)
-		{
-			if (!(**obj).checkCollisions())
-				continue;
-
-			for (auto obj2 = obj + 1; obj2 != mActors.end(); ++obj2)
-			{
-				if (!(**obj2).checkCollisions())
-					continue;
-				ResMovingMovingCol(**obj, **obj2);
-			}
-		}*/
+		mKeyCallbacks.insert(std::pair < char, std::pair<GameObject*, KeyCallback> > {toupper(c), std::pair<GameObject*, KeyCallback>{obj, callback } });
 	}
 
-	void Game::Render(const AssetManager* man)
+	void Game::removeObj(GameObject* obj)
 	{
-		/*
-
-		for (auto rdrObj = mActors.begin(); rdrObj != mActors.end(); ++rdrObj)
+		for (auto it = mGameObjects.begin(); it != mGameObjects.end(); ++it)
 		{
-			if (!(*rdrObj)->isVisible()) continue;
 
-			(**rdrObj).Render(mCamera);
-
-			if (mRenderCollisions)
-				mCamera.RenderCollider(**rdrObj);
-
-		}
-
-		if (mRenderCollisions)
-		{
-			for (auto colliderObj = mStaticActors.begin(); colliderObj != mStaticActors.end(); ++colliderObj)
+			if (*it == obj)
 			{
-				mCamera.RenderCollider(**colliderObj);
+				if ( (*it)->unstagedFunc )
+					(*it)->unstagedFunc(*it);
+
+				cpSpaceRemoveShape(mSpace, (*it)->mShape);
+				cpSpaceRemoveBody(mSpace, (*it)->mBody);
+
+
+				if (it == mGameObjects.end() - 1)
+				{
+					mObjectsLayer.remove(obj->pmRenderable.get());
+					delete *it;
+					mGameObjects.pop_back();
+				}
+				else
+				{
+					mObjectsLayer.remove(obj->pmRenderable.get());
+					delete *it;
+					*it = mGameObjects.back();
+					mGameObjects.pop_back();
+				}
+				
+				break;
 			}
 		}
-
-		*/
 	}
 
+	void Game::clearObjs()
+	{
+		for (auto it = mGameObjects.begin(); it != mGameObjects.end(); ++it)
+		{
+			if ((*it)->unstagedFunc)
+				(*it)->unstagedFunc(*it);
+
+			delete *it;
+		}
+
+		mGameObjects.clear();
+	}
+	void Game::update(F32 dt)
+	{
+		cpSpaceStep(mSpace, dt / 1000.0f);
+		mCamera.update(dt);
+
+		for (auto it = mGameObjects.begin(); it != mGameObjects.end(); ++it)
+		{
+			(*it)->update(dt);
+			if ((*it)->DESTROY)
+			{
+				removeObj(*it);
+				if (it != mGameObjects.begin())
+					--it;
+			}
+		}
+	}
+
+
+	void Game::render()
+	{
+		mMapLayer.render();
+		mObjectsLayer.render();
+	}
+
+	// currently relies on the fact that glfw defines keys as their ascii value, probably should define my own constants
+	void Game::game_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		auto range = mKeyCallbacks.equal_range(key);
+
+		int keyaction = -1;
+		
+		switch (action)
+		{
+		case GLFW_PRESS:
+			keyaction = TALGA_KEYPRESS; break;
+		case GLFW_RELEASE:
+			keyaction = TALGA_KEYRELEASE; break;
+		default:
+			keyaction = -1; break;
+		}
+		
+		TALGA_PRVAL((char)key)
+
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			(*it).second.second(it->second.first, keyaction);
+		}
+	}
+
+	void Game::game_resize_window(GLFWwindow* window, int w, int h)
+	{
+		mObjectsLayer.setProjectionMatrix(w, h);
+		mMapLayer.setProjectionMatrix(w, h);
+		mCamera.setW(w);
+		mCamera.setH(h);
+		glViewport(0, 0, w, h);
+	}
 
 	Game::~Game()
 	{
-
+		cpSpaceFree(mSpace);
+		clearObjs();
+		mMapLayer.clear();
+		mObjectsLayer.clear();
 	}
 }

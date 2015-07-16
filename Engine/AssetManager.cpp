@@ -43,6 +43,8 @@ namespace talga
 			TALGA_MSG(path + " was successfully loaded");
 			
 			cpTex exists = static_cast<cpTex>(assetExists(tex.getName()));
+			
+			TALGA_WARN(!exists, path + " texture has already been added");
 			if (exists)
 				return exists;
 

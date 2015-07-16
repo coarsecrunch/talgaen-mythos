@@ -12,20 +12,20 @@ namespace talga
 	class Layer
 	{
 	public:
-		Layer(Renderer* renderer, F32 renderWidth, F32 renderHeight);
+		Layer(std::shared_ptr<Renderer> renderer, F32 renderWidth, F32 renderHeight);
 		~Layer();
 
-		void add(const IRenderable* sprite);
-		void remove(const IRenderable* sprite);
+		void add(const IRenderable*);
+		void remove(const IRenderable*);
 		void clear();
 		void render();
-		Renderer* getRenderer() { return mRenderer; }
-		void setRenderer(Renderer* renderer);
+		std::shared_ptr<Renderer> getRenderer() { return mRenderer; }
+		void setRenderer(std::shared_ptr<Renderer> renderer);
 		//only call when the previous projection is on top
 		void setProjectionMatrix(I32 w, I32 h);
 	protected:
 		F32 mWidth, mHeight;
-		Renderer* mRenderer;
+		std::shared_ptr<Renderer> mRenderer;
 		std::vector<const IRenderable*> mRenderList;
 	};
 }

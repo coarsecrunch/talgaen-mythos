@@ -176,7 +176,7 @@ namespace talga
 		
 		mIndexCount += 6;
 	}
-	
+
 	void Renderer::render()
 	{
 		for (I32 i = 0; i < mTextureSlots.size(); ++i)
@@ -194,6 +194,7 @@ namespace talga
 		mIndexCount = 0;
 		glBindVertexArray(0);
 	}
+
 
 	void Renderer::end()
 	{

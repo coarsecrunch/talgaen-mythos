@@ -6,7 +6,7 @@
 namespace talga
 {
 	/*LAYER TAKES RESPONSIBLITY FOR ALL */
-	Layer::Layer(Renderer* renderer, F32 renderWidth, F32 renderHeight)
+	Layer::Layer(std::shared_ptr<Renderer> renderer, F32 renderWidth, F32 renderHeight)
 		: mRenderer(renderer)
 		, mWidth{ renderWidth }
 		, mHeight{ renderHeight }
@@ -44,9 +44,9 @@ namespace talga
 	{
 		mRenderer->begin();
 		for (const IRenderable* rdr : mRenderList)
-    {
-      if (!rdr) continue;
-			rdr->render(mRenderer, mRenderer->getCamera());
+		{
+			if (!rdr) continue;
+			rdr->render(mRenderer.get(), mRenderer->getCamera());
 		}
 		mRenderer->end();
 		mRenderer->render();
@@ -62,7 +62,7 @@ namespace talga
 		mRenderer->tStackPush(OrthographicProjectionMat2D(w, h));
 	}
 
-	void Layer::setRenderer(Renderer* renderer)
+	void Layer::setRenderer(std::shared_ptr<Renderer> renderer)
     {
 		mRenderer = renderer;
 		setProjectionMatrix(mWidth, mHeight);

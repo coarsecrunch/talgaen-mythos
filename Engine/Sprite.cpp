@@ -57,7 +57,7 @@ namespace talga
 			mImageBox.setH(32);
 			TALGA_WARN(0, "Invalid texture was passed to animated sprite");
 		}
-			
+
 
 	}
 
@@ -87,7 +87,7 @@ namespace talga
 				else if (mCurrentFrame >= mCurrentAnimation->size() && !isLoop)
 				{
 					mCurrentFrame = 0;
-					playAnimation("default", 5000, true);
+					playAnimation("default", 1000, true);
 					mTimeSince = 0;
 				}
 
@@ -115,7 +115,7 @@ namespace talga
 
 		// should probably be taken out, and just have a seperate array of
 		// rectangles with pixel coords in the animation
-		mImageBox.setW((mCurrentAnimation->at(mCurrentFrame).at(1)[0] - mCurrentAnimation->at(mCurrentFrame).at(0)[0] )
+		mImageBox.setW((mCurrentAnimation->at(mCurrentFrame).at(1)[0] - mCurrentAnimation->at(mCurrentFrame).at(0)[0])
 			* mAnims->tex()->w());
 		mImageBox.setH((mCurrentAnimation->at(mCurrentFrame).at(0)[1] - mCurrentAnimation->at(mCurrentFrame).at(3)[1])
 			* mAnims->tex()->h());
