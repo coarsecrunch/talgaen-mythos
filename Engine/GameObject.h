@@ -8,7 +8,6 @@
 #include "IDynamic.h"
 #include "Math/Vector2.h"
 #include "Game.h"
-#include "Callbacks.h"
 
 struct cpBody;
 struct cpShape;
@@ -18,6 +17,10 @@ namespace talga
 	class LuaEngine;
 	typedef std::function <void(GameObject*)> CollisionCallback;
 	struct CollisionData;
+
+	typedef std::function<void(GameObject*)> StagedFunction;
+	typedef std::function<void(GameObject*, I32 ms)> UpdateFunction;
+	typedef std::function<void(GameObject*)> UnstagedFunction;
 
 	class GameObject : public IDynamic
 	{
@@ -60,9 +63,9 @@ namespace talga
 		void addKeyCallback(char c, KeyCallback cback);
 		void destroy();
 
-		StagedFunc stagedFunc;
-		UpdateFunc updateFunc;
-		UnstagedFunc unstagedFunc;
+		StagedFunction stagedFunc;
+		UpdateFunction updateFunc;
+		UnstagedFunction unstagedFunc;
 	protected:
 		friend class Game;
 

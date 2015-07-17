@@ -27,6 +27,7 @@
     <ClCompile Include="Interpolation.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="LuaEngine.cpp" />
+    <ClCompile Include="luareg.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Math\Matrix3x3.cpp" />
     <ClCompile Include="Math\Matrix4x4.cpp" />
@@ -53,10 +54,10 @@
     <ClInclude Include="..\assets\scripts\collisiontypes.h" />
     <ClInclude Include="AAsset.h" />
     <ClInclude Include="AnimSet.h" />
-    <ClInclude Include="Callbacks.h" />
     <ClInclude Include="ESubject.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="luareg.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="sys.h" />
     <ClInclude Include="tassert.h" />
@@ -167,7 +168,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>chipmunk.lib;glfw3.lib;glew32.lib;opengl32.lib;lua52.lib;oolua.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>chipmunk.lib;glfw3.lib;glew32.lib;opengl32.lib;lua52.lib;ooluad.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>

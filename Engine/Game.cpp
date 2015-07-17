@@ -6,13 +6,11 @@
 #include "Collision.h"
 #include <iostream>
 
-#include "LuaEngine.h"
+#include "oolua/oolua.h"
 #include "GameObject.h"
-#include "LuaBridge/LuaBridge.h"
 
 #include "chipmunk/chipmunk_private.h"
 #include "collisiontypes.h"
-
 
 namespace talga
 {
@@ -34,17 +32,7 @@ namespace talga
 
 	void Game::LUA_REGISTER(LuaEngine* engine)
 	{
-		using namespace luabridge;
-		
-		getGlobalNamespace(engine->getState())
-			.beginNamespace("talga")
-			.beginClass<Game>("Game")
-			.addData("camera", &Game::mCamera)
-			.addFunction("addObj", &Game::addObj)
-			.addFunction("removeObj", &Game::removeObj)
-			.addFunction("printJelly", &Game::printJelly)
-			.endClass()
-			.endNamespace();
+			
 	}
 
 	void Game::printJelly() const
@@ -217,4 +205,8 @@ namespace talga
 		mMapLayer.clear();
 		mObjectsLayer.clear();
 	}
+
+	
+
 }
+

@@ -12,6 +12,7 @@
 #include "Layer.h"
 #include "IDynamic.h"
 #include "IRenderable.h"
+#include "oolua/oolua.h"
 struct GLFWwindow;
 struct cpBody;
 struct cpSpace;
@@ -74,5 +75,5 @@ namespace talga
 		GameObject* mPlayer;
 		Window mWindow;
 	};
-
+	
 }

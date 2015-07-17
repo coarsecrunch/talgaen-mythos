@@ -113,30 +113,9 @@ namespace talga
 		}
 	}
 
-	class TalgaFunc
-	{
-		//TalgaFunc(LuaRef ref);
-		//TalgaFunc();
-	};
 	void GameObject::loadScript(std::string path, LuaEngine* engine)
 	{
-		using namespace luabridge;
 
-		if (luaL_dofile(engine->getState(), path.c_str()) == 0) { // script has opened
-			LuaRef tempFunc = getGlobal(engine->getState(), "init");
-			if (tempFunc.isFunction())
-			{
-				std::cout << "found it" << std::endl;
-				stagedFunc = tempFunc;
-			}
-			else
-			{
-				std::cout << "didn't find it" << std::endl;
-			}
-		}
-		else {
-			TALGA_ASSERT(0, "Error, can't open script!");
-		}
 	}
 
 	CollisionCallback GameObject::getCollisionCallback(I32 collisionWith)

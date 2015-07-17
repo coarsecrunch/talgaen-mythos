@@ -147,6 +147,9 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="luareg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\include\Math\Interpolation.h">
@@ -275,7 +278,7 @@
     <ClInclude Include="..\assets\scripts\collisiontypes.h">
       <Filter>Scripts</Filter>
     </ClInclude>
-    <ClInclude Include="Callbacks.h">
+    <ClInclude Include="luareg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
