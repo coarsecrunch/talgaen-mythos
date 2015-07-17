@@ -2,24 +2,27 @@
 
 #include "lua/lua.hpp"
 #include <iostream>
+#include "LuaBridge\LuaBridge.h"
 
 namespace talga
 {
 	LuaEngine::LuaEngine() :
 		mState(nullptr)
 	{
+		mState = luaL_newstate();
+		luaL_openlibs(mState);
+	}
 
+	LuaEngine* LuaEngine::instance()
+	{
+		static LuaEngine* engine = new LuaEngine();
+
+		return engine;
 	}
 
 	lua_State* LuaEngine::getState()
 	{
 		return mState;
-	}
-
-	void LuaEngine::Init()
-	{
-		mState = luaL_newstate();
-		luaL_openlibs(mState);
 	}
 
 	void LuaEngine::ExecuteFile(std::string path)

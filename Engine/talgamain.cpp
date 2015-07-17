@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include "Cmn.h"
 #include "Rendering.h"
 #include "Map.h"
@@ -10,12 +14,19 @@
 #include <iostream>
 #include "Math/Matrix4x4.h"
 #include "Math/Vector3.h"
+
 #include "AssetManager.h"
 #include "Clock.h"
 #include "Rect.h"
 #include "ParticleEmitter.h"
+
 #include "GameObject.h"
+#include "Callbacks.h"
+
 #include "LuaEngine.h"
+
+#include "LuaBridge/LuaBridge.h"
+
 
 #include "Renderer.h"
 #include "Layer.h"
@@ -24,7 +35,9 @@
 #include "Math/RandomGen.h"
 #include "sys.h"
 #include "chipmunk/chipmunk_private.h"
+
 #include "collisiontypes.h"
+
 
 #define GROUND_COLLISION 1
 #define COLLISION_PHYSOBJ 2
@@ -32,6 +45,7 @@
 const talga::I32 WIDTH = 800;
 const talga::I32 HEIGHT = 600;
 static talga::Game* GAME = nullptr;
+static talga::LuaEngine* LUA_ENGINE = nullptr;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -43,15 +57,41 @@ void resize_callback(GLFWwindow* window, int w, int h)
 	GAME->game_resize_window(window, w, h);
 }
 
+talga::Game* getGame()
+{
+	return GAME;
+}
+
+static void LUA_REGISTER(talga::LuaEngine* engine)
+{
+	using namespace luabridge;
+
+	getGlobalNamespace(engine->getState())
+		.beginNamespace("talga")
+		.addVariable("game", GAME, false)
+		.addFunction("getGame", &getGame)
+		.endNamespace();
+}
+
+
 
 int main(int argc, char** argv)
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	TALGA_MSG("working directory: " + talga::getWorkingDirectory());
 	talga::Clock clock;
 	clock.Init();
 
 	GAME = new talga::Game();
 	GAME->Init(WIDTH, HEIGHT, "hello talga");
+	
+	talga::Rectangle::LUA_REGISTER(talga::LuaEngine::instance());
+	talga::GameObject::LUA_REGISTER(talga::LuaEngine::instance());
+	talga::Camera::LUA_REGISTER(talga::LuaEngine::instance());
+	talga::Game::LUA_REGISTER(talga::LuaEngine::instance());
+	talga::UpdateFunc::LUA_REGISTER(talga::LuaEngine::instance());
+	talga::StagedFunc::LUA_REGISTER(talga::LuaEngine::instance());
+	LUA_REGISTER(talga::LuaEngine::instance());
 
 	talga::U32 previousTime = 0;
 	talga::U32 dt = 0;
@@ -116,18 +156,25 @@ int main(int argc, char** argv)
 	};
 
 	
-	talga::GameObject* tga = new talga::GameObject(GAME, spr, talgaInit);
+	talga::GameObject* tga = new talga::GameObject(spr, talgaInit);
+	talga::GameObject* blk = new talga::GameObject(block);
 
-	talga::GameObject* blk = new talga::GameObject(GAME, block);
+	tga->loadScript("../assets/scripts/script.lua", talga::LuaEngine::instance());
+
 	GAME->addObj(tga);
 	GAME->addObj(blk);
-	GAME->removeObj(blk);
+
+	
 
 	glfwSetWindowSizeCallback(GAME->getWindow().getWindow(), resize_callback);
 	glfwSetKeyCallback(GAME->getWindow().getWindow(), key_callback);
 
+
 	while (!glfwWindowShouldClose(GAME->getWindow().getWindow()))
 	{
+		GAME->getWindow().swap();
+		GAME->getWindow().clear();
+
 		glfwPollEvents();
 		dt = clock.TimePassed() - previousTime;
 		timeSince += dt;
@@ -139,9 +186,6 @@ int main(int argc, char** argv)
 			std::cout << std::endl << "FPS: " << fps << std::endl;
 			fps = 0;
 		}
-		
-		GAME->getWindow().swap();
-		GAME->getWindow().clear();
 
 		GAME->update(dt);
 		GAME->render();
@@ -150,5 +194,6 @@ int main(int argc, char** argv)
 	}
 
 	delete GAME;
+
 	return 0;
 }

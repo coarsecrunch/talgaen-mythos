@@ -3,15 +3,21 @@
 #include "Sprite.h"
 #include "Game.h"
 #include "collisiontypes.h"
+
+#include "LuaEngine.h"
+#include "LuaBridge/LuaBridge.h"
+
 namespace talga
 {
-	GameObject::GameObject(Game* game, IRenderable* rdr, std::function<void(GameObject*)> tempInitFunc, F32 x, F32 y)
-		: GAME(game)
+	GameObject::GameObject(IRenderable* rdr, std::function<void(GameObject*)> tempInitFunc, F32 x, F32 y)
+		: GAME(nullptr)
 		, DESTROY(false)
 		, pmRenderable(rdr)
 		, isAnimated{false}
 		, mBox{ nullptr }
-		, initFunc(tempInitFunc)
+		, stagedFunc()
+		, updateFunc()
+		, unstagedFunc()
 	{
 		if (rdr)
 		{
@@ -24,11 +30,6 @@ namespace talga
 				cpBodySetPosition(mBody, cpv(x, y));
 				setFriction(0.94f);
 				setCollisionType(COLL_DEFAULT);
-
-				if (initFunc)
-				{
-					initFunc(this);
-				}
 			}
 			else if (dynamic_cast<AnimSprite*>(pmRenderable.get()))
 			{
@@ -40,16 +41,49 @@ namespace talga
 				cpBodySetPosition(mBody, cpv(x, y));
 				setFriction(0.94f);
 				setCollisionType(COLL_DEFAULT);
-				if (initFunc)
-				{
-					initFunc(this);
-				}
 			}
 		}
 		else
 		{
 			TALGA_ASSERT(0, "nullptr passed to GameObject");
 		}
+	}
+
+	GameObject::GameObject(const GameObject& cpy)
+		: GAME(cpy.GAME)
+		, DESTROY(false)
+		, pmRenderable(cpy.pmRenderable)
+		, isAnimated{ cpy.isAnimated }
+		, mBox{ cpy.mBox } //need to copy functions too
+		, stagedFunc(cpy.stagedFunc)
+		, updateFunc(cpy.updateFunc)
+		, unstagedFunc(cpy.unstagedFunc)
+	{
+	}
+
+	void GameObject::LUA_REGISTER(LuaEngine* engine)
+	{
+		using namespace luabridge;
+
+		getGlobalNamespace(engine->getState())
+			.beginNamespace("talga")
+			.beginClass<GameObject>("GameObject")
+			.addConstructor< void(*)(IRenderable*, std::function<void(GameObject*)>) >()
+			.addProperty("friction", &GameObject::getFriction, &GameObject::setFriction)
+			.addProperty("mass", &GameObject::getMass, &GameObject::setMass)
+			.addProperty("vx", &GameObject::getVx)
+			.addProperty("vy", &GameObject::getVy)
+			.addFunction("applyForceX", &GameObject::applyForceX)
+			.addFunction("applyForceY", &GameObject::applyForceY)
+			.addFunction("applyImpulseX", &GameObject::applyImpulseX)
+			.addFunction("applyImpulseY", &GameObject::applyImpulseY)
+			.addFunction("addKeyCallback", &GameObject::addKeyCallback)
+			.addFunction("addCollisionCallback", &GameObject::addCollisionCallback)
+			.addData("stagedFunc", &GameObject::stagedFunc)
+			.addData("updateFunc", &GameObject::updateFunc)
+			.addData("unstagedFunc", &GameObject::unstagedFunc)
+			.endClass()
+		.endNamespace();
 	}
 
 	void GameObject::update(F32 dt)
@@ -76,6 +110,32 @@ namespace talga
 			
 			if (updateFunc)
 				updateFunc(this, dt);
+		}
+	}
+
+	class TalgaFunc
+	{
+		//TalgaFunc(LuaRef ref);
+		//TalgaFunc();
+	};
+	void GameObject::loadScript(std::string path, LuaEngine* engine)
+	{
+		using namespace luabridge;
+
+		if (luaL_dofile(engine->getState(), path.c_str()) == 0) { // script has opened
+			LuaRef tempFunc = getGlobal(engine->getState(), "init");
+			if (tempFunc.isFunction())
+			{
+				std::cout << "found it" << std::endl;
+				stagedFunc = tempFunc;
+			}
+			else
+			{
+				std::cout << "didn't find it" << std::endl;
+			}
+		}
+		else {
+			TALGA_ASSERT(0, "Error, can't open script!");
 		}
 	}
 
@@ -186,14 +246,10 @@ namespace talga
 	}
 	GameObject::~GameObject()
 	{
-		if (destroyedFunc)
-			destroyedFunc(this);
-
 		cpShapeFree(mShape);
 		cpBodyFree(mBody);
 
 		for (auto it = mData.begin(); it != mData.end(); ++it)
 			delete *it;
-
 	}
 }

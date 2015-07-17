@@ -8,20 +8,28 @@
 #include "IDynamic.h"
 #include "Math/Vector2.h"
 #include "Game.h"
+#include "Callbacks.h"
 
 struct cpBody;
 struct cpShape;
 
 namespace talga
 {
+	class LuaEngine;
 	typedef std::function <void(GameObject*)> CollisionCallback;
 	struct CollisionData;
+
 	class GameObject : public IDynamic
 	{
 	public:
-		GameObject(Game* game, IRenderable* rdr, std::function<void(GameObject*)> = std::function<void(GameObject*)>(nullptr), F32 x = 0.0f, F32 y = 0.0f);
+		GameObject(IRenderable* rdr, std::function<void(GameObject*)> = std::function<void(GameObject*)>(nullptr), F32 x = 0.0f, F32 y = 0.0f);
+		GameObject(const GameObject& cpy);
 		virtual ~GameObject();
+
+		static void LUA_REGISTER(LuaEngine*);
 		
+		void loadScript(std::string path, LuaEngine* engine);
+
 		F32 getMass() const;
 		void setMass(F32 value); 
 		
@@ -52,13 +60,9 @@ namespace talga
 		void addKeyCallback(char c, KeyCallback cback);
 		void destroy();
 
-		std::function<void(GameObject*)> initFunc;
-		std::function<void(GameObject*)> stagedFunc;
-		std::function<void(GameObject*, F32)> updateFunc;
-		std::function<void(GameObject*)> unstagedFunc;
-		std::function<void(GameObject*)> destroyedFunc;
-		std::function<void(GameObject*)> wildcardCollisionFunc;
-
+		StagedFunc stagedFunc;
+		UpdateFunc updateFunc;
+		UnstagedFunc unstagedFunc;
 	protected:
 		friend class Game;
 

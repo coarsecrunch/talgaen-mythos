@@ -30,17 +30,18 @@ namespace talga
 	class Game : public IDynamic
 	{
 	public:
-		static void LUA_REGISTER(LuaEngine*);
 
 		Game();
 		~Game();
 
 		int Init(int width, int height, const char* name);
+		static void LUA_REGISTER(LuaEngine*);
 
 		virtual void update(F32 dt) override;
 		virtual void render();
 
-		Camera& getCamera() { return mCamera; } // XXX
+		const Camera& getCamera() const { return *mCamera; }
+		void setCamera(const Camera& value) { *mCamera = value; }
 
 		Window& getWindow() { return mWindow; }
 
@@ -57,9 +58,11 @@ namespace talga
 		void addKeyCallback(char c, GameObject* obj, KeyCallback);
 
 		cpSpace* getSpace() { return mSpace; }
+
+		void printJelly() const;
 	protected:
 		std::vector<GameObject*> mGameObjects;
-		Camera mCamera;
+		Camera* mCamera;
 		cpBody* rectBody;
 		Layer mMapLayer;
 		Layer mObjectsLayer;
@@ -68,7 +71,7 @@ namespace talga
 		AssetManager mManager;
 		
 		std::multimap<char, std::pair<GameObject*, KeyCallback>> mKeyCallbacks;
-
+		GameObject* mPlayer;
 		Window mWindow;
 	};
 

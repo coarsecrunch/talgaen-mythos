@@ -1,5 +1,9 @@
 #include "Rectangle.h"
 #include "Math/Matrix4x4.h"
+
+#include "LuaEngine.h"
+#include "LuaBridge/LuaBridge.h"
+
 namespace talga
 {
 	Rectangle::Rectangle(F32 width, F32 height, vec3 position, vec4 color,
@@ -11,6 +15,20 @@ namespace talga
 	{
 		mVerts.fill(vec3());
 		updateVerts();
+	}
+
+	void Rectangle::LUA_REGISTER(LuaEngine* engine)
+	{
+		using namespace luabridge;
+
+		getGlobalNamespace(engine->getState())
+			.beginNamespace("talga")
+			.beginClass<Rectangle>("Rect")
+			.addProperty("x", &Rectangle::getX, &Rectangle::setX)
+			.addProperty("y", &Rectangle::getY, &Rectangle::setY)
+			.addProperty("z", &Rectangle::getZ, &Rectangle::setZ)
+			.endClass()
+			.endNamespace();
 	}
 
 	Rectangle::Rectangle(const Rectangle& cpy)

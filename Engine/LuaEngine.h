@@ -12,15 +12,17 @@ namespace talga
 	{
 
 	public:
-		LuaEngine();
+		static LuaEngine* instance();
+
+		
 		~LuaEngine();
 
 		lua_State* getState();
 
-		void Init();
 		void ExecuteFile(std::string path);
 		void ExecuteStr(std::string str);
 	protected:
+		LuaEngine();
 		lua_State* mState;
 
 	protected:
