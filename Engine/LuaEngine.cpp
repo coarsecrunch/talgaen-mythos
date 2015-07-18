@@ -2,23 +2,14 @@
 
 #include "lua/lua.hpp"
 #include <iostream>
-#include "LuaBridge\LuaBridge.h"
 #include "Game.h"
 
-#include "luareg.h"
 
-void printJelly()
-{
-	std::cout << "I've got jelly in my belly!" << std::endl;
-}
-
-OOLUA_CFUNC(printJelly, l_printJelly)
 namespace talga
 {
 	LuaEngine::LuaEngine() 
 		: mScript()
 	{
-		OOLUA::set_global(mScript, "printJelly", l_printJelly);
 	}
 
 	LuaEngine* LuaEngine::instance()
@@ -35,23 +26,39 @@ namespace talga
 
 	void LuaEngine::ExecuteFile(std::string path)
 	{
-		int err = mScript.run_file(path);
-//		reportError(err);
+		if (mScript.run_file(path))
+			;
+		else
+			reportError(0);
 	}
+
 
 	void LuaEngine::reportError(int err)
 	{
-		if (err != 0)
+		std::cout << "Lua error: " << OOLUA::get_last_error(getState()) << std::endl;;
+	}
+
+	void LuaEngine::stackDump()
+	{
+		lua_Debug entry;
+		int depth = 0;
+
+		while (lua_getstack(getState(), depth, &entry))
 		{
-			std::cout << "Lua error: " << lua_tostring(getState(), err);
-			lua_pop(getState(), 1);
+			int status = lua_getinfo(getState(), "Sln", &entry);
+			assert(status);
+
+			std::cout << entry.short_src << "(" << entry.currentline << "): " << (entry.name ? entry.name : "?") << std::endl;
+			depth++;
 		}
 	}
 
 	void LuaEngine::ExecuteStr(std::string str)
 	{
-		int err = mScript.run_chunk(str);
-		reportError(err);
+		if (mScript.run_chunk(str))
+			;
+		else
+			reportError(0);
 	}
 
 	LuaEngine::~LuaEngine()

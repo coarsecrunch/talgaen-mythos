@@ -1,3 +1,5 @@
+
+
 #include "Cmn.h"
 #include "Rendering.h"
 #include "Map.h"
@@ -49,10 +51,6 @@ talga::Game* getGame()
 {
 	return GAME;
 }
-static void LUA_REGISTER(talga::LuaEngine* engine)
-{
-
-}
 
 int main(int argc, char** argv)
 {
@@ -70,9 +68,9 @@ int main(int argc, char** argv)
 	//talga::UpdateFunc::LUA_REGISTER(talga::LuaEngine::instance());
 	//talga::StagedFunc::LUA_REGISTER(talga::LuaEngine::instance());
 	//LUA_REGISTER(talga::LuaEngine::instance());
-	//OOLUA::LUA_REGISTER_TYPES();
+	LUA_REGISTER_TYPES();
 
-	//talga::LuaEngine::instance()->push(GAME);
+	talga::LuaEngine::instance()->addGlobal("GAME", GAME);
 
 	talga::LuaEngine::instance()->ExecuteFile("../assets/scripts/script.lua");
 
@@ -87,10 +85,12 @@ int main(int argc, char** argv)
 	std::vector<talga::Rect> talgaStandR{ { talga::Rect{ 128, 0, 64, 64 }, talga::Rect{ 192, 0, 64, 64 } } };
 	std::vector<talga::Rect> talgaWalkL;
 	std::vector<talga::Rect> talgaWalkR;
+	
 	for (int i = 0; i < 6; ++i)
 	{
 		talgaWalkL.push_back(talga::Rect{ 64 * i, 64, 64, 64 });
 	}
+
 	for (int i = 6; i < 12; ++i)
 	{
 		talgaWalkR.push_back(talga::Rect{ 64 * i, 64, 64, 64 });
@@ -169,6 +169,7 @@ int main(int argc, char** argv)
 			std::cout << std::endl << "FPS: " << fps << std::endl;
 			fps = 0;
 		}
+		talga::LuaEngine::instance()->ExecuteStr("GAME:camera():box():setX(GAME:camera():box():getX() - 2)");
 
 		GAME->update(dt);
 		GAME->render();

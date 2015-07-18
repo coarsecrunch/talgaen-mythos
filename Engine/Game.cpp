@@ -17,7 +17,7 @@ namespace talga
 	const int MAX_GAMEOBJECTS = 3000;
 
 	Game::Game()
-		: mCamera(new Camera(800, 600))
+		: mCamera(800, 600)
 		, mWindow(800, 600)
 		, mMapLayer{ nullptr, -1, -1 }
 		, mObjectsLayer{ nullptr, -1, -1 }
@@ -35,15 +35,10 @@ namespace talga
 			
 	}
 
-	void Game::printJelly() const
-	{
-		std::cout << "I've got jelly in my belly!" << std::endl;
-	}
-
 	int Game::Init(int width, int height, const char* name)
 	{
-		mCamera->getBox().setW(width);
-		mCamera->getBox().setH(height);
+		mCamera.box().setW(width);
+		mCamera.box().setH(height);
 
 		mRenderer = std::shared_ptr<Renderer>(new Renderer{ "../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag" });
 		mManager.AddTexture("../assets/textures/testblock.png");
@@ -64,7 +59,7 @@ namespace talga
 		cpShapeSetCollisionType(ground, COLL_MAPGEOM);
 		cpSpaceAddShape(mSpace, ground);
 
-		mRenderer->setCamera(mCamera);
+		mRenderer->setCamera(&mCamera);
 
 		mMapLayer.add(mManager.GetMap("sandboxx.tmap"));
 
@@ -140,7 +135,7 @@ namespace talga
 	void Game::update(F32 dt)
 	{
 		cpSpaceStep(mSpace, dt / 1000.0f);
-		mCamera->update(dt);
+		mCamera.update(dt);
 
 		for (auto it = mGameObjects.begin(); it != mGameObjects.end(); ++it)
 		{
@@ -157,7 +152,7 @@ namespace talga
 
 	void Game::render()
 	{
-		mMapLayer.getRenderer()->tStackPush(mCamera->getCameraMat());
+		mMapLayer.getRenderer()->tStackPush(mCamera.getCameraMat());
 		mMapLayer.render();
 		mObjectsLayer.render();
 		mMapLayer.getRenderer()->tStackPop();
@@ -192,14 +187,13 @@ namespace talga
 	{
 		mObjectsLayer.setProjectionMatrix(w, h);
 		mMapLayer.setProjectionMatrix(w, h);
-		mCamera->setW(w);
-		mCamera->setH(h);
+		mCamera.setW(w);
+		mCamera.setH(h);
 		glViewport(0, 0, w, h);
 	}
 
 	Game::~Game()
 	{
-		delete mCamera;
 		cpSpaceFree(mSpace);
 		clearObjs();
 		mMapLayer.clear();

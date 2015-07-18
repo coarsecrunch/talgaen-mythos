@@ -18,7 +18,7 @@ namespace talga
 		virtual void render(Renderer* renderer, const Camera* camera) const override;
 		virtual void update(F32 dt) override;
 
-		Rectangle& getBox() { return mImageBox; }
+		Rectangle& box() { return mImageBox; }
 
 		cpTex getTexure() const { return mTex; }
 	protected:
@@ -41,7 +41,7 @@ namespace talga
 		void playAnimation(const std::string& animName, I32 speed, bool loop);
 		void playDefault();
 
-		Rectangle& getBox() { return mImageBox; }
+		Rectangle& box() { return mImageBox; }
 
 
 	protected:

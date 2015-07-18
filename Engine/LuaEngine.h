@@ -4,7 +4,9 @@
 
 #include <string>
 #include "oolua/oolua_script.h"
+#include "oolua/oolua_registration.h"
 struct lua_State;
+
 
 namespace talga
 {
@@ -28,9 +30,19 @@ namespace talga
 		template<typename T>
 		void push(const T& ref)
 		{
-			mScript.push(ref);
+			if (mScript.push(ref))
+				;
+			else
+				reportError(0);
 		}
 
+		template<typename T>
+		void addGlobal(std::string name, T& ref)
+		{
+			OOLUA::set_global(getState(), name.c_str(), ref);
+		}
+
+		void stackDump();
 		void ExecuteFile(std::string path);
 		void ExecuteStr(std::string str);
 

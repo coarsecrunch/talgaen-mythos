@@ -5,6 +5,13 @@
 
 #define TALGA_UBUNTU_BUILD
 
+
+#ifdef TALGA_DEBUG
+#define OOLUA_USE_EXCEPTIONS 1
+#define OOLUA_STORE_LAST_ERROR 0
+#endif
+
+
 namespace talga
 {
 	class Texture;
@@ -55,3 +62,4 @@ namespace talga
 	const F32 FRICTION = 0.754f;
 	const F32 DT_VEL_RATIO = 0.05f;
 }
+

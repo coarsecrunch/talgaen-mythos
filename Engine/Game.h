@@ -41,8 +41,7 @@ namespace talga
 		virtual void update(F32 dt) override;
 		virtual void render();
 
-		const Camera& getCamera() const { return *mCamera; }
-		void setCamera(const Camera& value) { *mCamera = value; }
+		Camera& camera() { return mCamera; }
 
 		Window& getWindow() { return mWindow; }
 
@@ -60,10 +59,10 @@ namespace talga
 
 		cpSpace* getSpace() { return mSpace; }
 
-		void printJelly() const;
+		
 	protected:
 		std::vector<GameObject*> mGameObjects;
-		Camera* mCamera;
+		Camera mCamera;
 		cpBody* rectBody;
 		Layer mMapLayer;
 		Layer mObjectsLayer;

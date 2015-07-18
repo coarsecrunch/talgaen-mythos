@@ -32,8 +32,8 @@ namespace talga
         void setW(I32 w);
         void setH(I32 h);
 
-		Rectangle& getBox() { return *mBox; }
-		const Rectangle& getBox() const { return *mBox; }
+		Rectangle& box() { return mBox; }
+		const Rectangle& box() const { return mBox; }
 		vec3 screenToWorld(const vec3& pos);
 
 		int getij() const { return ij; }
@@ -44,7 +44,7 @@ namespace talga
 		void setPoop(I32 poop) { mPoop = poop; }
 	protected:
 		I32 mPoop = 0;
-		Rectangle* mBox;
+		Rectangle mBox;
 		int ij;
 
 		mat4 mCameraMat;

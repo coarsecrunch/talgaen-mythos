@@ -83,18 +83,18 @@ namespace talga
 
 	void Map::render(Renderer* renderer, const Camera* camera) const
 	{
-		I32 tileY = CartToTile(camera->getBox().getX() - (camera->getBox().getW() * 0.5f), 
-      camera->getBox().getY() - (camera->getBox().getH() * 0.5f)).y();
-		I32 tileX = CartToTile(camera->getBox().getX() - (camera->getBox().getW() * 0.5f),
-      camera->getBox().getY() - (camera->getBox().getH() * 0.5f)).x();
+		I32 tileY = CartToTile(camera->box().getX() - (camera->box().getW() * 0.5f), 
+      camera->box().getY() - (camera->box().getH() * 0.5f)).y();
+		I32 tileX = CartToTile(camera->box().getX() - (camera->box().getW() * 0.5f),
+      camera->box().getY() - (camera->box().getH() * 0.5f)).x();
 
 		Rectangle tempR((I32)mTileWidth, (I32)mTileHeight);
 
 		tempR.setZ(0.1f);
 
-		for (I32 y = tileY; y <= camera->getBox().getH() / mTileHeight + tileY + 1; ++y)
+		for (I32 y = tileY; y <= camera->box().getH() / mTileHeight + tileY + 1; ++y)
 		{
-			for (I32 x = tileX; x <= camera->getBox().getW() / mTileWidth + tileX + 1; ++x)
+			for (I32 x = tileX; x <= camera->box().getW() / mTileWidth + tileX + 1; ++x)
 			{
 				if (!Exists(x, y))
 					continue;

@@ -24,7 +24,7 @@ namespace talga
 			if (dynamic_cast<Sprite*>(pmRenderable.get()))
 			{
 				Sprite* ptr = (Sprite*) pmRenderable.get();
-				mBox = &ptr->getBox();
+				mBox = &ptr->box();
 				mBody = cpBodyNew(10.0f, INFINITY);  
 				mShape = cpBoxShapeNew(mBody, mBox->getW(), mBox->getH(), 0);
 				cpBodySetPosition(mBody, cpv(x, y));
@@ -34,7 +34,7 @@ namespace talga
 			else if (dynamic_cast<AnimSprite*>(pmRenderable.get()))
 			{
 				AnimSprite* ptr = (AnimSprite*)pmRenderable.get();
-				mBox = &ptr->getBox();
+				mBox = &ptr->box();
 				isAnimated = true;
 				mBody = cpBodyNew(10.0f, INFINITY);
 				mShape = cpBoxShapeNew(mBody, mBox->getW(), mBox->getH(), 0);	
@@ -91,7 +91,7 @@ namespace talga
 		if (isAnimated)
 		{
 			static_cast<AnimSprite*>(pmRenderable.get())->update(dt);
-			Rectangle& r = static_cast<AnimSprite*>(pmRenderable.get())->getBox();
+			Rectangle& r = static_cast<AnimSprite*>(pmRenderable.get())->box();
 			r.setX(cpBodyGetPosition(mBody).x);
 			r.setY(-cpBodyGetPosition(mBody).y);
 			r.setOrientation(-cpBodyGetAngle(mBody));
@@ -103,7 +103,7 @@ namespace talga
 		else
 		{
 			static_cast<Sprite*>(pmRenderable.get())->update(dt);
-			Rectangle& r = static_cast<AnimSprite*>(pmRenderable.get())->getBox();
+			Rectangle& r = static_cast<AnimSprite*>(pmRenderable.get())->box();
 			r.setX(cpBodyGetPosition(mBody).x);
 			r.setY(-cpBodyGetPosition(mBody).y);
 			r.setOrientation(-cpBodyGetAngle(mBody));

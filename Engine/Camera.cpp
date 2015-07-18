@@ -14,13 +14,13 @@
 namespace talga
 {
 	Camera::Camera(I32 width, I32 height, vec3 position)
-		: mBox(new Rectangle(width, height, position))
+		: mBox(width, height, position)
 	{
 		update(0);
 	}
 
 	Camera::Camera(const Camera& c)
-		: mBox(new Rectangle(c.getBox().getW(), c.getBox().getH()))
+		: mBox(c.box().getW(), c.box().getH())
 	{
 
 	}
@@ -53,13 +53,13 @@ namespace talga
 
     void Camera::setW(I32 w)
     {
-        mBox->setW(w);
+        mBox.setW(w);
         update(0);
     }
 
     void Camera::setH(I32 h)
     {
-        mBox->setH(h);
+        mBox.setH(h);
         update(0);
     }
 
@@ -71,14 +71,14 @@ namespace talga
 	vec3 Camera::screenToWorld(const vec3& pos)
 	{
 		mat4 inversePosition(
-			1.0f, 0.0f, 0.0f, mBox->getX() - (mBox->getW() * 0.5f),
-			0.0f, 1.0f, 0.0f, mBox->getY() - (mBox->getH() * 0.5f),
-			0.0f, 0.0f, 1.0f, mBox->getZ(),
+			1.0f, 0.0f, 0.0f, mBox.getX() - (mBox.getW() * 0.5f),
+			0.0f, 1.0f, 0.0f, mBox.getY() - (mBox.getH() * 0.5f),
+			0.0f, 0.0f, 1.0f, mBox.getZ(),
 			0.0f, 0.0f, 0.0f, 1.0f);
 
 		mat4 inverseScale(
-			mBox->getScaleX(), 0.0f, 0.0f, 0.0f,
-			0.0f, mBox->getScaleY(), 0.0f, 0.0f,
+			mBox.getScaleX(), 0.0f, 0.0f, 0.0f,
+			0.0f, mBox.getScaleY(), 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -87,24 +87,24 @@ namespace talga
 
 	void Camera::updateCameraScaleMat()
 	{
-		mCameraScaleMat = mat4((1.0f / mBox->getScaleX()), 0.0f, 0.0f, 0.0f,
-			0.0f, (1.0f / mBox->getScaleY()), 0.0f, 0.0f,
+		mCameraScaleMat = mat4((1.0f / mBox.getScaleX()), 0.0f, 0.0f, 0.0f,
+			0.0f, (1.0f / mBox.getScaleY()), 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 	void Camera::updateCameraRotMat()
 	{
-		mCameraRotMat = mat4(cos(mBox->getOrientation()), sin(mBox->getOrientation()), 0.0f, 0.0f,
-			-sin(mBox->getOrientation()), cos(mBox->getOrientation()), 0.0f, 0.0f,
+		mCameraRotMat = mat4(cos(mBox.getOrientation()), sin(mBox.getOrientation()), 0.0f, 0.0f,
+			-sin(mBox.getOrientation()), cos(mBox.getOrientation()), 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f);
 	}
 	
 	void Camera::updateCameraTransMat()
 	{
-		mCameraTransMat = mat4(1.0f, 0.0f, 0.0f, (-mBox->getX()),
-			0.0f, 1.0f, 0.0f, (-mBox->getY()),
+		mCameraTransMat = mat4(1.0f, 0.0f, 0.0f, (-mBox.getX()),
+			0.0f, 1.0f, 0.0f, (-mBox.getY()),
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f);
 	}
@@ -116,7 +116,6 @@ namespace talga
 
 	Camera::~Camera()
 	{
-		delete mBox;
 	}
 
 }

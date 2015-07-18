@@ -35,3 +35,6 @@
 
 #define TALGA_PRVAL(variable) \
 	std::cout << #variable << ": " << variable << std::endl;
+
+#define TALGA_LOGS_ENABLED
+
