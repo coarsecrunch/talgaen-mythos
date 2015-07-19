@@ -3,6 +3,7 @@
 //LuaEngine.h must be included BEOFRE luaBridge
 
 #include <string>
+#include "oolua/oolua.h"
 #include "oolua/oolua_script.h"
 #include "oolua/oolua_registration.h"
 struct lua_State;
@@ -15,7 +16,6 @@ namespace talga
 
 	public:
 		static LuaEngine* instance();
-
 		
 		~LuaEngine();
 
@@ -28,19 +28,13 @@ namespace talga
 		}
 		
 		template<typename T>
-		void push(const T& ref)
-		{
-			if (mScript.push(ref))
-				;
-			else
-				reportError(0);
-		}
-
-		template<typename T>
 		void addGlobal(std::string name, T& ref)
 		{
 			OOLUA::set_global(getState(), name.c_str(), ref);
 		}
+
+		OOLUA::Lua_func_ref getGlobalFunction(std::string name);
+		OOLUA::Lua_table_ref getGlobalTable(std::string name);
 
 		void stackDump();
 		void ExecuteFile(std::string path);
@@ -50,6 +44,6 @@ namespace talga
 		LuaEngine();
 		OOLUA::Script mScript;
 	protected:
-		void reportError(int err);
+		void reportError();
 	};
 }

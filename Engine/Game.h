@@ -5,14 +5,12 @@
 #include <functional>
 #include <map>
 
-#include "Camera.h"
 #include "Cmn.h"
+#include "Camera.h"
 #include "Map.h"
 #include "Window.h"
 #include "Layer.h"
-#include "IDynamic.h"
-#include "IRenderable.h"
-#include "oolua/oolua.h"
+#include "funkdefs.h"
 struct GLFWwindow;
 struct cpBody;
 struct cpSpace;
@@ -25,10 +23,9 @@ namespace talga
 {
 	class LuaEngine;
 	class GameObject;
+	class Game;
 
-	typedef std::function<void(GameObject*, int)> KeyCallback;
-
-	class Game : public IDynamic
+	class Game
 	{
 	public:
 
@@ -38,8 +35,8 @@ namespace talga
 		int Init(int width, int height, const char* name);
 		static void LUA_REGISTER(LuaEngine*);
 
-		virtual void update(F32 dt) override;
-		virtual void render();
+		void update(F32 dt);
+		void render();
 
 		Camera& camera() { return mCamera; }
 
@@ -55,7 +52,7 @@ namespace talga
 
 		AssetManager* getManager() { return &mManager; }
 
-		void addKeyCallback(char c, GameObject* obj, KeyCallback);
+		void addKeyCallback(char c, GameObject* obj, KeyCallbackFunc);
 
 		cpSpace* getSpace() { return mSpace; }
 
@@ -70,7 +67,7 @@ namespace talga
 		cpSpace* mSpace;
 		AssetManager mManager;
 		
-		std::multimap<char, std::pair<GameObject*, KeyCallback>> mKeyCallbacks;
+		std::multimap<char, std::pair<GameObject*, KeyCallbackFunc>> mKeyCallbacks;
 		GameObject* mPlayer;
 		Window mWindow;
 	};

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Cmn.h"
-#include "IRenderable.h"
 
 namespace talga
 {

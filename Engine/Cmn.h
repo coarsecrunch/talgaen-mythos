@@ -6,7 +6,7 @@
 #define TALGA_UBUNTU_BUILD
 
 
-#ifdef TALGA_DEBUG
+#if 0
 #define OOLUA_USE_EXCEPTIONS 1
 #define OOLUA_STORE_LAST_ERROR 0
 #endif

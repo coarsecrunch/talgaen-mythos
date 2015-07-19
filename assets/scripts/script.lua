@@ -1,2 +1,14 @@
+local function onStaged(self)
+    print("staged!")
+end
 
-GAME:camera():box():setX(500)
+local function onUnstaged(self)
+    print("unstaged!")
+end
+
+script = 
+{
+    stagedFunc = onStaged;
+    unstagedFunc = onUnstaged;
+    updateFunc = onUpdate;
+}

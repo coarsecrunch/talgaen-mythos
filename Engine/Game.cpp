@@ -11,6 +11,7 @@
 
 #include "chipmunk/chipmunk_private.h"
 #include "collisiontypes.h"
+#include "luareg.h"
 
 namespace talga
 {
@@ -76,15 +77,15 @@ namespace talga
 		
 		TALGA_PRVAL(cpShapeGetCollisionType(obj->mShape));
 
-		if (obj->stagedFunc)
-			obj->stagedFunc(obj);
+		//if (obj->stagedFunc)
+		//	obj->stagedFunc(obj);
 
 		TALGA_MSG("Game object has been added")
 	}
 
-	void Game::addKeyCallback(char c, GameObject* obj, KeyCallback callback)
+	void Game::addKeyCallback(char c, GameObject* obj, KeyCallbackFunc callback)
 	{
-		mKeyCallbacks.insert(std::pair < char, std::pair<GameObject*, KeyCallback> > {toupper(c), std::pair<GameObject*, KeyCallback>{obj, callback } });
+		mKeyCallbacks.insert(std::pair < char, std::pair<GameObject*, KeyCallbackFunc> > {toupper(c), std::pair<GameObject*, KeyCallbackFunc>{obj, callback } });
 	}
 
 	void Game::removeObj(GameObject* obj)
@@ -94,8 +95,8 @@ namespace talga
 
 			if (*it == obj)
 			{
-				if ( (*it)->unstagedFunc )
-					(*it)->unstagedFunc(*it);
+		//		if ( (*it)->unstagedFunc )
+			//		(*it)->unstagedFunc(*it);
 
 				cpSpaceRemoveShape(mSpace, (*it)->mShape);
 				cpSpaceRemoveBody(mSpace, (*it)->mBody);
@@ -124,8 +125,8 @@ namespace talga
 	{
 		for (auto it = mGameObjects.begin(); it != mGameObjects.end(); ++it)
 		{
-			if ((*it)->unstagedFunc)
-				(*it)->unstagedFunc(*it);
+		//	if ((*it)->unstagedFunc)
+			//	(*it)->unstagedFunc(*it);
 
 			delete *it;
 		}

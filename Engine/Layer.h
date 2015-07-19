@@ -1,9 +1,9 @@
 #pragma once
+#include <vector>
 
 #include "Cmn.h"
 #include "Math/Matrix4x4.h"
 #include "IRenderable.h"
-#include <vector>
 #include "Renderer.h"
 namespace talga
 {

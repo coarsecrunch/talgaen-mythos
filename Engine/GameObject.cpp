@@ -4,8 +4,10 @@
 #include "Game.h"
 #include "collisiontypes.h"
 
+
 #include "LuaEngine.h"
-#include "LuaBridge/LuaBridge.h"
+#include "luareg.h"
+#include "sys.h"
 
 namespace talga
 {
@@ -15,9 +17,9 @@ namespace talga
 		, pmRenderable(rdr)
 		, isAnimated{false}
 		, mBox{ nullptr }
-		, stagedFunc()
-		, updateFunc()
-		, unstagedFunc()
+		//, stagedFunc()
+	//	, updateFunc()
+	//	, unstagedFunc()
 	{
 		if (rdr)
 		{
@@ -55,35 +57,10 @@ namespace talga
 		, pmRenderable(cpy.pmRenderable)
 		, isAnimated{ cpy.isAnimated }
 		, mBox{ cpy.mBox } //need to copy functions too
-		, stagedFunc(cpy.stagedFunc)
-		, updateFunc(cpy.updateFunc)
-		, unstagedFunc(cpy.unstagedFunc)
+	//	, stagedFunc(cpy.stagedFunc)
+	//	, updateFunc(cpy.updateFunc)
+	//	, unstagedFunc(cpy.unstagedFunc)
 	{
-	}
-
-	void GameObject::LUA_REGISTER(LuaEngine* engine)
-	{
-		using namespace luabridge;
-
-		getGlobalNamespace(engine->getState())
-			.beginNamespace("talga")
-			.beginClass<GameObject>("GameObject")
-			.addConstructor< void(*)(IRenderable*, std::function<void(GameObject*)>) >()
-			.addProperty("friction", &GameObject::getFriction, &GameObject::setFriction)
-			.addProperty("mass", &GameObject::getMass, &GameObject::setMass)
-			.addProperty("vx", &GameObject::getVx)
-			.addProperty("vy", &GameObject::getVy)
-			.addFunction("applyForceX", &GameObject::applyForceX)
-			.addFunction("applyForceY", &GameObject::applyForceY)
-			.addFunction("applyImpulseX", &GameObject::applyImpulseX)
-			.addFunction("applyImpulseY", &GameObject::applyImpulseY)
-			.addFunction("addKeyCallback", &GameObject::addKeyCallback)
-			.addFunction("addCollisionCallback", &GameObject::addCollisionCallback)
-			.addData("stagedFunc", &GameObject::stagedFunc)
-			.addData("updateFunc", &GameObject::updateFunc)
-			.addData("unstagedFunc", &GameObject::unstagedFunc)
-			.endClass()
-		.endNamespace();
 	}
 
 	void GameObject::update(F32 dt)
@@ -96,8 +73,8 @@ namespace talga
 			r.setY(-cpBodyGetPosition(mBody).y);
 			r.setOrientation(-cpBodyGetAngle(mBody));
 
-			if (updateFunc)
-				updateFunc(this, dt);
+//			if (updateFunc)
+//				updateFunc(this, dt);
 
 		}
 		else
@@ -108,21 +85,52 @@ namespace talga
 			r.setY(-cpBodyGetPosition(mBody).y);
 			r.setOrientation(-cpBodyGetAngle(mBody));
 			
-			if (updateFunc)
-				updateFunc(this, dt);
+//			if (updateFunc)
+//				updateFunc(this, dt);
 		}
 	}
 
-	void GameObject::loadScript(std::string path, LuaEngine* engine)
+	void GameObject::loadScript(std::string path)
 	{
+		OOLUA::Lua_func_ref stagedFuncRef;
+		OOLUA::Lua_func_ref unstagedFuncRef;
+		OOLUA::Lua_func_ref updateFuncRef;
+		std::string tblname = getFileNameFromPathWithoutExtension(path);
+		talga::LuaEngine::instance()->ExecuteFile(path);
 
+		OOLUA::Table tempTbl(talga::LuaEngine::instance()->getGlobalTable(tblname));
+		TALGA_WARN(tempTbl.valid(), "incorrect script at " + path + " the table's name MUST match the name of the script" );
+		
+		if (!tempTbl.valid())	
+			return;
+
+		TALGA_MSG("script " + path + " successfully loaded");
+
+		tempTbl.at("stagedFunc", stagedFuncRef);
+		tempTbl.at("unstagedFunc", unstagedFuncRef);
+		tempTbl.at("updateFunc", updateFuncRef);
+		/*
+		if (stagedFuncRef.valid())
+			stagedFunc = stagedFuncRef;
+		else
+			TALGA_WARN(0, "failed to find stagedFunc in table " + tblname);
+
+		if (unstagedFuncRef.valid())
+			unstagedFunc = unstagedFuncRef;
+		else
+			TALGA_WARN(0, "failed to find unstagedFunc in table " + tblname);
+		
+		if (updateFuncRef.valid())
+			updateFunc = updateFuncRef;
+		else
+			TALGA_WARN(0, "failed to find updateFunc in table " + tblname);
+		*/
 	}
 
 	CollisionCallback GameObject::getCollisionCallback(I32 collisionWith)
 	{
 		return mCollisionCallbacks[collisionWith];
 	}
-
 
 	void GameObject::addCollisionCallback(I32 collisionWith, CollisionCallback callback)
 	{
@@ -144,14 +152,12 @@ namespace talga
 		};
 	}
 
-	
-
 	void GameObject::setCollisionType(I32 type)
 	{
 		cpShapeSetCollisionType(mShape, type);
 	}
 
-	void GameObject::addKeyCallback(char c, KeyCallback cback)
+	void GameObject::addKeyCallback(char c, KeyCallbackFunc cback)
 	{
 		GAME->addKeyCallback(c, this, cback);
 	}

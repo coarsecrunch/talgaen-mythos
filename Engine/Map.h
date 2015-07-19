@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "AAsset.h"
 #include "Point.h"
 #include "Cmn.h"
@@ -7,7 +9,7 @@
 #include "Rectangle.h"
 #include "Math/Vector2.h"
 
-#include <vector>
+
 
 namespace talga
 {

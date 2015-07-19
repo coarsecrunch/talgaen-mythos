@@ -1,6 +1,9 @@
 #include "LuaEngine.h"
 
 #include "lua/lua.hpp"
+#include "oolua/oolua.h"
+#include "oolua/oolua_function.h"
+#include "oolua/oolua_ref.h"
 #include <iostream>
 #include "Game.h"
 
@@ -29,11 +32,11 @@ namespace talga
 		if (mScript.run_file(path))
 			;
 		else
-			reportError(0);
+			reportError();
 	}
 
 
-	void LuaEngine::reportError(int err)
+	void LuaEngine::reportError()
 	{
 		std::cout << "Lua error: " << OOLUA::get_last_error(getState()) << std::endl;;
 	}
@@ -53,12 +56,34 @@ namespace talga
 		}
 	}
 
+	OOLUA::Lua_func_ref LuaEngine::getGlobalFunction(std::string name)
+	{
+		OOLUA::Lua_func_ref tempRef(getState());
+		if (OOLUA::get_global(getState(), name.c_str(), tempRef))
+			;
+		else
+			reportError();
+	
+		return tempRef;
+	}
+
+	OOLUA::Lua_table_ref LuaEngine::getGlobalTable(std::string name)
+	{
+		OOLUA::Lua_table_ref tempRef(getState());
+		if (OOLUA::get_global(getState(), name.c_str(), tempRef))
+			;
+		else
+			reportError();
+
+		return tempRef;
+	}
+
 	void LuaEngine::ExecuteStr(std::string str)
 	{
 		if (mScript.run_chunk(str))
 			;
 		else
-			reportError(0);
+			reportError();
 	}
 
 	LuaEngine::~LuaEngine()

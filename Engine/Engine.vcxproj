@@ -21,7 +21,7 @@
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Collision.cpp" />
-    <ClCompile Include="ESubject.cpp" />
+    <ClCompile Include="funkdefs.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Interpolation.cpp" />
@@ -36,7 +36,6 @@
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Vector4.cpp" />
-    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
@@ -54,11 +53,9 @@
     <ClInclude Include="..\assets\scripts\collisiontypes.h" />
     <ClInclude Include="AAsset.h" />
     <ClInclude Include="AnimSet.h" />
-    <ClInclude Include="ESubject.h" />
-    <ClInclude Include="Event.h" />
+    <ClInclude Include="funkdefs.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="luareg.h" />
-    <ClInclude Include="Observer.h" />
     <ClInclude Include="sys.h" />
     <ClInclude Include="tassert.h" />
     <ClInclude Include="AssetManager.h" />
@@ -164,6 +161,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)../include/;$(ProjectDir)../src/;$(ProjectDir)../assets/scripts/;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>CHIPMUNK_FFI;TALGA_DEBUG;TALGA_ASSERTIONS_ENABLED;TALGA_WARNINGS_ENABLED;TALGA_MESSAGES_ENABLED;TALGA_WINDOWS_BUILD;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

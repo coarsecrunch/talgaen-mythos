@@ -64,5 +64,6 @@ namespace talga
 
 	Window::~Window()
 	{
+		glfwTerminate();
 	}
 }

@@ -2,12 +2,12 @@
 
 #include <map>
 #include <functional>
+#include <vector>
 
 #include "IRenderable.h"
 #include "Rectangle.h"
 #include "IDynamic.h"
 #include "Math/Vector2.h"
-#include "Game.h"
 
 struct cpBody;
 struct cpShape;
@@ -15,12 +15,12 @@ struct cpShape;
 namespace talga
 {
 	class LuaEngine;
+	class Game;
+	class GameObject;
 	typedef std::function <void(GameObject*)> CollisionCallback;
-	struct CollisionData;
 
-	typedef std::function<void(GameObject*)> StagedFunction;
-	typedef std::function<void(GameObject*, I32 ms)> UpdateFunction;
-	typedef std::function<void(GameObject*)> UnstagedFunction;
+	class KeyCallbackFunc;
+	struct CollisionData;
 
 	class GameObject : public IDynamic
 	{
@@ -28,10 +28,8 @@ namespace talga
 		GameObject(IRenderable* rdr, std::function<void(GameObject*)> = std::function<void(GameObject*)>(nullptr), F32 x = 0.0f, F32 y = 0.0f);
 		GameObject(const GameObject& cpy);
 		virtual ~GameObject();
-
-		static void LUA_REGISTER(LuaEngine*);
 		
-		void loadScript(std::string path, LuaEngine* engine);
+		void loadScript(std::string path);
 
 		F32 getMass() const;
 		void setMass(F32 value); 
@@ -60,12 +58,12 @@ namespace talga
 
 		void addCollisionCallback(I32 collisionWith, CollisionCallback);
 		CollisionCallback getCollisionCallback(I32 collsionWith);
-		void addKeyCallback(char c, KeyCallback cback);
+		void addKeyCallback(char c, KeyCallbackFunc cback);
 		void destroy();
 
-		StagedFunction stagedFunc;
-		UpdateFunction updateFunc;
-		UnstagedFunction unstagedFunc;
+		//StagedFunc stagedFunc;
+		//UpdateFunc updateFunc;
+		//UnstagedFunc unstagedFunc;
 	protected:
 		friend class Game;
 
@@ -87,4 +85,6 @@ namespace talga
 		GameObject* obj;
 		I32 collisionWith;
 	};
+
+	
 }

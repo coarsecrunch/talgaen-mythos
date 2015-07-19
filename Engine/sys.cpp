@@ -69,6 +69,28 @@ namespace talga
 		return seperatePath(path).back();
 	}
 
+	std::string getFileNameFromPathWithoutExtension(const std::string& path)
+	{
+		std::string name = getFileNameFromPath(path);
+
+		I32 i = 0;
+		I32 indexOfDot = 0;
+		while (i < name.size())
+		{
+			if (name[i] == '.')
+				indexOfDot = i;
+
+			++i;
+		}
+
+		if (indexOfDot)
+			for (I32 c = name.size() - 1; c >= indexOfDot; --c)
+				name.pop_back();
+	
+		return name;
+	}
+
+
 	std::string getPathFromFilePath(const std::string& path)
 	{
 		bool isAbsolute = false;

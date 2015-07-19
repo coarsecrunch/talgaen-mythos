@@ -1,5 +1,4 @@
-
-
+#include "luareg.h"
 #include "Cmn.h"
 #include "Rendering.h"
 #include "Map.h"
@@ -19,8 +18,6 @@
 #include "ParticleEmitter.h"
 #include "LuaEngine.h"
 #include "GameObject.h"
-
-#include "luareg.h"
 
 #include "Renderer.h"
 #include "Layer.h"
@@ -61,23 +58,9 @@ int main(int argc, char** argv)
 	GAME = new talga::Game();
 	GAME->Init(WIDTH, HEIGHT, "hello talga");
 	
-	//talga::Rectangle::LUA_REGISTER(talga::LuaEngine::instance());
-	//talga::GameObject::LUA_REGISTER(talga::LuaEngine::instance());
-	//talga::Camera::LUA_REGISTER(talga::LuaEngine::instance());
-	//talga::Game::LUA_REGISTER(talga::LuaEngine::instance());
-	//talga::UpdateFunc::LUA_REGISTER(talga::LuaEngine::instance());
-	//talga::StagedFunc::LUA_REGISTER(talga::LuaEngine::instance());
-	//LUA_REGISTER(talga::LuaEngine::instance());
 	LUA_REGISTER_TYPES();
 
-	talga::LuaEngine::instance()->addGlobal("GAME", GAME);
-
-	talga::LuaEngine::instance()->ExecuteFile("../assets/scripts/script.lua");
-
-	talga::U32 previousTime = 0;
-	talga::U32 dt = 0;
-	talga::U32 fps = 0;
-	talga::U32 timeSince = 0;
+	//talga::LuaEngine::instance()->addGlobal("GAME", GAME);
 	
 	talga::AnimationSet set{ GAME->getManager()->GetTexture("talgasheet.png") };
 
@@ -108,51 +91,24 @@ int main(int argc, char** argv)
 
 	spr->playAnimation("talgaStandL", 1000, true);
 
-	auto onTalgaHitGround = [](talga::GameObject* obj)
-	{
-		std::cout << "TALGA HIT THE GROUND!! YQYQYQ!" << std::endl;
-	};
-
-	auto onKeyPressA = [](talga::GameObject* obj, int action)
-	{
-		if (obj->getVx() > -100.0f)
-		{
-			obj->applyImpulseX(-1000.0f);
-		}
-	};
-
-	auto onKeyPressD = [](talga::GameObject* obj, int action)
-	{
-		if (obj->getVx() < 100.0f)
-		{
-			obj->applyImpulseX(1000.0f);
-		}
-	};
-
-	auto talgaInit = [=](talga::GameObject* obj)
-	{
-		obj->setCollisionType(talga::COLL_PLAYER);
-		obj->addCollisionCallback(talga::COLL_MAPGEOM, onTalgaHitGround);
-		obj->addKeyCallback('A', onKeyPressA);
-		obj->addKeyCallback('D', onKeyPressD);
-
-	};
-
 	
-	talga::GameObject* tga = new talga::GameObject(spr, talgaInit);
+	talga::GameObject* tga = new talga::GameObject(spr);
 	talga::GameObject* blk = new talga::GameObject(block);
 
-	//tga->loadScript("../assets/scripts/script.lua", talga::LuaEngine::instance());
+	//tga->loadScript("../assets/scripts/script.lua");
+	
+	//talga::LuaEngine::instance()->ExecuteFile("../assets/scripts/script.lua");
 
 	GAME->addObj(tga);
 	GAME->addObj(blk);
-
 	
-
 	glfwSetWindowSizeCallback(GAME->getWindow().getWindow(), resize_callback);
 	glfwSetKeyCallback(GAME->getWindow().getWindow(), key_callback);
 
-
+	talga::U32 previousTime = 0;
+	talga::U32 dt = 0;
+	talga::U32 fps = 0;
+	talga::U32 timeSince = 0;
 	while (!glfwWindowShouldClose(GAME->getWindow().getWindow()))
 	{
 		GAME->getWindow().swap();
@@ -169,7 +125,6 @@ int main(int argc, char** argv)
 			std::cout << std::endl << "FPS: " << fps << std::endl;
 			fps = 0;
 		}
-		talga::LuaEngine::instance()->ExecuteStr("GAME:camera():box():setX(GAME:camera():box():getX() - 2)");
 
 		GAME->update(dt);
 		GAME->render();
@@ -178,6 +133,8 @@ int main(int argc, char** argv)
 	}
 
 	delete GAME;
+
+	system("PAUSE");
 
 	return 0;
 }
