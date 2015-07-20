@@ -3,7 +3,7 @@
 #include "LuaEngine.h"
 
 //GameObject
-OOLUA_EXPORT_FUNCTIONS(GameObject)
+OOLUA_EXPORT_FUNCTIONS(GameObject, addKeyCallback)
 OOLUA_EXPORT_FUNCTIONS_CONST(GameObject)
 
 //Rectangle

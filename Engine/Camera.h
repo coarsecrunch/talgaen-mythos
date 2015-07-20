@@ -24,7 +24,6 @@ namespace talga
 		Camera(I32 width, I32 height, vec3 position = vec3(0.0f, 0.0f, 1.0f));
 		Camera(const Camera& c);
 		~Camera();
-		static void LUA_REGISTER(LuaEngine* engine);
 		virtual void update(F32 dt) override;
 
 		const mat4& getCameraMat() const;

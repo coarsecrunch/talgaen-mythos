@@ -2,11 +2,13 @@
 
 #include "oolua/oolua_dsl.h"
 #include "oolua/proxy_tags.h"
+
+#include <string>
+
 #include "Game.h"
 #include "Camera.h"
 #include "Rectangle.h"
 #include "GameObject.h"
-
 namespace OOLUA
 {
 	typedef talga::Game Game;
@@ -27,6 +29,7 @@ OOLUA_PROXY_END
 
 OOLUA_PROXY(GameObject)
 	OOLUA_TAGS(OOLUA::No_public_constructors)
+	OOLUA_MEM_FUNC(void, addKeyCallback, std::string, Lua_func_ref)
 OOLUA_PROXY_END
 
 OOLUA_PROXY(Camera)

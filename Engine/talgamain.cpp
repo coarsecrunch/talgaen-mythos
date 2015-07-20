@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 	
 	LUA_REGISTER_TYPES();
 
-	//talga::LuaEngine::instance()->addGlobal("GAME", GAME);
+	talga::LuaEngine::instance()->addGlobal("GAME", GAME);
 	
 	talga::AnimationSet set{ GAME->getManager()->GetTexture("talgasheet.png") };
 
@@ -91,14 +91,11 @@ int main(int argc, char** argv)
 
 	spr->playAnimation("talgaStandL", 1000, true);
 
-	
 	talga::GameObject* tga = new talga::GameObject(spr);
 	talga::GameObject* blk = new talga::GameObject(block);
 
-	//tga->loadScript("../assets/scripts/script.lua");
+	tga->loadScript("../assets/scripts/script.lua");
 	
-	//talga::LuaEngine::instance()->ExecuteFile("../assets/scripts/script.lua");
-
 	GAME->addObj(tga);
 	GAME->addObj(blk);
 	

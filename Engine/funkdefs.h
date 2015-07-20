@@ -85,6 +85,7 @@ namespace talga
 	{
 	public:
 		KeyCallbackFunc() : isLua{ TALGA_FUNC_TYPE::NONE }, luaFunc{ talga::LuaEngine::instance()->getState() }, ref{} {}
+		KeyCallbackFunc(const KeyCallbackFunc& cpy) : isLua{ cpy.isLua }, ref{ cpy.ref }, luaFunc(cpy.luaFunc), stdFunc{ cpy.stdFunc } {}
 		~KeyCallbackFunc() {}
 
 		void operator=(OOLUA::Lua_func_ref tempRef)

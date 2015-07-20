@@ -28,35 +28,36 @@ namespace talga
 	class Game
 	{
 	public:
-
 		Game();
 		~Game();
 
 		int Init(int width, int height, const char* name);
-		static void LUA_REGISTER(LuaEngine*);
 
 		void update(F32 dt);
 		void render();
 
 		Camera& camera() { return mCamera; }
-
 		Window& getWindow() { return mWindow; }
+		AssetManager* getManager() { return &mManager; }
+		cpSpace* getSpace() { return mSpace; }
 
-		//void exec();
-		void game_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-		void game_resize_window(GLFWwindow* window, int w, int h);
-		
 		void addObj(GameObject* obj);
 		void removeObj(GameObject* obj);
 		void clearObjs();
-
-		AssetManager* getManager() { return &mManager; }
-
-		void addKeyCallback(char c, GameObject* obj, KeyCallbackFunc);
-
-		cpSpace* getSpace() { return mSpace; }
+		
+		template<typename T>
+		T* createObj(T* t)
+		{
+			static_assert(_IS_BASE_OF(GameObject, T));
+			((GameObject*)t)->GAME = this;
+			return t;
+		}
 
 		
+		void game_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		void game_resize_window(GLFWwindow* window, int w, int h);
+		void addKeyCallback(char c, GameObject* obj, KeyCallbackFunc);
+
 	protected:
 		std::vector<GameObject*> mGameObjects;
 		Camera mCamera;

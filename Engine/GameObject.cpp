@@ -4,7 +4,7 @@
 #include "Game.h"
 #include "collisiontypes.h"
 
-
+#include "oolua/oolua_string.h"
 #include "LuaEngine.h"
 #include "luareg.h"
 #include "sys.h"
@@ -17,9 +17,9 @@ namespace talga
 		, pmRenderable(rdr)
 		, isAnimated{false}
 		, mBox{ nullptr }
-		//, stagedFunc()
-	//	, updateFunc()
-	//	, unstagedFunc()
+		, stagedFunc()
+		, updateFunc()
+		, unstagedFunc()
 	{
 		if (rdr)
 		{
@@ -57,9 +57,9 @@ namespace talga
 		, pmRenderable(cpy.pmRenderable)
 		, isAnimated{ cpy.isAnimated }
 		, mBox{ cpy.mBox } //need to copy functions too
-	//	, stagedFunc(cpy.stagedFunc)
-	//	, updateFunc(cpy.updateFunc)
-	//	, unstagedFunc(cpy.unstagedFunc)
+		, stagedFunc(cpy.stagedFunc)
+		, updateFunc(cpy.updateFunc)
+		, unstagedFunc(cpy.unstagedFunc)
 	{
 	}
 
@@ -73,8 +73,8 @@ namespace talga
 			r.setY(-cpBodyGetPosition(mBody).y);
 			r.setOrientation(-cpBodyGetAngle(mBody));
 
-//			if (updateFunc)
-//				updateFunc(this, dt);
+			if (updateFunc)
+				updateFunc(this, dt);
 
 		}
 		else
@@ -85,9 +85,18 @@ namespace talga
 			r.setY(-cpBodyGetPosition(mBody).y);
 			r.setOrientation(-cpBodyGetAngle(mBody));
 			
-//			if (updateFunc)
-//				updateFunc(this, dt);
+			if (updateFunc)
+				updateFunc(this, dt);
 		}
+	}
+
+	void GameObject::staged()
+	{
+
+	}
+	void GameObject::unstaged()
+	{
+
 	}
 
 	void GameObject::loadScript(std::string path)
@@ -95,6 +104,7 @@ namespace talga
 		OOLUA::Lua_func_ref stagedFuncRef;
 		OOLUA::Lua_func_ref unstagedFuncRef;
 		OOLUA::Lua_func_ref updateFuncRef;
+		OOLUA::Lua_table_ref keyCallbacksTbl;
 		std::string tblname = getFileNameFromPathWithoutExtension(path);
 		talga::LuaEngine::instance()->ExecuteFile(path);
 
@@ -109,22 +119,52 @@ namespace talga
 		tempTbl.at("stagedFunc", stagedFuncRef);
 		tempTbl.at("unstagedFunc", unstagedFuncRef);
 		tempTbl.at("updateFunc", updateFuncRef);
-		/*
+		tempTbl.at("keyCallbacks", keyCallbacksTbl);
+
+		
 		if (stagedFuncRef.valid())
 			stagedFunc = stagedFuncRef;
 		else
-			TALGA_WARN(0, "failed to find stagedFunc in table " + tblname);
+			TALGA_WARN(0, "failed to find stagedFunc in table in " + tblname);
 
 		if (unstagedFuncRef.valid())
 			unstagedFunc = unstagedFuncRef;
 		else
-			TALGA_WARN(0, "failed to find unstagedFunc in table " + tblname);
+			TALGA_WARN(0, "failed to find unstagedFunc in table in " + tblname);
 		
 		if (updateFuncRef.valid())
 			updateFunc = updateFuncRef;
 		else
-			TALGA_WARN(0, "failed to find updateFunc in table " + tblname);
-		*/
+			TALGA_WARN(0, "failed to find updateFunc in table in " + tblname);
+		
+		if (keyCallbacksTbl.valid())
+		{
+			OOLUA::Table keyCallbacksTable(keyCallbacksTbl);
+
+			oolua_pairs(keyCallbacksTable)
+			{
+				OOLUA::Lua_func_ref trythis;
+				std::string key;
+				OOLUA::pull(keyCallbacksTable.state(), trythis);
+				OOLUA::pull(keyCallbacksTable.state(), key);
+
+
+				KeyCallbackFunc func;
+				func = trythis;
+
+				char c = key[0];
+
+				addKeyCallback(key[0], func);
+
+				OOLUA::push(keyCallbacksTable.state(), key);
+			}
+			oolua_pairs_end()
+
+		}
+		else
+		{
+			TALGA_WARN(0, "failed to find keyCallbacks table in " + tblname)
+		}
 	}
 
 	CollisionCallback GameObject::getCollisionCallback(I32 collisionWith)
@@ -162,11 +202,17 @@ namespace talga
 		GAME->addKeyCallback(c, this, cback);
 	}
 
+	void GameObject::addKeyCallback(std::string c, OOLUA::Lua_func_ref ref)
+	{
+		KeyCallbackFunc func;
+		func = ref;
+		GAME->addKeyCallback(c[0], this, func);
+	}
+
 	void GameObject::applyForce(vec2 force)
 	{
 		cpBodyApplyForceAtLocalPoint(mBody, cpv(force[0], force[1]), cpvzero);
 	}
-
 	void GameObject::applyForceX(F32 x)
 	{
 		cpBodyApplyForceAtLocalPoint(mBody, cpv(x, cpBodyGetForce(mBody).y), cpvzero);
@@ -175,7 +221,6 @@ namespace talga
 	{
 		cpBodyApplyForceAtLocalPoint(mBody, cpv(cpBodyGetForce(mBody).x, y), cpvzero);
 	}
-
 	void GameObject::applyImpulseY(F32 impulse)
 	{
 		cpBodyApplyImpulseAtLocalPoint(mBody, cpv(0, impulse), cpvzero);
@@ -188,7 +233,6 @@ namespace talga
 	{
 		return cpBodyGetForce(mBody).x;
 	}
-
 	F32 GameObject::getVy() const
 	{
 		return cpBodyGetForce(mBody).y;

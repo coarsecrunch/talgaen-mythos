@@ -31,11 +31,6 @@ namespace talga
 		mGameObjects.reserve(MAX_GAMEOBJECTS);
 	}
 
-	void Game::LUA_REGISTER(LuaEngine* engine)
-	{
-			
-	}
-
 	int Game::Init(int width, int height, const char* name)
 	{
 		mCamera.box().setW(width);
@@ -77,15 +72,15 @@ namespace talga
 		
 		TALGA_PRVAL(cpShapeGetCollisionType(obj->mShape));
 
-		//if (obj->stagedFunc)
-		//	obj->stagedFunc(obj);
+		if (obj->stagedFunc)
+			obj->stagedFunc(obj);
 
 		TALGA_MSG("Game object has been added")
 	}
 
 	void Game::addKeyCallback(char c, GameObject* obj, KeyCallbackFunc callback)
 	{
-		mKeyCallbacks.insert(std::pair < char, std::pair<GameObject*, KeyCallbackFunc> > {toupper(c), std::pair<GameObject*, KeyCallbackFunc>{obj, callback } });
+		mKeyCallbacks.insert(std::pair < char, std::pair<GameObject*, KeyCallbackFunc> > (toupper(c), std::pair<GameObject*, KeyCallbackFunc>(obj, callback) ));
 	}
 
 	void Game::removeObj(GameObject* obj)
@@ -95,8 +90,8 @@ namespace talga
 
 			if (*it == obj)
 			{
-		//		if ( (*it)->unstagedFunc )
-			//		(*it)->unstagedFunc(*it);
+				if ( (*it)->unstagedFunc )
+					(*it)->unstagedFunc(*it);
 
 				cpSpaceRemoveShape(mSpace, (*it)->mShape);
 				cpSpaceRemoveBody(mSpace, (*it)->mBody);
@@ -125,8 +120,8 @@ namespace talga
 	{
 		for (auto it = mGameObjects.begin(); it != mGameObjects.end(); ++it)
 		{
-		//	if ((*it)->unstagedFunc)
-			//	(*it)->unstagedFunc(*it);
+			if ((*it)->unstagedFunc)
+				(*it)->unstagedFunc(*it);
 
 			delete *it;
 		}
@@ -176,8 +171,6 @@ namespace talga
 			keyaction = -1; break;
 		}
 		
-		TALGA_PRVAL((char)key)
-
 		for (auto it = range.first; it != range.second; ++it)
 		{
 			(*it).second.second(it->second.first, keyaction);

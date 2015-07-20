@@ -8,7 +8,7 @@
 #include "Rectangle.h"
 #include "IDynamic.h"
 #include "Math/Vector2.h"
-
+#include "funkdefs.h"
 struct cpBody;
 struct cpShape;
 
@@ -19,7 +19,6 @@ namespace talga
 	class GameObject;
 	typedef std::function <void(GameObject*)> CollisionCallback;
 
-	class KeyCallbackFunc;
 	struct CollisionData;
 
 	class GameObject : public IDynamic
@@ -59,11 +58,15 @@ namespace talga
 		void addCollisionCallback(I32 collisionWith, CollisionCallback);
 		CollisionCallback getCollisionCallback(I32 collsionWith);
 		void addKeyCallback(char c, KeyCallbackFunc cback);
+		void addKeyCallback(std::string c, OOLUA::Lua_func_ref ref);
 		void destroy();
 
-		//StagedFunc stagedFunc;
-		//UpdateFunc updateFunc;
-		//UnstagedFunc unstagedFunc;
+		virtual void staged();
+		virtual void unstaged();
+
+		StagedFunc stagedFunc;
+		UpdateFunc updateFunc;
+		UnstagedFunc unstagedFunc;
 	protected:
 		friend class Game;
 

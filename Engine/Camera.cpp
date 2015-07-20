@@ -10,7 +10,6 @@
 #include "Math/Matrix3x3.h"
 #include "AssetManager.h"
 #include "LuaEngine.h"
-#include "LuaBridge/LuaBridge.h"
 namespace talga
 {
 	Camera::Camera(I32 width, I32 height, vec3 position)
@@ -23,18 +22,6 @@ namespace talga
 		: mBox(c.box().getW(), c.box().getH())
 	{
 
-	}
-
-	void Camera::LUA_REGISTER(LuaEngine* engine)
-	{
-		using namespace luabridge;
-		getGlobalNamespace(engine->getState())
-			.beginNamespace("talga")
-			.beginClass<Camera>("Camera")
-			.addData("box", &Camera::mBox)
-			.addFunction("printC", &Camera::printC)
-			.endClass()
-			.endNamespace();
 	}
 
 	void Camera::printC()
