@@ -46,4 +46,19 @@ namespace talga
 			}
 		}
 	}
+
+	void CollisionCallbackFunc::operator()(GameObject* obj)
+	{
+		if (*this)
+		{
+			if (isLua == TALGA_FUNC_TYPE::LUA)
+			{
+				luaFunc(ref, obj);
+			}
+			else
+			{
+				stdFunc(obj);
+			}
+		}
+	}
 }

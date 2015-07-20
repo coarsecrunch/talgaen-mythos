@@ -30,6 +30,8 @@ OOLUA_PROXY_END
 OOLUA_PROXY(GameObject)
 	OOLUA_TAGS(OOLUA::No_public_constructors)
 	OOLUA_MEM_FUNC(void, addKeyCallback, std::string, Lua_func_ref)
+	OOLUA_MEM_FUNC(void, addCollisionCallback, int, Lua_func_ref)
+	OOLUA_MEM_FUNC(void, setCollisionType, int)
 OOLUA_PROXY_END
 
 OOLUA_PROXY(Camera)

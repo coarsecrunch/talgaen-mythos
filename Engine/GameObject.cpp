@@ -90,15 +90,6 @@ namespace talga
 		}
 	}
 
-	void GameObject::staged()
-	{
-
-	}
-	void GameObject::unstaged()
-	{
-
-	}
-
 	void GameObject::loadScript(std::string path)
 	{
 		OOLUA::Lua_func_ref stagedFuncRef;
@@ -167,16 +158,18 @@ namespace talga
 		}
 	}
 
-	CollisionCallback GameObject::getCollisionCallback(I32 collisionWith)
+	CollisionCallbackFunc GameObject::getCollisionCallback(I32 collisionWith)
 	{
 		return mCollisionCallbacks[collisionWith];
 	}
 
-	void GameObject::addCollisionCallback(I32 collisionWith, CollisionCallback callback)
+	void GameObject::addCollisionCallback(I32 collisionWith, OOLUA::Lua_func_ref ref)
 	{
 		I32 mycoltype = cpShapeGetCollisionType(mShape);
 		I32 othercoltype = collisionWith;
-		mCollisionCallbacks.insert(std::pair<I32, CollisionCallback>(collisionWith, callback));
+		CollisionCallbackFunc func;
+		func = ref;
+		mCollisionCallbacks.insert(std::pair<I32, CollisionCallbackFunc>(collisionWith, func));
 		mData.push_back(new CollisionData{ this, collisionWith });
 
 		cpCollisionHandler* handler = cpSpaceAddCollisionHandler(GAME->getSpace(), cpShapeGetCollisionType(mShape), collisionWith);

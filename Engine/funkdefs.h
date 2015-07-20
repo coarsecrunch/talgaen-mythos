@@ -13,6 +13,7 @@ namespace talga
 	typedef std::function<void(GameObject*, I32 ms)> UpdateStdFunction;
 	typedef std::function<void(GameObject*)> UnstagedStdFunction;
 	typedef std::function<void(GameObject*, I32)> KeyStdCallback;
+	typedef std::function <void(GameObject*)> CollisionStdCallback;
 
 	enum class TALGA_FUNC_TYPE { NONE, LUA, STD };
 
@@ -112,6 +113,39 @@ namespace talga
 		OOLUA::Lua_func_ref ref;
 		OOLUA::Lua_function luaFunc;
 		KeyStdCallback stdFunc;
+	};
+
+	class CollisionCallbackFunc
+	{
+	public:
+		CollisionCallbackFunc() : isLua{ TALGA_FUNC_TYPE::NONE }, luaFunc{ talga::LuaEngine::instance()->getState() }, ref{} {}
+		CollisionCallbackFunc(const CollisionCallbackFunc& cpy) : isLua{ cpy.isLua }, ref{ cpy.ref }, luaFunc(cpy.luaFunc), stdFunc{ cpy.stdFunc } {}
+		~CollisionCallbackFunc() {}
+
+		void operator=(OOLUA::Lua_func_ref tempRef)
+		{
+			isLua = TALGA_FUNC_TYPE::LUA;
+			this->ref = tempRef;
+		}
+
+		void operator=(CollisionStdCallback func)
+		{
+			isLua == TALGA_FUNC_TYPE::STD;
+			stdFunc = func;
+		}
+
+		operator bool()
+		{
+			return !(isLua == TALGA_FUNC_TYPE::NONE);
+		}
+
+		void operator()(GameObject* obj);
+
+	private:
+		TALGA_FUNC_TYPE isLua;
+		OOLUA::Lua_func_ref ref;
+		OOLUA::Lua_function luaFunc;
+		CollisionStdCallback stdFunc;
 	};
 
 }

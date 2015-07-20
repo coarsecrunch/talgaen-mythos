@@ -21,14 +21,7 @@ namespace talga
 	Camera::Camera(const Camera& c)
 		: mBox(c.box().getW(), c.box().getH())
 	{
-
 	}
-
-	void Camera::printC()
-	{
-		std::cout << "Hello Jello!" << std::endl;
-	}
-
 
 	void Camera::update(F32 dt)
 	{

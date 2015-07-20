@@ -34,17 +34,8 @@ namespace talga
 		Rectangle& box() { return mBox; }
 		const Rectangle& box() const { return mBox; }
 		vec3 screenToWorld(const vec3& pos);
-
-		int getij() const { return ij; }
-
-		void printC();
-
-		I32 getPoop() const { return mPoop; }
-		void setPoop(I32 poop) { mPoop = poop; }
 	protected:
-		I32 mPoop = 0;
 		Rectangle mBox;
-		int ij;
 
 		mat4 mCameraMat;
 		mat4 mCameraScaleMat;

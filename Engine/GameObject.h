@@ -17,7 +17,6 @@ namespace talga
 	class LuaEngine;
 	class Game;
 	class GameObject;
-	typedef std::function <void(GameObject*)> CollisionCallback;
 
 	struct CollisionData;
 
@@ -45,24 +44,23 @@ namespace talga
 
 		virtual void update(F32 dt) override;
 
-		void setCollisionType(I32 type);
+		
 		void applyForce(vec2 force);
 		void applyForceX(F32 x);
 		void applyForceY(F32 y);
 		void applyImpulseY(F32 impulse);
 		void applyImpulseX(F32 impulse);
-
 		F32 getVx() const;
 		F32 getVy() const;
+		
+		void setCollisionType(I32 type);
+		void addCollisionCallback(I32 collisionWith, OOLUA::Lua_func_ref);
+		CollisionCallbackFunc getCollisionCallback(I32 collsionWith);
 
-		void addCollisionCallback(I32 collisionWith, CollisionCallback);
-		CollisionCallback getCollisionCallback(I32 collsionWith);
 		void addKeyCallback(char c, KeyCallbackFunc cback);
 		void addKeyCallback(std::string c, OOLUA::Lua_func_ref ref);
+		
 		void destroy();
-
-		virtual void staged();
-		virtual void unstaged();
 
 		StagedFunc stagedFunc;
 		UpdateFunc updateFunc;
@@ -79,7 +77,7 @@ namespace talga
 		bool DESTROY;
 		Game* GAME;
 
-		std::map<I32, CollisionCallback> mCollisionCallbacks;
+		std::map<I32, CollisionCallbackFunc> mCollisionCallbacks;
 		std::vector<CollisionData*> mData;
 	};
 
