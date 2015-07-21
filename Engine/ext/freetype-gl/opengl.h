@@ -1,4 +1,4 @@
-/* ============================================================================
+	/* ============================================================================
  * Freetype GL - A C OpenGL Freetype engine
  * Platform:    Any
  * WWW:         http://code.google.com/p/freetype-gl/
@@ -31,6 +31,8 @@
  * policies, either expressed or implied, of Nicolas P. Rougier.
  * ============================================================================
  */
+#ifndef SPARKY_PLATFORM_WEB
+
 #ifndef __OPEN_GL_H__
 #define __OPEN_GL_H__
 
@@ -42,10 +44,11 @@
 #  endif
 #elif defined(_WIN32) || defined(_WIN64)
 #  include <GL/glew.h>
-#  include <GL/wglew.h>
 #else
 #  include <GL/glew.h>
 #  include <GL/gl.h>
 #endif
 
 #endif /* OPEN_GL_H */
+
+#endif

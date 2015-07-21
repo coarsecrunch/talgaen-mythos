@@ -57,7 +57,7 @@ namespace talga
 		void begin();
 		//draw 
 		void submit(const Rectangle& imageBox, cpTex texture = nullptr, F32 transparencyScale = 1.0f, UVFrame frame = UVFrame());
-		void drawString(const std::string& str, vec3 pos, vec4 color);
+		void submit(const std::string& str, vec3 pos, vec4 color);
 		//draw line
 		//void submit(const fPnt& pnt1, const fPnt& pnt2);
 		void render();

@@ -16,15 +16,13 @@ out vec4 oColor;
 
 void main()
 {	
+	vec4 tempColor = fs_in.color;
 	
-	if (fs_in.tid >= -0.1)
+	if (fs_in.tid >= -0.01f)
 	{
-		oColor = texture2D(textures[ int(fs_in.tid) ], fs_in.uv);
-	}
-	else
-	{
-		oColor = fs_in.color;
+		tempColor = fs_in.color * texture2D(textures[ int(fs_in.tid) ], fs_in.uv);
 	}
 
-	oColor[3] *= fs_in.transparencyScale;
+	tempColor[3] *= fs_in.transparencyScale;
+	oColor = tempColor;
 }

@@ -111,7 +111,6 @@ namespace talga
 					tempR.setX(I32(x * mTileWidth + (0.5f * mTileWidth)));
 					tempR.setY(I32(y * mTileHeight + (0.5f * mTileHeight)));
 					tempR.updateVertsPosition();
-					tempR.setColor(vec4{1.0f, 0.0f, 0.1f, 0.2f});
 
 					renderer->submit(tempR, getTile(x, y, i).first, 1.0f, getTile(x, y, i).second);
 					tempR.setZ(tempR.getZ() + 0.01f);

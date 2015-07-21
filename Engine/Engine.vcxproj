@@ -21,7 +21,6 @@
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Collision.cpp" />
-    <ClCompile Include="ext\freetype-gl\edtaa3func.c" />
     <ClCompile Include="ext\freetype-gl\platform.c" />
     <ClCompile Include="ext\freetype-gl\texture-atlas.c" />
     <ClCompile Include="ext\freetype-gl\texture-font.c" />
@@ -59,7 +58,6 @@
     <ClInclude Include="..\assets\scripts\collisiontypes.h" />
     <ClInclude Include="AAsset.h" />
     <ClInclude Include="AnimSet.h" />
-    <ClInclude Include="ext\freetype-gl\edtaa3func.h" />
     <ClInclude Include="ext\freetype-gl\freetype-gl.h" />
     <ClInclude Include="ext\freetype-gl\markup.h" />
     <ClInclude Include="ext\freetype-gl\opengl.h" />

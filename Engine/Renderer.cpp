@@ -25,16 +25,8 @@ namespace talga
 		mTransformationStack.push(mat4::identity());
 		Init();
 
-		mFTAtlas = ftgl::texture_atlas_new(512, 512, 1);
+		mFTAtlas = ftgl::texture_atlas_new(512, 512, 2);
 		mFTFont =  ftgl::texture_font_new_from_file(mFTAtlas, 30, "../assets/fonts/arial.ttf");
-		
-		ftgl::texture_font_get_glyph(mFTFont, 'A');
-		ftgl::texture_font_get_glyph(mFTFont, 'B');
-		ftgl::texture_font_get_glyph(mFTFont, 'a');
-		ftgl::texture_font_get_glyph(mFTFont, '$');
-		ftgl::texture_font_get_glyph(mFTFont, '%');
-		ftgl::texture_font_get_glyph(mFTFont, '^');
-		ftgl::texture_font_get_glyph(mFTFont, '8');
 	}
 
 	void Renderer::Init()
@@ -190,7 +182,7 @@ namespace talga
 		mIndexCount += 6;
 	}
 
-	void Renderer::drawString(const std::string& str, vec3 pos, vec4 color)
+	void Renderer::submit(const std::string& str, vec3 pos, vec4 color)
 	{
 		using namespace ftgl;
 

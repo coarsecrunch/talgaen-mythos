@@ -13,6 +13,7 @@ namespace talga
 
 		Transformation2D(const Transformation2D& cpy);
 		const Transformation2D& operator=(const Transformation2D& cpy);
+
 	protected:
 		vec3 mPosition;
 		F32 mScaleX;

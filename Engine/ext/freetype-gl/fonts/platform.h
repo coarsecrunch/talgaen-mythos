@@ -31,37 +31,43 @@
  * policies, either expressed or implied, of Nicolas P. Rougier.
  * ============================================================================
  */
-#include <string.h>
-#include "platform.h"
+#ifndef __PLATFORM_H__
+#define __PLATFORM_H__
 
-#if defined(_WIN32) || defined(_WIN64)
+#include <stdlib.h>
 
-#include <math.h>
+//-------------------------------------------------
+// stdint.h is not available on VS2008 or lower
+//-------------------------------------------------
+#ifdef _MSC_VER
+typedef __int32 int32_t;
+typedef unsigned __int32 uint32_t;
+typedef __int64 int64_t;
+typedef unsigned __int64 uint64_t;
+#else
+#include <stdint.h>
+#endif // _MSC_VER
 
-#if !defined(_MSC_VER) || _MSC_VER < 1800
-double round (double v)
-{
-	return (v > 0.0) ? floor(v + 0.5) : ceil(v - 0.5);
-}
-#endif // _MSC_VER < 1800
-
-// strndup() is not available on Windows
-char *strndup( const char *s1, size_t n)
-{
-	char *copy= (char*)malloc( n+1 );
-	memcpy( copy, s1, n );
-	copy[n] = 0;
-	return copy;
-};
-#endif 
-
-
-// strndup() was only added in OSX lion
-#if defined(__APPLE__)
-char *strndup( const char *s1, size_t n)
-{
-    char *copy = calloc( n+1, sizeof(char) );
-    memcpy( copy, s1, n );
-    return copy;
-};
+#ifdef __cplusplus
+extern "C" {
+namespace ftgl {
 #endif
+
+#ifdef __APPLE__
+    /* strndup() was only added in OSX lion */
+    char * strndup( const char *s1, size_t n);
+#elif defined(_WIN32) || defined(_WIN64)
+    /* does not exist on windows */
+    char * strndup( const char *s1, size_t n);
+#	if !defined(_MSC_VER) || _MSC_VER < 1800
+		double round(double v);
+#	endif // _MSC_VER
+#    pragma warning (disable: 4244) // suspend warnings
+#endif // _WIN32 || _WIN64
+
+#ifdef __cplusplus
+}
+}
+#endif // __cplusplus
+
+#endif /* __PLATFORM_H__ */

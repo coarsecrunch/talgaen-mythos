@@ -153,9 +153,6 @@
     <ClCompile Include="funkdefs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ext\freetype-gl\edtaa3func.c">
-      <Filter>ext\freetype-gl</Filter>
-    </ClCompile>
     <ClCompile Include="ext\freetype-gl\platform.c">
       <Filter>ext\freetype-gl</Filter>
     </ClCompile>
@@ -295,9 +292,6 @@
     </ClInclude>
     <ClInclude Include="funkdefs.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ext\freetype-gl\edtaa3func.h">
-      <Filter>ext\freetype-gl</Filter>
     </ClInclude>
     <ClInclude Include="ext\freetype-gl\markup.h">
       <Filter>ext\freetype-gl</Filter>

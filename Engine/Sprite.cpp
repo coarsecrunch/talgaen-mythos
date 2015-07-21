@@ -29,6 +29,12 @@ namespace talga
 	void Sprite::render(Renderer* renderer, const Camera* camera) const
 	{
 		renderer->submit(mImageBox, mTex, mTransparencyScale, mUVCurrentFrame);
+		for (auto it = getChildren().begin(); it != getChildren().end(); ++it)
+		{
+			renderer->tStackPush(mImageBox.getTransformationMatrix());
+			(*it)->render(renderer, camera);
+			renderer->tStackPop();
+		}
 	}
 
 	void Sprite::update(F32 dt)
@@ -67,6 +73,13 @@ namespace talga
 			renderer->submit(mImageBox, mAnims->tex(), 1.0f, mUVCurrentFrame);
 		else
 			renderer->submit(mImageBox);
+
+		for (auto it = getChildren().begin(); it != getChildren().end(); ++it)
+		{
+			renderer->tStackPush(mImageBox.getTransformationMatrix());
+			(*it)->render(renderer, camera);
+			renderer->tStackPop();
+		}
 	}
 
 	void AnimSprite::update(F32 dt)

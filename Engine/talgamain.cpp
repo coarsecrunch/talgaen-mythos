@@ -86,7 +86,11 @@ int main(int argc, char** argv)
 
 	talga::Sprite* block = new talga::Sprite(GAME->getManager()->GetTexture("testblock.png"));
 	talga::AnimSprite* spr = new talga::AnimSprite{ &set };
-	
+	talga::Sprite* block2spr = new talga::Sprite(GAME->getManager()->GetTexture("testblock.png"));
+	block2spr->box().setScaleX(0.5f);
+	block2spr->box().setScaleY(0.5f);
+
+	spr->addChild(block2spr);
 	talga::cpMap testMap = GAME->getManager()->GetMap("sandboxx.tmap");
 
 	spr->playAnimation("talgaStandL", 1000, true);

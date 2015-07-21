@@ -61,6 +61,15 @@ namespace talga
 		mVerts[3] = vec3(-0.5f * mWidth, -0.5f * mHeight, 0) + mPosition;
 	}
 
+	mat4 Rectangle::getTransformationMatrix() const
+	{
+		mat4 rotMat = mat4::rotation(mOrientation);
+		mat4 scaleMat = mat4::scale(vec3(mScaleX, mScaleY, 1.0f));
+		mat4 transMat = mat4::translation(vec3(mPosition[0], mPosition[1]));
+		
+		return transMat * rotMat * scaleMat;
+	}
+
 	Rectangle::~Rectangle()
 	{
 		
