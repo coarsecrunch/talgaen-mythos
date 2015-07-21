@@ -6,6 +6,8 @@
 #include "AssetManager.h"
 #include <iostream>
 
+#include "ext/freetype-gl/freetype-gl.h"
+
 namespace talga
 {
 	Renderer::Renderer(const char* vertexShaderPath, const char* fragmentShaderPath)
@@ -22,6 +24,17 @@ namespace talga
 		mProgram = LoadCompileShaders(vertSrc.c_str(), fragSrc.c_str());
 		mTransformationStack.push(mat4::identity());
 		Init();
+
+		mFTAtlas = ftgl::texture_atlas_new(512, 512, 1);
+		mFTFont =  ftgl::texture_font_new_from_file(mFTAtlas, 30, "../assets/fonts/arial.ttf");
+		
+		ftgl::texture_font_get_glyph(mFTFont, 'A');
+		ftgl::texture_font_get_glyph(mFTFont, 'B');
+		ftgl::texture_font_get_glyph(mFTFont, 'a');
+		ftgl::texture_font_get_glyph(mFTFont, '$');
+		ftgl::texture_font_get_glyph(mFTFont, '%');
+		ftgl::texture_font_get_glyph(mFTFont, '^');
+		ftgl::texture_font_get_glyph(mFTFont, '8');
 	}
 
 	void Renderer::Init()
@@ -175,6 +188,107 @@ namespace talga
 		++mNextVertex;
 		
 		mIndexCount += 6;
+	}
+
+	void Renderer::drawString(const std::string& str, vec3 pos, vec4 color)
+	{
+		using namespace ftgl;
+
+		pos = vec3(100, 100);
+
+		float texId = mFTAtlas->id;
+		bool found = false;
+
+		for (int i = 0; i < mTextureSlots.size(); ++i)
+		{
+			texId = i;
+			if (mTextureSlots[i] == mFTAtlas->id)
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (!found)
+		{
+			if (mTextureSlots.size() > RENDERER_MAX_ACTIVE_TEXTURES)
+			{
+				end();
+				render();
+				begin();
+			}
+			texId = mTextureSlots.size();
+			mTextureSlots.push_back(mFTAtlas->id);
+		}
+
+
+		for (int i = 0; i < str.length(); ++i)
+		{
+			char c = str[i];
+			texture_glyph_t* glyph = texture_font_get_glyph(mFTFont, c);
+
+			if (glyph)
+			{
+				if (i > 0)
+				{
+					F32 kerning = texture_glyph_get_kerning(glyph, str[i - 1]);
+					pos[0] += kerning;
+				}
+				F32 halfwidth = mFTAtlas->width * 0.5f;
+				F32 halfheight = mFTAtlas->height * 0.5f;
+
+				F32 x0 = pos.x() + glyph->offset_x;
+				F32 y0 = pos.y() - glyph->offset_y;
+
+				F32 x1 = x0 + glyph->width;
+				F32 y1 = y0 + glyph->height;
+
+				F32 u0 = glyph->s0;
+				F32 v0 = glyph->t0;
+
+				F32 u1 = glyph->s1;
+				F32 v1 = glyph->t1;
+
+				mNextVertex->position = mTransformationStack.top() * vec3(x0, y0);
+				mNextVertex->uv = vec2(u0, v0);
+				mNextVertex->color = color;
+				mNextVertex->tid = texId;
+				mNextVertex->transparencyScale = 1.0f;
+				++mNextVertex;
+
+
+				mNextVertex->position = mTransformationStack.top() * vec3(x1, y0);
+				mNextVertex->uv = vec2(u1, v0);
+				mNextVertex->color = color;
+				mNextVertex->tid = texId;
+				mNextVertex->transparencyScale = 1.0f;
+				++mNextVertex;
+
+				mNextVertex->position = mTransformationStack.top() * vec3(x1, y1);
+				mNextVertex->uv = vec2(u1, v1);
+				mNextVertex->color = color;
+				mNextVertex->tid = texId;
+				mNextVertex->transparencyScale = 1.0f;
+				++mNextVertex;
+
+				mNextVertex->position = mTransformationStack.top() * vec3(x0, y1);
+				mNextVertex->uv = vec2(u0, v1);
+				mNextVertex->color = color;
+				mNextVertex->tid = texId;
+				mNextVertex->transparencyScale = 1.0f;
+				++mNextVertex;
+
+				pos[0] += glyph->advance_x;
+				pos[1] += glyph->advance_y;
+				if (c == '\n')
+					pos[1] += glyph->advance_y;
+
+				mIndexCount += 6;
+			}
+		}
+
+		F32 halfwidth = mFTAtlas->width * 0.5f;
+		F32 halfheight = mFTAtlas->height * 0.5f;
 	}
 
 	void Renderer::render()

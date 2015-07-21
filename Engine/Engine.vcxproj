@@ -21,10 +21,16 @@
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="ext\freetype-gl\edtaa3func.c" />
+    <ClCompile Include="ext\freetype-gl\platform.c" />
+    <ClCompile Include="ext\freetype-gl\texture-atlas.c" />
+    <ClCompile Include="ext\freetype-gl\texture-font.c" />
+    <ClCompile Include="ext\freetype-gl\vector.c" />
     <ClCompile Include="funkdefs.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Interpolation.cpp" />
+    <ClCompile Include="label.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="LuaEngine.cpp" />
     <ClCompile Include="luareg.cpp" />
@@ -53,8 +59,17 @@
     <ClInclude Include="..\assets\scripts\collisiontypes.h" />
     <ClInclude Include="AAsset.h" />
     <ClInclude Include="AnimSet.h" />
+    <ClInclude Include="ext\freetype-gl\edtaa3func.h" />
+    <ClInclude Include="ext\freetype-gl\freetype-gl.h" />
+    <ClInclude Include="ext\freetype-gl\markup.h" />
+    <ClInclude Include="ext\freetype-gl\opengl.h" />
+    <ClInclude Include="ext\freetype-gl\platform.h" />
+    <ClInclude Include="ext\freetype-gl\texture-atlas.h" />
+    <ClInclude Include="ext\freetype-gl\texture-font.h" />
+    <ClInclude Include="ext\freetype-gl\vector.h" />
     <ClInclude Include="funkdefs.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="label.h" />
     <ClInclude Include="luareg.h" />
     <ClInclude Include="sys.h" />
     <ClInclude Include="tassert.h" />
@@ -138,7 +153,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\</IncludePath>
     <SourcePath>$(SolutionDir)Math\;$(VC_SourcePath)</SourcePath>
     <OutDir>$(ProjectDir)..\build\debug\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
@@ -146,12 +161,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <SourcePath>$(SolutionDir)Math\;</SourcePath>
-    <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\</IncludePath>
     <OutDir>$(ProjectDir)..\build\release\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'">
     <SourcePath>$(SolutionDir)Math\;</SourcePath>
-    <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\</IncludePath>
     <OutDir>$(ProjectDir)..\build\final\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -159,14 +174,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)../include/;$(ProjectDir)../src/;$(ProjectDir)../assets/scripts/;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CHIPMUNK_FFI;TALGA_DEBUG;TALGA_ASSERTIONS_ENABLED;TALGA_WARNINGS_ENABLED;TALGA_MESSAGES_ENABLED;TALGA_WINDOWS_BUILD;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)../include/;$(ProjectDir)../src/;$(ProjectDir)../include/freetype/;$(ProjectDir)../assets/scripts/;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
+      <PreprocessorDefinitions>CHIPMUNK_FFI;TALGA_DEBUG;TALGA_ASSERTIONS_ENABLED;TALGA_WARNINGS_ENABLED;TALGA_MESSAGES_ENABLED;TALGA_WINDOWS_BUILD;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>chipmunk.lib;glfw3.lib;glew32.lib;opengl32.lib;lua52.lib;ooluad.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>chipmunk.lib;glfw3.lib;glew32.lib;opengl32.lib;lua52.lib;freetype26MT.lib;ooluad.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -181,18 +196,18 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)../include/;$(ProjectDir)../src/;$(ProjectDir)../assets/scripts/;%(AdditionalIncludeDirectories);%PYTHON_INCLUDE%;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../include/;$(ProjectDir)../src/;$(ProjectDir)../include/freetype/;$(ProjectDir)../assets/scripts/;%(AdditionalIncludeDirectories);%PYTHON_INCLUDE%;</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <FloatingPointModel>Fast</FloatingPointModel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
-      <PreprocessorDefinitions>TALGA_ASSERTIONS_ENABLED;TALGA_WARNINGS_ENABLED;TALGA_MESSAGES_ENABLED;TALGA_WINDOWS_BUILD;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CHIPMUNK_FFI;TALGA_DEBUG;TALGA_ASSERTIONS_ENABLED;TALGA_WARNINGS_ENABLED;TALGA_MESSAGES_ENABLED;TALGA_WINDOWS_BUILD;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>chipmunk.lib;glfw3.lib;glew32.lib;opengl32.lib;lua52.lib;oolua.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>chipmunk.lib;glfw3.lib;glew32.lib;opengl32.lib;lua52.lib;freetype26MT.lib;oolua.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -205,18 +220,18 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)../include/;$(ProjectDir)../src/;$(ProjectDir)../assets/scripts/;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)../include/;$(ProjectDir)../src/;$(ProjectDir)../include/freetype/;$(ProjectDir)../assets/scripts/;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <FloatingPointModel>Fast</FloatingPointModel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <PreprocessorDefinitions>CHIPMUNK_FFI;TALGA_WINDOWS_BUILD;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CHIPMUNK_FFI;TALGA_DEBUG;TALGA_ASSERTIONS_ENABLED;TALGA_WARNINGS_ENABLED;TALGA_MESSAGES_ENABLED;TALGA_WINDOWS_BUILD;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>chipmunk.lib;glfw3.lib;glew32.lib;opengl32.lib;lua52.lib;oolua.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>chipmunk.lib;glfw3.lib;glew32.lib;opengl32.lib;lua52.lib;freetype26MT.lib;oolua.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>

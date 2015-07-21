@@ -11,6 +11,10 @@ namespace talga
 		const float& operator[](int index) const;
 		float operator()(int index) const;
 
+		float x() const { return vec[0]; }
+		float y() const { return vec[1]; }
+		float z() const { return vec[2]; }
+
 		float mag() const;
 		float dx() const;
 		float dy() const;
