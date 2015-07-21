@@ -40,6 +40,7 @@ namespace talga
 		mManager.AddTexture("../assets/textures/testblock.png");
 		mManager.AddTexture("../assets/textures/talgasheet.png");
 		mManager.AddMap("../assets/maps/sandboxx.tmap");
+		mManager.addFont("../assets/fonts/OFLGoudyStM.otf", 50);
 
 		mMapLayer = Layer{ mRenderer, 800, 600 };
 		mObjectsLayer = Layer{ mRenderer, 800, 600 };
@@ -48,7 +49,7 @@ namespace talga
 
 		mSpace = cpSpaceNew();
 		cpSpaceSetGravity(mSpace, gravity);
-		cpSpaceSetIterations(mSpace, 10);
+		cpSpaceSetIterations(mSpace, 20);
 
 		cpShape* ground = cpSegmentShapeNew(mSpace->staticBody, cpv(0, -5 * 32), cpv(20 * 32, -5 * 32), 0);
 		cpShapeSetFriction(ground, 0.97f);

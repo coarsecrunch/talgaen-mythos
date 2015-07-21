@@ -49,7 +49,6 @@ namespace talga
 			rdr->render(mRenderer.get(), mRenderer->getCamera());
 		}
 
-		mRenderer->submit("Look out world!", vec3(), vec4(0.0f, 1.0f, 1.0f, 1.0f));
 		mRenderer->end();
 		mRenderer->render();
 	}

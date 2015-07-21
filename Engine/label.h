@@ -2,16 +2,18 @@
 
 #include <string>
 
+#include "Cmn.h"
 #include "IRenderable.h"
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
 
 namespace talga
 {
+
 	class Label : public IRenderable
 	{
 	public:
-		Label(std::string text, vec3 pos, vec4 color);
+		Label(std::string text, vec3 pos, vec4 color, cpFont font);
 		virtual ~Label();
 
 		virtual void render(Renderer* renderer, const Camera* camera) const override;
@@ -20,6 +22,7 @@ namespace talga
 		std::string mText;
 		vec3 mPosition;
 		vec4 mColor;
+		cpFont mFont;
 	};
 
 }

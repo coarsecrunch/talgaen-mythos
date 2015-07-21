@@ -12,14 +12,9 @@
 #include "AAsset.h"
 #include "Point.h"
 
-namespace ftgl
-{
-	struct texture_atlas_t;
-	struct texture_font_t;
-}
-
 namespace talga
 {
+
 	struct VertexData
 	{
 		vec3 position;
@@ -57,7 +52,7 @@ namespace talga
 		void begin();
 		//draw 
 		void submit(const Rectangle& imageBox, cpTex texture = nullptr, F32 transparencyScale = 1.0f, UVFrame frame = UVFrame());
-		void submit(const std::string& str, vec3 pos, vec4 color);
+		void submit(const std::string& str, cpFont font, vec3 pos, vec4 color);
 		//draw line
 		//void submit(const fPnt& pnt1, const fPnt& pnt2);
 		void render();
@@ -76,8 +71,6 @@ namespace talga
 	protected:
 		std::stack<mat4> mTransformationStack;
 		std::vector<U32> mTextureSlots;
-		ftgl::texture_atlas_t* mFTAtlas;
-		ftgl::texture_font_t* mFTFont;
 
 		VertexData* mNextVertex;
 		Camera* mCamera;

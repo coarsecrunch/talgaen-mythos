@@ -3,9 +3,6 @@
 #define MAX_STRBFR 50
 #include "tassert.h"
 
-#define TALGA_UBUNTU_BUILD
-
-
 #if 0
 #define OOLUA_USE_EXCEPTIONS 1
 #define OOLUA_STORE_LAST_ERROR 0
@@ -17,6 +14,7 @@ namespace talga
 	class Texture;
 	class Map;
 	class AnimationSet;
+	class Font;
 
 #ifdef TALGA_WINDOWS_BUILD
 	typedef signed __int8 I8;
@@ -56,6 +54,7 @@ namespace talga
 	typedef const AnimationSet* cpAnimSet;
 	typedef const Map* cpMap;
 	typedef const Map& crMap;
+	typedef const Font* cpFont;
 
 	const F32 GRAVITY = 0.25f;
 	const F32 MAX_SPEED = 14.0f;

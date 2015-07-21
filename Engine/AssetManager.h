@@ -3,12 +3,12 @@
 #include <string>
 #include <vector>
 #include "Cmn.h"
-
 namespace talga
 {
 	class AnimationSet;
 	class Texture;
 	class Map;
+	class Font;
 	class AAsset;
 	struct Rect;
 
@@ -28,6 +28,10 @@ namespace talga
 
 		const std::vector<Texture>& getTextures() const { return mTextures; }
 		const std::vector<Map>& getMaps() const { return mMaps; }
+
+		cpFont addFont(const std::string& path, I32 size);
+		cpFont getFont(const std::string& path) const;
+
 		static cpTex NO_TEXTURE;
 	private:
 		const AAsset* assetExists(const std::string& name) const;
@@ -36,5 +40,6 @@ namespace talga
 		std::vector<Texture> mTextures;
 		std::vector<AnimationSet> mAnimationSets;
 		std::vector<Map> mMaps;
+		std::vector<Font> mFonts;
 	};
 }

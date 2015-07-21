@@ -22,6 +22,7 @@
 #include "Renderer.h"
 #include "Layer.h"
 #include "Sprite.h"
+#include "label.h"
 #include "AnimSet.h"
 #include "Math/RandomGen.h"
 #include "sys.h"
@@ -61,7 +62,6 @@ int main(int argc, char** argv)
 	LUA_REGISTER_TYPES();
 
 	talga::LuaEngine::instance()->addGlobal("GAME", GAME);
-	
 	talga::AnimationSet set{ GAME->getManager()->GetTexture("talgasheet.png") };
 
 	std::vector<talga::Rect> talgaStandL{ { talga::Rect{ 0, 0, 64, 64 }, talga::Rect{ 64, 0, 64, 64 } } };
@@ -87,10 +87,12 @@ int main(int argc, char** argv)
 	talga::Sprite* block = new talga::Sprite(GAME->getManager()->GetTexture("testblock.png"));
 	talga::AnimSprite* spr = new talga::AnimSprite{ &set };
 	talga::Sprite* block2spr = new talga::Sprite(GAME->getManager()->GetTexture("testblock.png"));
+	talga::Label* talgaLbl = new talga::Label("Talga", talga::vec3(-30.0f, -30.0f), talga::vec4(0.0f, 0.0f, 1.0f, 1.0f), GAME->getManager()->getFont("OFLGoudyStM.otf"));
 	block2spr->box().setScaleX(0.5f);
 	block2spr->box().setScaleY(0.5f);
 
 	spr->addChild(block2spr);
+	spr->addChild(talgaLbl);
 	talga::cpMap testMap = GAME->getManager()->GetMap("sandboxx.tmap");
 
 	spr->playAnimation("talgaStandL", 1000, true);

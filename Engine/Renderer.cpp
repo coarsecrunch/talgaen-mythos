@@ -5,7 +5,7 @@
 #include "Texture.h"
 #include "AssetManager.h"
 #include <iostream>
-
+#include "font.h"
 #include "ext/freetype-gl/freetype-gl.h"
 
 namespace talga
@@ -24,9 +24,6 @@ namespace talga
 		mProgram = LoadCompileShaders(vertSrc.c_str(), fragSrc.c_str());
 		mTransformationStack.push(mat4::identity());
 		Init();
-
-		mFTAtlas = ftgl::texture_atlas_new(512, 512, 2);
-		mFTFont =  ftgl::texture_font_new_from_file(mFTAtlas, 30, "../assets/fonts/arial.ttf");
 	}
 
 	void Renderer::Init()
@@ -182,11 +179,12 @@ namespace talga
 		mIndexCount += 6;
 	}
 
-	void Renderer::submit(const std::string& str, vec3 pos, vec4 color)
+	void Renderer::submit(const std::string& str, cpFont font, vec3 pos, vec4 color)
 	{
 		using namespace ftgl;
 
-		pos = vec3(100, 100);
+		ftgl::texture_atlas_t* mFTAtlas = const_cast<ftgl::texture_atlas_t*>(font->getAtlas());
+		ftgl::texture_font_t* mFTFont = const_cast<ftgl::texture_font_t*>(font->getFTFont());
 
 		float texId = mFTAtlas->id;
 		bool found = false;

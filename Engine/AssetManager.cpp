@@ -9,6 +9,7 @@
 #include <fstream>
 #include "Cmn.h"
 #include "AnimSet.h"
+#include "font.h"
 
 
 
@@ -72,13 +73,45 @@ namespace talga
 
 			TALGA_MSG(path + " was successfully loaded");
 			mMaps.push_back(map);
-      return &mMaps.back();
+			return &mMaps.back();
 		}
 		else
-    {
-      TALGA_WARN(0, path + " could not be loaded");
-    }
+		{
+			TALGA_WARN(0, path + " could not be loaded");
+		}
 	}
+
+  cpFont AssetManager::addFont(const std::string& path, I32 size)
+  {
+	  Font font(size);
+
+	  if (font.load(path, *this))
+	  {
+		  cpFont exists = static_cast<cpFont>(assetExists(font.getName()));
+		  if (exists)
+			  return exists;
+
+		  TALGA_MSG(path + " was successfully loaded");
+		  mFonts.push_back(font);
+		  return &mFonts.back();
+	  }
+	  else
+	  {
+		  TALGA_WARN(0, path + " could not be loaded");
+	  }
+  }
+
+  cpFont AssetManager::getFont(const std::string& name) const
+  {
+	  for (int i = 0; i < mFonts.size(); ++i)
+	  {
+		  if (mFonts[i].getName() == name)
+			  return &mFonts[i];
+	  }
+
+	  TALGA_WARN(0, std::string("failed to find font ") + name);
+	  return nullptr;
+  }
 
 	static vec3 UV(float x, float xMax, float y, float yMax, float frameH)
 	{
@@ -142,6 +175,11 @@ namespace talga
 		for (Map& map : mMaps)
 		{
 			map.destroy();
+		}
+
+		for (Font& font : mFonts)
+		{
+			font.destroy();
 		}
 	}
 }
