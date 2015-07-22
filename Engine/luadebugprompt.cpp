@@ -4,11 +4,13 @@
 #include "Renderer.h"
 #include "ext/freetype-gl/freetype-gl.h"
 #include "font.h"
-
-
+#include "Rect.h"
+#include "LuaEngine.h"
 namespace talga
 {
 	const int YOFFSET = 10;
+	Rect TEXT_ENTER_BOX;
+
 
 	LuaDebugPrompt::LuaDebugPrompt(cpTex tex, cpFont font)
 		: Sprite(tex)
@@ -16,9 +18,30 @@ namespace talga
 		, mStartAt()
 		, mMaxVisibleLines(0)
 		, mMaxLinePixelWidth(0)
+		, mCurrentCommand()
 	{
-		mMaxVisibleLines = (box().getH() - LUA_DEBUG_BORDER) / font->getMaxGlyphHeight();
-		mMaxLinePixelWidth = box().getW() - LUA_DEBUG_BORDER * 2;
+		mMaxVisibleLines = ((box().getH() - LUA_DEBUG_BORDER) / font->getMaxGlyphHeight()) - 4;
+		mMaxLinePixelWidth = (box().getW() - LUA_DEBUG_BORDER * 2);
+
+		TEXT_ENTER_BOX = Rect{ 0, YOFFSET, mImageBox.getW(), font->getMaxGlyphHeight() * 2 };
+	}
+
+	void LuaDebugPrompt::pushCToCmd(char c)
+	{
+		mCurrentCommand.push_back(c);
+	}
+
+	void LuaDebugPrompt::popCmd()
+	{
+		if (mCurrentCommand.size() > 0)
+			mCurrentCommand.pop_back();
+	}
+
+	void LuaDebugPrompt::doCmd()
+	{
+		LuaEngine::instance()->ExecuteStr(mCurrentCommand);
+		mCurrentCommand.clear();
+		return;
 	}
 
 	void LuaDebugPrompt::print(const std::string& line)
@@ -90,7 +113,7 @@ namespace talga
 	{
 		Sprite::render(renderer, camera);
 		renderer->tStackPush(mImageBox.getTransformationMatrix());
-		std::string rdrStr;
+		std::string rdrStr = ">" + mCurrentCommand + "\n";
 		I32 numNewLines = 0;
 		for (auto it = mTextLines.begin(); it != mTextLines.end() && numNewLines <= mMaxVisibleLines; ++it)
 		{
@@ -101,6 +124,25 @@ namespace talga
 
 		renderer->submit(rdrStr, mFont, tempPos,vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		renderer->tStackPop();
+	}
+
+	bool LuaDebugPrompt::wasSelected(I32 mx, I32 my) const
+	{
+		if (mx >= TEXT_ENTER_BOX.x + (mImageBox.getX() - mImageBox.getW() * 0.5f))
+		{
+			if (mx <= TEXT_ENTER_BOX.x + TEXT_ENTER_BOX.w + (mImageBox.getX() - mImageBox.getW() * 0.5f))
+			{
+				if (my >= TEXT_ENTER_BOX.y + (mImageBox.getY() - mImageBox.getH() * 0.5f))
+				{
+					if (my <= TEXT_ENTER_BOX.y + TEXT_ENTER_BOX.h + (mImageBox.getY() - mImageBox.getH() * 0.5f))
+					{
+						TALGA_MSG("INN");
+					}
+				}
+			}
+		}
+
+		return true;
 	}
 
 	LuaDebugPrompt::~LuaDebugPrompt()

@@ -15,7 +15,7 @@ OOLUA_EXPORT_FUNCTIONS(Camera, box)
 OOLUA_EXPORT_FUNCTIONS_CONST(Camera)
 
 //Game
-OOLUA_EXPORT_FUNCTIONS(Game, camera, printToLuaPrompt)
+OOLUA_EXPORT_FUNCTIONS(Game, camera, printToLuaPromptStr, printToLuaPromptFl)
 OOLUA_EXPORT_FUNCTIONS_CONST(Game)
 
 void LUA_REGISTER_TYPES()

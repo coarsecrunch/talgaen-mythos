@@ -46,19 +46,16 @@ namespace talga
 		void removeObj(GameObject* obj);
 		void clearObjs();
 		
-		template<typename T>
-		T* createObj(T* t)
-		{
-			static_assert(_IS_BASE_OF(GameObject, T));
-			((GameObject*)t)->GAME = this;
-			return t;
-		}
-		
 		void game_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		void game_resize_window(GLFWwindow* window, int w, int h);
+		void game_mouse_press_callback(GLFWwindow* window, int button, int action, int mods);
+		void game_mouse_move_callback(GLFWwindow* window, double x, double y);
+
+
 		void addKeyCallback(char c, GameObject* obj, KeyCallbackFunc);
 		
 		void printToLuaPrompt(const std::string& str);
+		void printToLuaPrompt(float str);
 	protected:
 		std::vector<GameObject*> mGameObjects;
 		Camera mCamera;
@@ -74,6 +71,12 @@ namespace talga
 		GameObject* mPlayer;
 		Window mWindow;
 		LuaDebugPrompt* mPrompt;
+
+		double mMouseX;
+		double mMouseY;
+		I32 mWidth;
+		I32 mHeight;
+		bool mPromptIsSelected;
 	};
 	
 }

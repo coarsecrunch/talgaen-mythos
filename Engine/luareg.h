@@ -43,7 +43,8 @@ OOLUA_PROXY_END
 OOLUA_PROXY(Game)
 OOLUA_TAGS(OOLUA::No_public_constructors)
 OOLUA_MEM_FUNC(Camera&, camera)
-OOLUA_MEM_FUNC(void, printToLuaPrompt, const std::string&)
+OOLUA_MEM_FUNC_RENAME(printToLuaPromptStr, void, printToLuaPrompt, const std::string&)
+OOLUA_MEM_FUNC_RENAME(printToLuaPromptFl, void, printToLuaPrompt, float)
 OOLUA_PROXY_END
 
 void LUA_REGISTER_TYPES();

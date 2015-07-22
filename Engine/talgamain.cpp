@@ -45,10 +45,16 @@ void resize_callback(GLFWwindow* window, int w, int h)
 	GAME->game_resize_window(window, w, h);
 }
 
-talga::Game* getGame()
+void mouse_press_callback(GLFWwindow* window, int button, int action, int mods)
 {
-	return GAME;
+	GAME->game_mouse_press_callback(window, button, action, mods);
 }
+
+void mouse_move_callback(GLFWwindow * window, double x, double y)
+{
+	GAME->game_mouse_move_callback(window, x, y);
+}
+
 
 int main(int argc, char** argv)
 {
@@ -64,7 +70,7 @@ int main(int argc, char** argv)
 	talga::LuaEngine::instance()->setGame(GAME);
 	talga::LuaEngine::instance()->addGlobal("GAME", GAME);
 	talga::AnimationSet set{ GAME->getManager()->GetTexture("talgasheet.png") };
-	talga::LuaEngine::instance()->ExecuteStr("print = function(str) GAME:printToLuaPrompt(str) end");
+	talga::LuaEngine::instance()->ExecuteStr("print = function(s) if type(s) == \"string\" then GAME:printToLuaPromptStr(s) elseif type(s) == \"number\" then GAME:printToLuaPromptFl(s) end end");
 
 	std::vector<talga::Rect> talgaStandL{ { talga::Rect{ 0, 0, 64, 64 }, talga::Rect{ 64, 0, 64, 64 } } };
 	std::vector<talga::Rect> talgaStandR{ { talga::Rect{ 128, 0, 64, 64 }, talga::Rect{ 192, 0, 64, 64 } } };
@@ -100,6 +106,8 @@ int main(int argc, char** argv)
 	
 	glfwSetWindowSizeCallback(GAME->getWindow().getWindow(), resize_callback);
 	glfwSetKeyCallback(GAME->getWindow().getWindow(), key_callback);
+	glfwSetMouseButtonCallback(GAME->getWindow().getWindow(), mouse_press_callback);
+	glfwSetCursorPosCallback(GAME->getWindow().getWindow(), mouse_move_callback);
 
 	talga::U32 previousTime = 0;
 	talga::U32 dt = 0;
@@ -130,7 +138,7 @@ int main(int argc, char** argv)
 
 	delete GAME;
 
-	system("PAUSE");
+	//system("PAUSE");
 
 	return 0;
 }

@@ -29,12 +29,17 @@ namespace talga
 		, mManager()
 		, mKeyCallbacks()
 		, mPlayer{ nullptr }
+		, mMouseX{0.0}
+		, mMouseY{0.0}
+		, mPromptIsSelected{false}
 	{
 		mGameObjects.reserve(MAX_GAMEOBJECTS);
 	}
 
 	int Game::Init(int width, int height, const char* name)
 	{
+		mWidth = width;
+		mHeight = height;
 		mCamera.box().setW(width);
 		mCamera.box().setH(height);
 
@@ -170,23 +175,59 @@ namespace talga
 	// currently relies on the fact that glfw defines keys as their ascii value, probably should define my own constants
 	void Game::game_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		auto range = mKeyCallbacks.equal_range(key);
+		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		{
+			if (key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) return;
 
-		int keyaction = -1;
-		
-		switch (action)
-		{
-		case GLFW_PRESS:
-			keyaction = TALGA_KEYPRESS; break;
-		case GLFW_RELEASE:
-			keyaction = TALGA_KEYRELEASE; break;
-		default:
-			keyaction = -1; break;
-		}
-		
-		for (auto it = range.first; it != range.second; ++it)
-		{
-			(*it).second.second(it->second.first, keyaction);
+			if (mPromptIsSelected)
+			{
+				if (key == GLFW_KEY_BACKSPACE)
+				{
+					mPrompt->popCmd();
+					return;
+				}
+				else if (key == GLFW_KEY_ENTER)
+				{
+					mPrompt->doCmd();
+					return;
+				}
+
+
+				if (mods & GLFW_MOD_SHIFT)
+				{
+					switch (key)
+					{
+					case GLFW_KEY_9: mPrompt->pushCToCmd('('); break;
+					case GLFW_KEY_0: mPrompt->pushCToCmd(')'); break;
+					case GLFW_KEY_APOSTROPHE: mPrompt->pushCToCmd('\"'); break;
+					case GLFW_KEY_SEMICOLON: mPrompt->pushCToCmd(':'); break;
+					default: mPrompt->pushCToCmd(toupper(key)); break;
+					}
+				}
+				else
+					mPrompt->pushCToCmd(tolower(key));
+			}
+			else
+			{
+				auto range = mKeyCallbacks.equal_range(key);
+
+				int keyaction = -1;
+
+				switch (action)
+				{
+				case GLFW_PRESS:
+					keyaction = TALGA_KEYPRESS; break;
+				case GLFW_RELEASE:
+					keyaction = TALGA_KEYRELEASE; break;
+				default:
+					keyaction = -1; break;
+				}
+
+				for (auto it = range.first; it != range.second; ++it)
+				{
+					(*it).second.second(it->second.first, keyaction);
+				}
+			}
 		}
 	}
 
@@ -195,8 +236,15 @@ namespace talga
 		mPrompt->print(str);
 	}
 
+	void Game::printToLuaPrompt(float f)
+	{
+		mPrompt->print(std::to_string(f));
+	}
+
 	void Game::game_resize_window(GLFWwindow* window, int w, int h)
 	{
+		mWidth = w;
+		mHeight = h;
 		mObjectsLayer.setProjectionMatrix(w, h);
 		mMapLayer.setProjectionMatrix(w, h);
 		mUILayer.setProjectionMatrix(w, h);
@@ -207,6 +255,20 @@ namespace talga
 
 		mPrompt->box().updateVertsPosition();
 		glViewport(0, 0, w, h);
+	}
+
+	void Game::game_mouse_press_callback(GLFWwindow* window, int button, int action, int mods)
+	{
+		if (mPrompt->wasSelected(mMouseX - 0.5f * mWidth, mMouseY - 0.5f * mHeight))
+			mPromptIsSelected = true;
+		else
+			mPromptIsSelected = false;
+	}
+
+	void Game::game_mouse_move_callback(GLFWwindow* window, double x, double y)
+	{
+		mMouseX = x;
+		mMouseY = y;
 	}
 
 	Game::~Game()

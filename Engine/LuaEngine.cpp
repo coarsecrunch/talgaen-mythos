@@ -5,13 +5,12 @@
 #include "oolua/oolua_function.h"
 #include "oolua/oolua_ref.h"
 #include <iostream>
+#include <algorithm>
 #include "Game.h"
 
 
 namespace talga
 {
-	
-
 	LuaEngine::LuaEngine() 
 		: mScript()
 	{

@@ -20,9 +20,15 @@ namespace talga
 		virtual void render(Renderer* renderer, const Camera* camera) const override;
 
 		void print(const std::string& line);
+		bool wasSelected(I32 mx, I32 my) const;
+
+		void pushCToCmd(char c);
+		void popCmd();
+		void doCmd();
 	protected:
 		std::deque<std::string> mTextLines;
 		std::deque<std::string>::iterator mStartAt;
+		std::string mCurrentCommand;
 		cpFont mFont;
 		vec4 mColor;
 		size_t mMaxVisibleLines;
