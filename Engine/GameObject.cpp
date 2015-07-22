@@ -11,11 +11,12 @@
 
 namespace talga
 {
-	GameObject::GameObject(IRenderable* rdr, std::function<void(GameObject*)> tempInitFunc, F32 x, F32 y)
+	GameObject::GameObject(IRenderable* rdr, PhysicsComponent* collider)
 		: GAME(nullptr)
 		, DESTROY(false)
 		, pmRenderable(rdr)
 		, isAnimated{false}
+		, mCollider(collider)
 		, mBox{ nullptr }
 		, stagedFunc()
 		, updateFunc()
@@ -27,10 +28,6 @@ namespace talga
 			{
 				Sprite* ptr = (Sprite*) pmRenderable.get();
 				mBox = &ptr->box();
-				mBody = cpBodyNew(10.0f, INFINITY);  
-				mShape = cpBoxShapeNew(mBody, mBox->getW(), mBox->getH(), 0);
-				cpBodySetPosition(mBody, cpv(x, y));
-				setFriction(0.94f);
 				setCollisionType(COLL_DEFAULT);
 			}
 			else if (dynamic_cast<AnimSprite*>(pmRenderable.get()))
@@ -38,11 +35,11 @@ namespace talga
 				AnimSprite* ptr = (AnimSprite*)pmRenderable.get();
 				mBox = &ptr->box();
 				isAnimated = true;
-				mBody = cpBodyNew(10.0f, INFINITY);
-				mShape = cpBoxShapeNew(mBody, mBox->getW(), mBox->getH(), 0);	
-				cpBodySetPosition(mBody, cpv(x, y));
-				setFriction(0.94f);
 				setCollisionType(COLL_DEFAULT);
+			}
+			else
+			{
+				TALGA_ASSERT(0, "unknown renderable passed to GameObject");
 			}
 		}
 		else
@@ -51,58 +48,25 @@ namespace talga
 		}
 	}
 
-	GameObject::GameObject(const GameObject& cpy)
-		: GAME(cpy.GAME)
+	GameObject::GameObject(std::string path)
+		: GAME(nullptr)
 		, DESTROY(false)
-		, pmRenderable(cpy.pmRenderable)
-		, isAnimated{ cpy.isAnimated }
-		, mBox{ cpy.mBox } //need to copy functions too
-		, stagedFunc(cpy.stagedFunc)
-		, updateFunc(cpy.updateFunc)
-		, unstagedFunc(cpy.unstagedFunc)
-	{
-	}
-
-	void GameObject::update(F32 dt)
-	{
-		if (isAnimated)
-		{
-			static_cast<AnimSprite*>(pmRenderable.get())->update(dt);
-			Rectangle& r = static_cast<AnimSprite*>(pmRenderable.get())->box();
-			r.setX(cpBodyGetPosition(mBody).x);
-			r.setY(-cpBodyGetPosition(mBody).y);
-			r.setOrientation(-cpBodyGetAngle(mBody));
-
-			if (updateFunc)
-				updateFunc(this, dt);
-
-		}
-		else
-		{
-			static_cast<Sprite*>(pmRenderable.get())->update(dt);
-			Rectangle& r = static_cast<AnimSprite*>(pmRenderable.get())->box();
-			r.setX(cpBodyGetPosition(mBody).x);
-			r.setY(-cpBodyGetPosition(mBody).y);
-			r.setOrientation(-cpBodyGetAngle(mBody));
-			
-			if (updateFunc)
-				updateFunc(this, dt);
-		}
-	}
-
-	void GameObject::loadScript(std::string path)
+		, isAnimated{ false }
+		, mBox{ nullptr }
+		, stagedFunc()
+		, updateFunc()
+		, unstagedFunc()
 	{
 		OOLUA::Lua_func_ref stagedFuncRef;
 		OOLUA::Lua_func_ref unstagedFuncRef;
 		OOLUA::Lua_func_ref updateFuncRef;
-		OOLUA::Lua_table_ref keyCallbacksTbl;
 		std::string tblname = getFileNameFromPathWithoutExtension(path);
 		talga::LuaEngine::instance()->ExecuteFile(path);
 
 		OOLUA::Table tempTbl(talga::LuaEngine::instance()->getGlobalTable(tblname));
-		TALGA_WARN(tempTbl.valid(), "incorrect script at " + path + " the table's name MUST match the name of the script" );
-		
-		if (!tempTbl.valid())	
+		TALGA_WARN(tempTbl.valid(), "incorrect script at " + path + " the table's name MUST match the name of the script");
+
+		if (!tempTbl.valid())
 			return;
 
 		TALGA_MSG("script " + path + " successfully loaded");
@@ -110,9 +74,8 @@ namespace talga
 		tempTbl.at("stagedFunc", stagedFuncRef);
 		tempTbl.at("unstagedFunc", unstagedFuncRef);
 		tempTbl.at("updateFunc", updateFuncRef);
-		tempTbl.at("keyCallbacks", keyCallbacksTbl);
 
-		
+
 		if (stagedFuncRef.valid())
 			stagedFunc = stagedFuncRef;
 		else
@@ -122,39 +85,63 @@ namespace talga
 			unstagedFunc = unstagedFuncRef;
 		else
 			TALGA_WARN(0, "failed to find unstagedFunc in table in " + tblname);
-		
+
 		if (updateFuncRef.valid())
 			updateFunc = updateFuncRef;
 		else
 			TALGA_WARN(0, "failed to find updateFunc in table in " + tblname);
-		
-		if (keyCallbacksTbl.valid())
+
+	}
+
+	GameObject::GameObject(const GameObject& cpy)
+		: GAME(cpy.GAME)
+		, DESTROY(false)
+		, pmRenderable(cpy.pmRenderable)
+		, mCollider(cpy.mCollider)
+		, isAnimated{ cpy.isAnimated }
+		, mBox{ cpy.mBox } //need to copy functions too
+		, stagedFunc(cpy.stagedFunc)
+		, updateFunc(cpy.updateFunc)
+		, unstagedFunc(cpy.unstagedFunc)
+	{
+	}
+
+	void GameObject::staged()
+	{
+		if (stagedFunc)
+			stagedFunc(this);
+
+	}
+
+	void GameObject::update(F32 dt)
+	{
+		if (isAnimated)
 		{
-			OOLUA::Table keyCallbacksTable(keyCallbacksTbl);
+			static_cast<AnimSprite*>(pmRenderable.get())->update(dt);
+			Rectangle& r = static_cast<AnimSprite*>(pmRenderable.get())->box();
 
-			oolua_pairs(keyCallbacksTable)
+			if (mCollider)
 			{
-				OOLUA::Lua_func_ref trythis;
-				std::string key;
-				OOLUA::pull(keyCallbacksTable.state(), trythis);
-				OOLUA::pull(keyCallbacksTable.state(), key);
-
-
-				KeyCallbackFunc func;
-				func = trythis;
-
-				char c = key[0];
-
-				addKeyCallback(key[0], func);
-
-				OOLUA::push(keyCallbacksTable.state(), key);
+				mBox->setX(mCollider->getX());
+				mBox->setY(-mCollider->getY());
+				mBox->setOrientation(-mCollider->getOrientation());
 			}
-			oolua_pairs_end()
 
+			if (updateFunc)
+				updateFunc(this, dt);
 		}
 		else
 		{
-			TALGA_WARN(0, "failed to find keyCallbacks table in " + tblname)
+			static_cast<Sprite*>(pmRenderable.get())->update(dt);
+			Rectangle& r = static_cast<AnimSprite*>(pmRenderable.get())->box();
+			if (mCollider)
+			{
+				mBox->setX(mCollider->getX());
+				mBox->setY(-mCollider->getY());
+				mBox->setOrientation(-mCollider->getOrientation());
+			}
+			if (updateFunc)
+				updateFunc(this, dt);
 		}
 	}
 
@@ -165,14 +152,14 @@ namespace talga
 
 	void GameObject::addCollisionCallback(I32 collisionWith, OOLUA::Lua_func_ref ref)
 	{
-		I32 mycoltype = cpShapeGetCollisionType(mShape);
+		I32 mycoltype = cpShapeGetCollisionType(mCollider->mShape);
 		I32 othercoltype = collisionWith;
 		CollisionCallbackFunc func;
 		func = ref;
 		mCollisionCallbacks.insert(std::pair<I32, CollisionCallbackFunc>(collisionWith, func));
 		mData.push_back(new CollisionData{ this, collisionWith });
 
-		cpCollisionHandler* handler = cpSpaceAddCollisionHandler(GAME->getSpace(), cpShapeGetCollisionType(mShape), collisionWith);
+		cpCollisionHandler* handler = cpSpaceAddCollisionHandler(GAME->getSpace(), cpShapeGetCollisionType(mCollider->mShape), collisionWith);
 		handler->userData = (cpDataPointer)mData.back();
 		handler->beginFunc = 
 
@@ -187,7 +174,8 @@ namespace talga
 
 	void GameObject::setCollisionType(I32 type)
 	{
-		cpShapeSetCollisionType(mShape, type);
+		TALGA_ASSERT(mCollider, "tried to set collision type of non exsitent collider")
+		mCollider->setCollisionType(type);
 	}
 
 	void GameObject::addKeyCallback(char c, KeyCallbackFunc cback)
@@ -202,34 +190,6 @@ namespace talga
 		GAME->addKeyCallback(c[0], this, func);
 	}
 
-	void GameObject::applyForce(vec2 force)
-	{
-		cpBodyApplyForceAtLocalPoint(mBody, cpv(force[0], force[1]), cpvzero);
-	}
-	void GameObject::applyForceX(F32 x)
-	{
-		cpBodyApplyForceAtLocalPoint(mBody, cpv(x, cpBodyGetForce(mBody).y), cpvzero);
-	}
-	void GameObject::applyForceY(F32 y)
-	{
-		cpBodyApplyForceAtLocalPoint(mBody, cpv(cpBodyGetForce(mBody).x, y), cpvzero);
-	}
-	void GameObject::applyImpulseY(F32 impulse)
-	{
-		cpBodyApplyImpulseAtLocalPoint(mBody, cpv(0, impulse), cpvzero);
-	}
-	void GameObject::applyImpulseX(F32 impulse)
-	{
-		cpBodyApplyImpulseAtLocalPoint(mBody, cpv(impulse, 0), cpvzero);
-	}
-	F32 GameObject::getVx() const
-	{
-		return cpBodyGetForce(mBody).x;
-	}
-	F32 GameObject::getVy() const
-	{
-		return cpBodyGetForce(mBody).y;
-	}
 	void GameObject::playAnimation(const std::string& animName, I32 speed, bool loop)
 	{
 		if (isAnimated)
@@ -237,40 +197,14 @@ namespace talga
 			static_cast<AnimSprite*>(pmRenderable.get())->playAnimation(animName, speed, loop);
 		}
 	}
-	F32 GameObject::getMass() const
-	{ 
-		return cpBodyGetMass(mBody); 
-	}
-	void GameObject::setMass(F32 value)
-	{ 
-		cpBodySetMass(mBody, value); 
-		cpBodySetMoment(mBody, cpMomentForBox(cpBodyGetMass(mBody), mBox->getW(), mBox->getH()));
-	}
-	void GameObject::setFriction(F32 value)
-	{
-		cpShapeSetFriction(mShape, value);
-	}
-	F32 GameObject::getFriction() const
-	{
-		return cpShapeGetFriction(mShape);
-	}
-	void GameObject::setMoment(F32 value)
-	{
-		cpBodySetMoment(mBody, value);
-	}
-	F32 GameObject::getMoment() const
-	{
-		return cpBodyGetMoment(mBody);
-	}
+
 	void GameObject::destroy()
 	{
 		DESTROY = true;
 	}
 	GameObject::~GameObject()
 	{
-		cpShapeFree(mShape);
-		cpBodyFree(mBody);
-
+		delete mCollider;
 		for (auto it = mData.begin(); it != mData.end(); ++it)
 			delete *it;
 	}

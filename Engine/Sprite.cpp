@@ -9,19 +9,13 @@
 
 namespace talga
 {
-	Sprite::Sprite(cpTex tex, I32 width, I32 height, F32 transparencyScale, UVFrame frame)
+	Sprite::Sprite(cpTex tex)
 		: mTex(tex)
-		, mTransparencyScale(transparencyScale)
-		, mImageBox(width, height)
-		, mUVCurrentFrame(frame)
+		, mTransparencyScale(1.0f)
+		, mImageBox(tex->w(), tex->h())
+		, mUVCurrentFrame(DEFAULT_SPRITE_UV)
 	{
-		if (mTex && width == -1 && height == -1)
-		{
-			mImageBox.setW(mTex->w());
-			mImageBox.setH(mTex->h());
-		}
-		else
-			TALGA_WARN(0, "Invalid texture was passed to sprite");
+		TALGA_WARN(tex, "invalid texture passed to Sprite")
 
 		mImageBox.updateVerts();
 	}
@@ -44,7 +38,7 @@ namespace talga
 
 	AnimSprite::AnimSprite(cpAnimSet anims, I32 width, I32 height)
 		: mAnims(anims)
-		, mImageBox(width, height)
+		, mImageBox(anims->w(), anims->h())
 		, isAnimated(true)
 		, mCurrentFrame(-1)
 		, mFrameSpeed(-1)
@@ -52,19 +46,6 @@ namespace talga
 		, isLoop(false)
 		, mCurrentAnimation(nullptr)
 	{
-		if (mAnims && mAnims->tex())
-		{
-			mImageBox.setW(mAnims->tex()->w());
-			mImageBox.setH(mAnims->tex()->h());
-		}
-		else if (mAnims && !mAnims->tex())
-		{
-			mImageBox.setW(32);
-			mImageBox.setH(32);
-			TALGA_WARN(0, "Invalid texture was passed to animated sprite");
-		}
-
-
 	}
 
 	void AnimSprite::render(Renderer* renderer, const Camera* camera) const

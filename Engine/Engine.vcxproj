@@ -19,7 +19,6 @@
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Clock.cpp" />
-    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="ext\freetype-gl\platform.c" />
     <ClCompile Include="ext\freetype-gl\texture-atlas.c" />
@@ -43,6 +42,7 @@
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Vector4.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
@@ -73,13 +73,13 @@
     <ClInclude Include="label.h" />
     <ClInclude Include="luadebugprompt.h" />
     <ClInclude Include="luareg.h" />
+    <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="sys.h" />
     <ClInclude Include="tassert.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Clock.h" />
     <ClInclude Include="Cmn.h" />
-    <ClInclude Include="Collider.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="IDynamic.h" />

@@ -9,6 +9,8 @@ namespace talga
 	AnimationSet::AnimationSet(cpTex tex)
 		: mTex(tex)
 		, mAnims({AnimSetPair("default", UVAnimation{ WHOLE_TEXTURE }) })
+		, mWidth(-1)
+		, mHeight(-1)
 	{
 		// Sweet baby talga this is ridiculous
 	}
@@ -46,6 +48,9 @@ namespace talga
 			{
 				anim.push_back(WHOLE_TEXTURE);
 			}
+
+			mWidth = rectFrame.w;
+			mHeight = rectFrame.h;
 		}
 
 		mAnims.push_back(AnimSetPair(name, anim));

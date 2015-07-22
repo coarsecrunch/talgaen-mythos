@@ -9,10 +9,11 @@
 
 namespace talga
 {
+	const UVFrame DEFAULT_SPRITE_UV = { { vec2(0, 1), vec2(1, 1), vec2(1, 0), vec2(0, 0) } };
 	class Sprite : public IRenderable, public IDynamic
 	{
 	public:
-		Sprite(cpTex tex, I32 width = -1, I32 height = -1, F32 transparencyScale = 1.0f, UVFrame frame = { { vec2(0, 1), vec2(1, 1), vec2(1, 0), vec2(0, 0) } });
+		Sprite(cpTex tex);
 		virtual ~Sprite() { TALGA_MSG("Sprite destructor called"); }
 
 		virtual void render(Renderer* renderer, const Camera* camera) const override;

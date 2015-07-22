@@ -29,6 +29,7 @@
 #include "chipmunk/chipmunk_private.h"
 
 #include "collisiontypes.h"
+#include "PhysicsComponent.h"
 
 const talga::I32 WIDTH = 1200;
 const talga::I32 HEIGHT = 900;
@@ -69,7 +70,7 @@ int main(int argc, char** argv)
 
 	talga::LuaEngine::instance()->setGame(GAME);
 	talga::LuaEngine::instance()->addGlobal("GAME", GAME);
-	talga::AnimationSet set{ GAME->getManager()->GetTexture("talgasheet.png") };
+	talga::AnimationSet set{ GAME->manager()->GetTexture("talgasheet.png") };
 	talga::LuaEngine::instance()->ExecuteStr("print = function(s) if type(s) == \"string\" then GAME:printToLuaPromptStr(s) elseif type(s) == \"number\" then GAME:printToLuaPromptFl(s) end end");
 
 	std::vector<talga::Rect> talgaStandL{ { talga::Rect{ 0, 0, 64, 64 }, talga::Rect{ 64, 0, 64, 64 } } };
@@ -94,15 +95,15 @@ int main(int argc, char** argv)
 
 	talga::AnimSprite* spr = new talga::AnimSprite{ &set };
 
-	talga::cpMap testMap = GAME->getManager()->GetMap("sandboxx.tmap");
+	talga::cpMap testMap = GAME->manager()->GetMap("sandboxx.tmap");
 
 	spr->playAnimation("talgaStandL", 1000, true);
 
-	talga::GameObject* tga = new talga::GameObject(spr);
-
-	tga->loadScript("../assets/scripts/script.lua");
+	talga::GameObject* tga = new talga::GameObject(spr, new talga::RectCollider(spr->box().getW(), spr->box().getH()));
 	
 	GAME->addObj(tga);
+
+	talga::LuaEngine::instance()->ExecuteFile("../assets/scripts/script.lua");
 	
 	glfwSetWindowSizeCallback(GAME->getWindow().getWindow(), resize_callback);
 	glfwSetKeyCallback(GAME->getWindow().getWindow(), key_callback);

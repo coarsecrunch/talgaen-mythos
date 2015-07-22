@@ -39,7 +39,7 @@ namespace talga
 
 		Camera& camera() { return mCamera; }
 		Window& getWindow() { return mWindow; }
-		AssetManager* getManager() { return &mManager; }
+		AssetManager* manager() { return &mManager; }
 		cpSpace* getSpace() { return mSpace; }
 
 		void addObj(GameObject* obj);

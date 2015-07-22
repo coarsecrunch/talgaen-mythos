@@ -8,6 +8,7 @@
 #include "Rectangle.h"
 #include "IDynamic.h"
 #include "Math/Vector2.h"
+#include "PhysicsComponent.h"
 #include "funkdefs.h"
 struct cpBody;
 struct cpShape;
@@ -23,35 +24,16 @@ namespace talga
 	class GameObject : public IDynamic
 	{
 	public:
-		GameObject(IRenderable* rdr, std::function<void(GameObject*)> = std::function<void(GameObject*)>(nullptr), F32 x = 0.0f, F32 y = 0.0f);
+		GameObject(IRenderable* rdr, PhysicsComponent* collider);
+		GameObject(std::string script);
 		GameObject(const GameObject& cpy);
 		virtual ~GameObject();
 		
-		void loadScript(std::string path);
-
-		F32 getMass() const;
-		void setMass(F32 value); 
-		
-		void setFriction(F32 value);
-		F32 getFriction() const;
-
-		void setMoment(F32 value);
-		F32 getMoment() const;
-
 		void playAnimation(const std::string& animName, I32 speed, bool loop);
 		
 		SharedRdrPtr getRenderable() { return pmRenderable; }
 
 		virtual void update(F32 dt) override;
-
-		
-		void applyForce(vec2 force);
-		void applyForceX(F32 x);
-		void applyForceY(F32 y);
-		void applyImpulseY(F32 impulse);
-		void applyImpulseX(F32 impulse);
-		F32 getVx() const;
-		F32 getVy() const;
 		
 		void setCollisionType(I32 type);
 		void addCollisionCallback(I32 collisionWith, OOLUA::Lua_func_ref);
@@ -60,6 +42,7 @@ namespace talga
 		void addKeyCallback(char c, KeyCallbackFunc cback);
 		void addKeyCallback(std::string c, OOLUA::Lua_func_ref ref);
 		
+		void staged();
 		void destroy();
 
 		StagedFunc stagedFunc;
@@ -69,8 +52,7 @@ namespace talga
 		friend class Game;
 
 		SharedRdrPtr pmRenderable;
-		cpBody* mBody;
-		cpShape* mShape;
+		PhysicsComponent* mCollider;
 		Rectangle* mBox;
 		bool isAnimated;
 		
@@ -81,7 +63,7 @@ namespace talga
 		std::vector<CollisionData*> mData;
 	};
 
-	struct CollisionData
+	static struct CollisionData
 	{
 		GameObject* obj;
 		I32 collisionWith;

@@ -48,7 +48,7 @@ namespace talga
 		mManager.AddTexture("../assets/textures/talgasheet.png");
 		mManager.AddTexture("../assets/textures/luaprompt.png");
 		mManager.AddMap("../assets/maps/sandboxx.tmap");
-		mManager.addFont("../assets/fonts/EnvyR.ttf", 12);
+		mManager.addFont("../assets/fonts/EnvyR.ttf", 15);
 
 		mMapLayer = Layer{ mRenderer, (F32)width, (F32)height };
 		mObjectsLayer = Layer{ mRenderer, (F32)width, (F32)height };
@@ -68,8 +68,7 @@ namespace talga
 		mRenderer->setCamera(&mCamera);
 
 		mMapLayer.add(mManager.GetMap("sandboxx.tmap"));
-
-		mPrompt = new LuaDebugPrompt(mManager.GetTexture("luaprompt.png"), mManager.getFont("EnvyR.ttf"));
+		mPrompt = new LuaDebugPrompt( mManager.GetTexture("luaprompt.png"), mManager.getFont("EnvyR.ttf"));
 		mPrompt->box().setX(-width * 0.5f + mPrompt->box().getW() * 0.5f + 20);
 		mPrompt->box().setY(-height * 0.5f + mPrompt->box().getH() * 0.5f + 20);
 
@@ -84,11 +83,9 @@ namespace talga
 		obj->GAME = this;
 		mGameObjects.push_back(obj);
 		mObjectsLayer.add(obj->pmRenderable.get());
-		cpSpaceAddBody(mSpace, obj->mBody);
-		cpSpaceAddShape(mSpace, obj->mShape);
+		cpSpaceAddBody(mSpace, obj->mCollider->mBody);
+		cpSpaceAddShape(mSpace, obj->mCollider->mShape);
 		
-		TALGA_PRVAL(cpShapeGetCollisionType(obj->mShape));
-
 		if (obj->stagedFunc)
 			obj->stagedFunc(obj);
 
@@ -110,8 +107,8 @@ namespace talga
 				if ( (*it)->unstagedFunc )
 					(*it)->unstagedFunc(*it);
 
-				cpSpaceRemoveShape(mSpace, (*it)->mShape);
-				cpSpaceRemoveBody(mSpace, (*it)->mBody);
+				cpSpaceRemoveShape(mSpace, (*it)->mCollider->mShape);
+				cpSpaceRemoveBody(mSpace, (*it)->mCollider->mBody);
 
 
 				if (it == mGameObjects.end() - 1)
@@ -238,7 +235,24 @@ namespace talga
 
 	void Game::printToLuaPrompt(float f)
 	{
-		mPrompt->print(std::to_string(f));
+		std::string temp = std::to_string(f);
+		for (auto it = temp.rbegin(); it != temp.rend(); ++it)
+		{
+			if (*it == '.')
+			{
+				temp.pop_back();
+				break;
+			}
+			else if (*it == '0')
+			{
+				temp.pop_back();
+			}
+			else
+			{
+				break;
+			}
+		}
+		mPrompt->print(temp);
 	}
 
 	void Game::game_resize_window(GLFWwindow* window, int w, int h)

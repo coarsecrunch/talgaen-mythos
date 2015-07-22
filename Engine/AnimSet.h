@@ -31,11 +31,14 @@ namespace talga
 		const std::string& getName() const { return mName; }
 		void setName(std::string value) { mName = value; }
 		I32 numAnimations() const { return mAnims.size(); }
-
+		I32 w() const { return mWidth; }
+		I32 h() const { return mHeight; }
 		~AnimationSet();
 	protected:
 		std::vector<AnimSetPair> mAnims;
 		std::string mName;
 		cpTex mTex;
+		I32 mWidth;
+		I32 mHeight;
 	};
 }
