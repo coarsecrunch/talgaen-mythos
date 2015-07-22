@@ -11,6 +11,7 @@ struct lua_State;
 
 namespace talga
 {
+	class Game;
 	class LuaEngine
 	{
 
@@ -39,11 +40,11 @@ namespace talga
 		void stackDump();
 		void ExecuteFile(std::string path);
 		void ExecuteStr(std::string str);
-
+		void setGame(Game* game) { mGame = game; }
 	protected:
 		LuaEngine();
 		OOLUA::Script mScript;
-	protected:
+		Game* mGame;
 		void reportError();
 	};
 }

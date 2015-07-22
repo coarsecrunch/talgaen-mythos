@@ -211,10 +211,21 @@ namespace talga
 			mTextureSlots.push_back(mFTAtlas->id);
 		}
 
+		I32 tempX = pos.x();
+		I32 tempY = pos.y();
 
 		for (int i = 0; i < str.length(); ++i)
 		{
 			char c = str[i];
+
+			if (c == '\n')
+			{
+				tempX = pos.x();
+				tempY += font->getMaxGlyphHeight();
+				continue;
+			}
+			
+
 			texture_glyph_t* glyph = texture_font_get_glyph(mFTFont, c);
 
 			if (glyph)
@@ -222,13 +233,13 @@ namespace talga
 				if (i > 0)
 				{
 					F32 kerning = texture_glyph_get_kerning(glyph, str[i - 1]);
-					pos[0] += kerning;
+					tempX += kerning;
 				}
 				F32 halfwidth = mFTAtlas->width * 0.5f;
 				F32 halfheight = mFTAtlas->height * 0.5f;
 
-				F32 x0 = pos.x() + glyph->offset_x;
-				F32 y0 = pos.y() - glyph->offset_y;
+				F32 x0 = tempX + glyph->offset_x;
+				F32 y0 = tempY - glyph->offset_y;
 
 				F32 x1 = x0 + glyph->width;
 				F32 y1 = y0 + glyph->height;
@@ -268,10 +279,7 @@ namespace talga
 				mNextVertex->transparencyScale = 1.0f;
 				++mNextVertex;
 
-				pos[0] += glyph->advance_x;
-				pos[1] += glyph->advance_y;
-				if (c == '\n')
-					pos[1] += glyph->advance_y;
+				tempX += glyph->advance_x;
 
 				mIndexCount += 6;
 			}

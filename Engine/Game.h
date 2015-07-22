@@ -24,6 +24,7 @@ namespace talga
 	class LuaEngine;
 	class GameObject;
 	class Game;
+	class LuaDebugPrompt;
 
 	class Game
 	{
@@ -52,18 +53,19 @@ namespace talga
 			((GameObject*)t)->GAME = this;
 			return t;
 		}
-
 		
 		void game_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		void game_resize_window(GLFWwindow* window, int w, int h);
 		void addKeyCallback(char c, GameObject* obj, KeyCallbackFunc);
-
+		
+		void printToLuaPrompt(const std::string& str);
 	protected:
 		std::vector<GameObject*> mGameObjects;
 		Camera mCamera;
 		cpBody* rectBody;
 		Layer mMapLayer;
 		Layer mObjectsLayer;
+		Layer mUILayer;
 		std::shared_ptr<Renderer> mRenderer;
 		cpSpace* mSpace;
 		AssetManager mManager;
@@ -71,6 +73,7 @@ namespace talga
 		std::multimap<char, std::pair<GameObject*, KeyCallbackFunc>> mKeyCallbacks;
 		GameObject* mPlayer;
 		Window mWindow;
+		LuaDebugPrompt* mPrompt;
 	};
 	
 }

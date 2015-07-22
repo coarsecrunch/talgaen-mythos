@@ -11,16 +11,13 @@ local function onKeySpacePressed(self, action)
 end
 
 local function onStaged(self)
-    print("Staged")
+    print("this object has been staged")
     self:addKeyCallback("D", script.onKeyPressD)
     self:setCollisionType(2)
     self:addCollisionCallback(1, script.hitMapGeom)
-    self.canJump = "hello jump!"
 end
 
 local function onHitMapGeom(self)
-    print("TALGA HIT THE GROUND")
-    print("can jump: " .. self.canJump)
 end
 
 script = 

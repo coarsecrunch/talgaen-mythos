@@ -8,6 +8,7 @@
 
 #include "oolua/oolua.h"
 #include "GameObject.h"
+#include "luadebugprompt.h"
 
 #include "chipmunk/chipmunk_private.h"
 #include "collisiontypes.h"
@@ -18,10 +19,11 @@ namespace talga
 	const int MAX_GAMEOBJECTS = 3000;
 
 	Game::Game()
-		: mCamera(800, 600)
-		, mWindow(800, 600)
+		: mCamera(1200, 900)
+		, mWindow(1200, 900)
 		, mMapLayer{ nullptr, -1, -1 }
 		, mObjectsLayer{ nullptr, -1, -1 }
+		, mUILayer{nullptr, -1, -1}
 		, mGameObjects( )
 		, mRenderer( nullptr )
 		, mManager()
@@ -39,11 +41,13 @@ namespace talga
 		mRenderer = std::shared_ptr<Renderer>(new Renderer{ "../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag" });
 		mManager.AddTexture("../assets/textures/testblock.png");
 		mManager.AddTexture("../assets/textures/talgasheet.png");
+		mManager.AddTexture("../assets/textures/luaprompt.png");
 		mManager.AddMap("../assets/maps/sandboxx.tmap");
-		mManager.addFont("../assets/fonts/OFLGoudyStM.otf", 50);
+		mManager.addFont("../assets/fonts/EnvyR.ttf", 12);
 
-		mMapLayer = Layer{ mRenderer, 800, 600 };
-		mObjectsLayer = Layer{ mRenderer, 800, 600 };
+		mMapLayer = Layer{ mRenderer, (F32)width, (F32)height };
+		mObjectsLayer = Layer{ mRenderer, (F32)width, (F32)height };
+		mUILayer = Layer{ mRenderer, (F32)width, (F32)height };
 		
 		cpVect gravity = cpv(0, -300);
 
@@ -59,6 +63,13 @@ namespace talga
 		mRenderer->setCamera(&mCamera);
 
 		mMapLayer.add(mManager.GetMap("sandboxx.tmap"));
+
+		mPrompt = new LuaDebugPrompt(mManager.GetTexture("luaprompt.png"), mManager.getFont("EnvyR.ttf"));
+		mPrompt->box().setX(-width * 0.5f + mPrompt->box().getW() * 0.5f + 20);
+		mPrompt->box().setY(-height * 0.5f + mPrompt->box().getH() * 0.5f + 20);
+
+		mPrompt->box().updateVertsPosition();
+		mUILayer.add(mPrompt);
 
 		return 0;
 	}
@@ -146,13 +157,14 @@ namespace talga
 		}
 	}
 
-
 	void Game::render()
 	{
 		mMapLayer.getRenderer()->tStackPush(mCamera.getCameraMat());
 		mMapLayer.render();
 		mObjectsLayer.render();
 		mMapLayer.getRenderer()->tStackPop();
+
+		mUILayer.render();
 	}
 
 	// currently relies on the fact that glfw defines keys as their ascii value, probably should define my own constants
@@ -178,12 +190,22 @@ namespace talga
 		}
 	}
 
+	void Game::printToLuaPrompt(const std::string& str)
+	{
+		mPrompt->print(str);
+	}
+
 	void Game::game_resize_window(GLFWwindow* window, int w, int h)
 	{
 		mObjectsLayer.setProjectionMatrix(w, h);
 		mMapLayer.setProjectionMatrix(w, h);
+		mUILayer.setProjectionMatrix(w, h);
 		mCamera.setW(w);
 		mCamera.setH(h);
+		mPrompt->box().setX(-w * 0.5f + mPrompt->box().getW() * 0.5f + 20);
+		mPrompt->box().setY(-h * 0.5f + mPrompt->box().getH() * 0.5f + 20);
+
+		mPrompt->box().updateVertsPosition();
 		glViewport(0, 0, w, h);
 	}
 
@@ -193,6 +215,8 @@ namespace talga
 		clearObjs();
 		mMapLayer.clear();
 		mObjectsLayer.clear();
+		mUILayer.clear();
+		delete mPrompt;
 	}
 
 	

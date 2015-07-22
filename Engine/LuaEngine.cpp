@@ -10,6 +10,8 @@
 
 namespace talga
 {
+	
+
 	LuaEngine::LuaEngine() 
 		: mScript()
 	{
@@ -38,7 +40,9 @@ namespace talga
 
 	void LuaEngine::reportError()
 	{
-		std::cout << "Lua error: " << OOLUA::get_last_error(getState()) << std::endl;;
+		std::string err = OOLUA::get_last_error(getState());
+		std::cout << "Lua error: " << err << std::endl;;
+		mGame->printToLuaPrompt(err);
 	}
 
 	void LuaEngine::stackDump()

@@ -32,6 +32,7 @@
     <ClCompile Include="Interpolation.cpp" />
     <ClCompile Include="label.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="luadebugprompt.cpp" />
     <ClCompile Include="LuaEngine.cpp" />
     <ClCompile Include="luareg.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -70,6 +71,7 @@
     <ClInclude Include="funkdefs.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="label.h" />
+    <ClInclude Include="luadebugprompt.h" />
     <ClInclude Include="luareg.h" />
     <ClInclude Include="sys.h" />
     <ClInclude Include="tassert.h" />

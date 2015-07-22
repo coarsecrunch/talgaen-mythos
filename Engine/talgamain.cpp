@@ -30,8 +30,8 @@
 
 #include "collisiontypes.h"
 
-const talga::I32 WIDTH = 800;
-const talga::I32 HEIGHT = 600;
+const talga::I32 WIDTH = 1200;
+const talga::I32 HEIGHT = 900;
 static talga::Game* GAME = nullptr;
 static talga::LuaEngine* LUA_ENGINE = nullptr;
 
@@ -61,8 +61,10 @@ int main(int argc, char** argv)
 	
 	LUA_REGISTER_TYPES();
 
+	talga::LuaEngine::instance()->setGame(GAME);
 	talga::LuaEngine::instance()->addGlobal("GAME", GAME);
 	talga::AnimationSet set{ GAME->getManager()->GetTexture("talgasheet.png") };
+	talga::LuaEngine::instance()->ExecuteStr("print = function(str) GAME:printToLuaPrompt(str) end");
 
 	std::vector<talga::Rect> talgaStandL{ { talga::Rect{ 0, 0, 64, 64 }, talga::Rect{ 64, 0, 64, 64 } } };
 	std::vector<talga::Rect> talgaStandR{ { talga::Rect{ 128, 0, 64, 64 }, talga::Rect{ 192, 0, 64, 64 } } };
@@ -84,26 +86,17 @@ int main(int argc, char** argv)
 	set.addAnim("talgaWalkL", talgaWalkL);
 	set.addAnim("talgaWalkR", talgaWalkR);
 
-	talga::Sprite* block = new talga::Sprite(GAME->getManager()->GetTexture("testblock.png"));
 	talga::AnimSprite* spr = new talga::AnimSprite{ &set };
-	talga::Sprite* block2spr = new talga::Sprite(GAME->getManager()->GetTexture("testblock.png"));
-	talga::Label* talgaLbl = new talga::Label("Talga", talga::vec3(-30.0f, -30.0f), talga::vec4(0.0f, 0.0f, 1.0f, 1.0f), GAME->getManager()->getFont("OFLGoudyStM.otf"));
-	block2spr->box().setScaleX(0.5f);
-	block2spr->box().setScaleY(0.5f);
 
-	spr->addChild(block2spr);
-	spr->addChild(talgaLbl);
 	talga::cpMap testMap = GAME->getManager()->GetMap("sandboxx.tmap");
 
 	spr->playAnimation("talgaStandL", 1000, true);
 
 	talga::GameObject* tga = new talga::GameObject(spr);
-	talga::GameObject* blk = new talga::GameObject(block);
 
 	tga->loadScript("../assets/scripts/script.lua");
 	
 	GAME->addObj(tga);
-	GAME->addObj(blk);
 	
 	glfwSetWindowSizeCallback(GAME->getWindow().getWindow(), resize_callback);
 	glfwSetKeyCallback(GAME->getWindow().getWindow(), key_callback);
