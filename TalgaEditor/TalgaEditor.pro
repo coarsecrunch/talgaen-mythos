@@ -15,7 +15,8 @@ TARGET = TalgaEditor
 TEMPLATE = app
 INCLUDEPATH += ../Engine/ \
     ../Engine/Math/ \
-    ../include/
+    ../include/ \
+    ../include/freetype/
 
 DEFINES -= UNICODE
 
@@ -47,15 +48,12 @@ SOURCES += ../TalgaEditor/main.cpp \
     ../Engine/AssetManager.cpp \
     ../Engine/Camera.cpp \
     ../Engine/Clock.cpp \
-    ../Engine/Collider.cpp \
     ../Engine/Collision.cpp \
-    ../Engine/ESubject.cpp \
     ../Engine/Game.cpp \
     ../Engine/Interpolation.cpp \
     ../Engine/Layer.cpp \
     ../Engine/LuaEngine.cpp \
     ../Engine/Map.cpp \
-    ../Engine/Observer.cpp \
     ../Engine/Particle.cpp \
     ../Engine/ParticleEmitter.cpp \
     ../Engine/Rectangle.cpp \
@@ -65,6 +63,17 @@ SOURCES += ../TalgaEditor/main.cpp \
     ../Engine/Texture.cpp \
     ../Engine/Transformation2D.cpp \
     ../Engine/Window.cpp \
+    ../Engine/label.cpp \
+    ../Engine/renderableshapes.cpp \
+    ../Engine/font.cpp \
+    ../Engine/funkdefs.cpp \
+    ../Engine/luadebugprompt.cpp \
+    ../Engine/PhysicsComponent.cpp \
+    ../Engine/sys.cpp \
+    ../Engine/ext/freetype-gl/platform.c \
+    ../Engine/ext/freetype-gl/texture-atlas.c \
+    ../Engine/ext/freetype-gl/texture-font.c \
+    ../Engine/ext/freetype-gl/vector.c \
     editormap.cpp \
     commands/CInsertTiles.cpp \
     historyviewer.cpp \
@@ -74,13 +83,14 @@ SOURCES += ../TalgaEditor/main.cpp \
     commands/cremovelayer.cpp \
     gdata.cpp \
     commands/cchangelayerorder.cpp \
-    ../Engine/sys.cpp \
-    newmapdialog.cpp
+    newmapdialog.cpp \
+    ../Engine/GameObject.cpp \
+    ../Engine/Triangle.cpp \
+    ../Engine/luareg.cpp
 
-HEADERS  += mainwindow.h \
-    assetlist.h \
-    assetviewer.h \
-    glcontext.h \
+
+
+HEADERS  += \
     ../Engine/Math/Interpolation.h \
     ../Engine/Math/MathCommon.h \
     ../Engine/Math/Matrix3x3.h \
@@ -95,17 +105,13 @@ HEADERS  += mainwindow.h \
     ../Engine/Camera.h \
     ../Engine/Clock.h \
     ../Engine/Cmn.h \
-    ../Engine/Collider.h \
     ../Engine/Collision.h \
-    ../Engine/ESubject.h \
-    ../Engine/Event.h \
     ../Engine/Game.h \
     ../Engine/IDynamic.h \
     ../Engine/IRenderable.h \
     ../Engine/Layer.h \
     ../Engine/LuaEngine.h \
     ../Engine/Map.h \
-    ../Engine/Observer.h \
     ../Engine/Particle.h \
     ../Engine/ParticleEmitter.h \
     ../Engine/Point.h \
@@ -118,6 +124,25 @@ HEADERS  += mainwindow.h \
     ../Engine/Texture.h \
     ../Engine/Transformation2D.h \
     ../Engine/Window.h \
+    ../Engine/sys.h \
+    ../Engine/AAsset.h \
+    ../Engine/label.h \
+    ../Engine/renderableshapes.h \
+    ../Engine/font.h \
+    ../Engine/funkdefs.h \
+    ../Engine/luadebugprompt.h \
+    ../Engine/PhysicsComponent.h \
+    ../Engine/ext/freetype-gl/freetype-gl.h \
+    ../Engine/ext/freetype-gl/opengl.h \
+    ../Engine/ext/freetype-gl/platform.h \
+    ../Engine/ext/freetype-gl/texture-atlas.h \
+    ../Engine/ext/freetype-gl/texture-font.h \
+    ../Engine/ext/freetype-gl/vec234.h \
+    ../Engine/ext/freetype-gl/vector.h \
+    mainwindow.h \
+    assetlist.h \
+    assetviewer.h \
+    glcontext.h \
     editormap.h \
     commands/CInsertTiles.h \
     historyviewer.h \
@@ -127,41 +152,15 @@ HEADERS  += mainwindow.h \
     commands/cremovelayer.h \
     gdata.h \
     commands/cchangelayerorder.h \
-    ../Engine/sys.h \
-    ../Engine/AAsset.h \
-    newmapdialog.h
+    newmapdialog.h \
+    globals.h \
+    ../Engine/GameObject.h \
+    ../Engine/Triangle.h \
+    ../Engine/luareg.h
 
 
 FORMS    += mainwindow.ui \
     newmapdialog.ui
-
-DISTFILES += \
-    ../assets/sandbox/Archimedes/Archimedes.autosave.scml \
-    ../assets/sandbox/Archimedes/Archimedes.scml \
-    ../assets/sandbox/Archimedes/NewProject.autosave.scml \
-    ../assets/sandbox/Archimedes/Archimedes.fla \
-    ../assets/sandbox/talga/talga.fla \
-    ../assets/sandbox/Archimedes/body_sym.png \
-    ../assets/sandbox/Archimedes/calf.png \
-    ../assets/sandbox/Archimedes/foot.png \
-    ../assets/sandbox/Archimedes/forearm.png \
-    ../assets/sandbox/Archimedes/hand.png \
-    ../assets/sandbox/Archimedes/head_sym.png \
-    ../assets/sandbox/Archimedes/neck_sym.png \
-    ../assets/sandbox/Archimedes/shoulder.png \
-    ../assets/sandbox/Archimedes/thig.png \
-    ../assets/sandbox/blah.png \
-    ../assets/sandbox/scrap4.png \
-    ../assets/charactersheet.png \
-    ../assets/notex.png \
-    ../assets/sprite_sheet.png \
-    ../assets/sprite_sheet2.png \
-    ../assets/talgasheet.png \
-    ../assets/sandbox/whyisthisnotworking.xcf \
-    ../assets/test.map \
-    ../assets/shaders/renderer2d.frag \
-    ../assets/shaders/renderer2d.vert \
-    ../assets/scripts/script.lua
 
 RESOURCES += \
     ../assets/icons/icons.qrc
@@ -207,3 +206,54 @@ else:win32:CONFIG(debug, debug|release): LIBS += "-L$$PWD/C:/Program Files (x86)
 
 
 
+
+win32: LIBS += -L$$PWD/../lib/win64/ -lchipmunk
+
+INCLUDEPATH += $$PWD/../lib/win64
+DEPENDPATH += $$PWD/../lib/win64
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/chipmunk.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/libchipmunk.a
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../lib/win64/ -loolua
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../lib/win64/ -looluad
+
+INCLUDEPATH += $$PWD/../lib/win64
+DEPENDPATH += $$PWD/../lib/win64
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/liboolua.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/libooluad.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/oolua.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/ooluad.lib
+
+win32: LIBS += -L$$PWD/../lib/win64/ -lfreetype26MT
+
+INCLUDEPATH += $$PWD/../lib/win64
+DEPENDPATH += $$PWD/../lib/win64
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/freetype26MT.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/libfreetype26MT.a
+
+DISTFILES += \
+    ../Engine/ext/freetype-gl/fonts/amiri-regular.ttf \
+    ../Engine/ext/freetype-gl/fonts/fireflysung.ttf \
+    ../Engine/ext/freetype-gl/fonts/Liberastika-Regular.ttf \
+    ../Engine/ext/freetype-gl/fonts/Lobster-Regular.ttf \
+    ../Engine/ext/freetype-gl/fonts/LuckiestGuy.ttf \
+    ../Engine/ext/freetype-gl/fonts/OldStandard-Regular.ttf \
+    ../Engine/ext/freetype-gl/fonts/SourceCodePro-Regular.ttf \
+    ../Engine/ext/freetype-gl/fonts/SourceSansPro-Regular.ttf \
+    ../Engine/ext/freetype-gl/fonts/Vera.ttf \
+    ../Engine/ext/freetype-gl/fonts/VeraMoBd.ttf \
+    ../Engine/ext/freetype-gl/fonts/VeraMoBI.ttf \
+    ../Engine/ext/freetype-gl/fonts/VeraMoIt.ttf \
+    ../Engine/ext/freetype-gl/fonts/VeraMono.ttf \
+    ../Engine/ext/freetype-gl/fonts/amiri-regular_LICENSE.txt \
+    ../Engine/ext/freetype-gl/fonts/fireflysung-LICENSE.txt \
+    ../Engine/ext/freetype-gl/fonts/Liberastika-Regular-LICENSE.txt \
+    ../Engine/ext/freetype-gl/fonts/Lobster-LICENSE.txt \
+    ../Engine/ext/freetype-gl/fonts/LuckiestGuy-LICENSE.txt \
+    ../Engine/ext/freetype-gl/fonts/OldStandard-LICENSE.txt \
+    ../Engine/ext/freetype-gl/fonts/SourceCodePro-LICENSE.txt \
+    ../Engine/ext/freetype-gl/fonts/SourceSansPro-LICENSE.txt \
+    ../Engine/ext/freetype-gl/fonts/VERA-COPYRIGHT

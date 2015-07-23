@@ -8,8 +8,11 @@
 #include "LuaEngine.h"
 #include "sys.h"
 
+#ifndef TALGA_QT_BUILD
 extern talga::Game* GAME; // <------------- NOOOOOOOOOOOO DON'T DO IT THIS IS SOOOO BAD THIS ISN'T SUPPOSED TO BE A SINGLETON!!
-
+#else
+talga::Game* GAME = nullptr;
+#endif
 namespace talga
 {
 	GameObject::GameObject(IRenderable* rdr, PhysicsComponent* collider)

@@ -59,9 +59,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\include\Math\Interpolation.h" />
-    <ClInclude Include="..\assets\scripts\collisiontypes.h" />
     <ClInclude Include="AAsset.h" />
     <ClInclude Include="AnimSet.h" />
+    <ClInclude Include="collisiontypes.h" />
     <ClInclude Include="ext\freetype-gl\freetype-gl.h" />
     <ClInclude Include="ext\freetype-gl\markup.h" />
     <ClInclude Include="ext\freetype-gl\opengl.h" />

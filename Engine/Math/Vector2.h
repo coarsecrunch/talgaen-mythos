@@ -14,6 +14,9 @@ namespace talga
 		float operator()(int index);
 
 		const Vector2& operator=(const Vector3& vec3Cpy);
+
+		float x() const { return arr[0]; }
+		float y() const { return arr[1]; }
 	private:
 		float arr[2];
 	};

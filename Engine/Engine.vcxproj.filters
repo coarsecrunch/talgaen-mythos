@@ -293,9 +293,6 @@
     <ClInclude Include="GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\assets\scripts\collisiontypes.h">
-      <Filter>Scripts</Filter>
-    </ClInclude>
     <ClInclude Include="luareg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -339,6 +336,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Triangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="collisiontypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

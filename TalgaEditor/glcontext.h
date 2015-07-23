@@ -4,6 +4,7 @@
 #include <QPoint>
 #include <QOpenGLWidget>
 #include <vector>
+#include <memory>
 
 #include "Renderer.h"
 #include "Layer.h"
@@ -59,11 +60,10 @@ namespace talga
 
     protected:
       Camera camera;
-
-      Layer mTileLayer;
       Layer mSpriteLayer;
+      Layer mTileLayer;
       Layer mSelectionLayer;
-      Renderer* mRenderer2D;
+      std::shared_ptr<Renderer> mRenderer2D;
       EditorMap* mCurrentMap;
 
       //tracking

@@ -17,6 +17,7 @@
 #include "gdata.h"
 
 #include <vector>
+#include <memory>
 
 namespace talga
 {
@@ -28,8 +29,8 @@ namespace talga
       , camera{width(), height()}
       , mRenderer2D{nullptr}
       , mTileLayer{nullptr, width(), height()}
-      , mSpriteLayer{nullptr, width(), height()}
       , mSelectionLayer{nullptr, width(), height()}
+      , mSpriteLayer{nullptr, width(), height()}
       , mCurrentMap{nullptr}
       , mCurrentSelection{"NULL", std::vector<iPnt>{}}
       , mShift{false}
@@ -54,25 +55,24 @@ namespace talga
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      mRenderer2D = new Renderer("../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag");
+      mRenderer2D = std::shared_ptr<Renderer>(new Renderer("../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag"));
 
-      mSpriteLayer.setRenderer(mRenderer2D);
-      mSpriteLayer.setProjectionMatrix(width(), height());
       mTileLayer.setRenderer(mRenderer2D);
       mTileLayer.setProjectionMatrix(width(), height());
       mSelectionLayer.setRenderer(mRenderer2D);
       mSelectionLayer.setProjectionMatrix(width(), height());
-
-      camera.getBox().setW(width());
-      camera.getBox().setH(height());
+      mSpriteLayer.setRenderer(mRenderer2D);
+      mSpriteLayer.setProjectionMatrix(width(), height());
+      camera.box().setW(width());
+      camera.box().setH(height());
       camera.update(0);
 
       mRenderer2D->setCamera(&camera);
 
       mTileLayer.add(mCurrentMap);
 
-      camera.getBox().setX(100);
-      camera.getBox().setY(200);
+      camera.box().setX(100);
+      camera.box().setY(200);
     }
 
     void GLContext::dragEnterEvent(QDragEnterEvent *e)
@@ -142,7 +142,7 @@ namespace talga
       mSelectionRender.reserve(tiles.size());
       for (auto& t : tiles)
       {
-        mSelectionRender.push_back(Sprite{t.first, mCurrentMap->getTileWidth(), mCurrentMap->getTileHeight(), 0.5f, t.second});
+        mSelectionRender.push_back(Sprite{t.first, t.second, 0.5f, });
         mSelectionLayer.add(&mSelectionRender.back());
       }
     } 
@@ -177,21 +177,15 @@ namespace talga
 
       mTileLayer.getRenderer()->tStackPush(camera.getCameraMat());
       mTileLayer.render();
-      mTileLayer.getRenderer()->tStackPop();
-
-      mSpriteLayer.getRenderer()->tStackPush(camera.getCameraMat());
       mSpriteLayer.render();
-      mSpriteLayer.getRenderer()->tStackPop();
-
-      mSelectionLayer.getRenderer()->tStackPush(camera.getCameraMat());
       mSelectionLayer.render();
       mSelectionLayer.getRenderer()->tStackPop();
     }
 
     void GLContext::resizeGL(int w, int h)
     {
-      mSpriteLayer.setProjectionMatrix(w, h);
       mTileLayer.setProjectionMatrix(w, h);
+      mSpriteLayer.setProjectionMatrix(w, h);
       camera.setW(w);
       camera.setH(h);
       glViewport(0,0,w,h);
@@ -257,7 +251,7 @@ namespace talga
       {
         vec3 currentMousePos = vec3(e->x(), e->y(), 1.0f);
         vec3 dmouse = camera.screenToWorld(currentMousePos) - camera.screenToWorld(mPreviousMousePos);
-        camera.getBox().setPosition(camera.getBox().getPosition() - dmouse);
+        camera.box().setPosition(camera.box().getPosition() - dmouse);
         camera.update(0);
         mPreviousMousePos = currentMousePos;
 
@@ -323,8 +317,8 @@ namespace talga
             setTo[0] = (I32)setTo(0);
             setTo[1] = (I32)setTo(1);
 
-            mSelectionRender[ (pnt.y() - smallestY) * (greatestX - smallestX + 1) + (pnt.x() - smallestX)].getBox().setPosition(setTo);
-            mSelectionRender[ (pnt.y() - smallestY) * (greatestX - smallestX + 1) + (pnt.x() - smallestX)].getBox().updateVertsPosition();
+            mSelectionRender[ (pnt.y() - smallestY) * (greatestX - smallestX + 1) + (pnt.x() - smallestX)].box().setPosition(setTo);
+            mSelectionRender[ (pnt.y() - smallestY) * (greatestX - smallestX + 1) + (pnt.x() - smallestX)].box().updateVertsPosition();
           }
 
           update();
@@ -351,13 +345,13 @@ namespace talga
     {
       F32 amount = e->delta() / 400.0f;
 
-      camera.getBox().setScaleX(camera.getBox().getScaleX() - amount);
-      camera.getBox().setScaleY(camera.getBox().getScaleY() - amount);
+      camera.box().setScaleX(camera.box().getScaleX() - amount);
+      camera.box().setScaleY(camera.box().getScaleY() - amount);
 
-      if (camera.getBox().getScaleX() <= 0.1f || camera.getBox().getScaleY() <= 0.1f)
+      if (camera.box().getScaleX() <= 0.1f || camera.box().getScaleY() <= 0.1f)
       {
-        camera.getBox().setScaleX(0.1f);
-        camera.getBox().setScaleY(0.1f);
+        camera.box().setScaleX(0.1f);
+        camera.box().setScaleY(0.1f);
       }
       camera.update(0);
 
@@ -398,8 +392,6 @@ namespace talga
     {
       mSelectionLayer.clear();
       mSelectionRender.clear();
-
-      delete mRenderer2D;
     }
 
   }

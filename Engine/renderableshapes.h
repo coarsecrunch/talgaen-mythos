@@ -3,6 +3,8 @@
 #include "IRenderable.h"
 #include "Rectangle.h"
 #include "Triangle.h"
+#include "Point.h"
+
 namespace talga
 {
 	class RenderableRectangle : public IRenderable
@@ -16,6 +18,21 @@ namespace talga
 		void setW(F32 value) { mBase.setW(value); mBase.updateVertsPosition(); }
 		void setH(F32 value) { mBase.setH(value); mBase.updateVertsPosition(); }
 
+		virtual void render(Renderer* renderer, const Camera* camera) const override;
+	private:
+		Rectangle mBase;
+		vec4 mColor;
+	};
+
+	class RenderablePoint :public IRenderable
+	{
+	public:
+		RenderablePoint(fPnt point, F32 size, vec4 color = vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		virtual ~RenderablePoint();
+
+		void setX(F32 value) { mBase.setX(value); mBase.updateVertsPosition(); }
+		void setY(F32 value) { mBase.setY(value); mBase.updateVertsPosition(); }
+		void setSize(F32 value) { mBase.setW(value); mBase.setH(value); mBase.updateVertsPosition(); }
 		virtual void render(Renderer* renderer, const Camera* camera) const override;
 	private:
 		Rectangle mBase;

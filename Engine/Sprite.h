@@ -13,7 +13,7 @@ namespace talga
 	class Sprite : public IRenderable, public IDynamic
 	{
 	public:
-		Sprite(cpTex tex);
+		Sprite(cpTex tex, UVFrame quords = DEFAULT_SPRITE_UV, F32 transScale = 1.0f);
 		virtual ~Sprite() { TALGA_MSG("Sprite destructor called"); }
 
 		virtual void render(Renderer* renderer, const Camera* camera) const override;

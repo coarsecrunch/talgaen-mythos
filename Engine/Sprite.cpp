@@ -9,13 +9,17 @@
 
 namespace talga
 {
-	Sprite::Sprite(cpTex tex)
+	Sprite::Sprite(cpTex tex, UVFrame quords, F32 transScale)
 		: mTex(tex)
-		, mTransparencyScale(1.0f)
-		, mImageBox(tex->w(), tex->h())
-		, mUVCurrentFrame(DEFAULT_SPRITE_UV)
+		, mTransparencyScale(transScale)
+		, mImageBox(-1, -1)
+		, mUVCurrentFrame(quords)
 	{
 		TALGA_WARN(tex, "invalid texture passed to Sprite")
+
+		//deduce width and height from uv quords
+		mImageBox.setW(abs(quords[1].x() - quords[0].x()) * tex->w());
+		mImageBox.setH(abs(quords[3].y() - quords[0].y()) * tex->h());
 
 		mImageBox.updateVerts();
 	}
