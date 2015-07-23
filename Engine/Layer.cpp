@@ -2,7 +2,7 @@
 #include "Renderer.h"
 #include "IRenderable.h"
 #include "Sprite.h"
-
+#include "Triangle.h"
 namespace talga
 {
 	/*LAYER TAKES RESPONSIBLITY FOR ALL */

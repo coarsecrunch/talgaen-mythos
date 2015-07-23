@@ -1,9 +1,12 @@
 #pragma once
 namespace talga
 {
+	class Vector2;
+
 	class Vector3 {
 	public:
-		Vector3(float f = 0.0f, float f1 = 0.0f, float f2 = 1.0f);
+		Vector3(float f = 0.0f, float f1 = 0.0f, float f2 = 0.0f);
+		Vector3(const Vector2& vec2Cpy, float z = 1.0f);
 		virtual ~Vector3();
 
 		Vector3& operator=(const Vector3& copy);

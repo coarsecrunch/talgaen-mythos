@@ -46,6 +46,7 @@
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
+    <ClCompile Include="renderableshapes.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Rendering.cpp" />
     <ClCompile Include="Sprite.cpp" />
@@ -53,6 +54,7 @@
     <ClCompile Include="talgamain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transformation2D.cpp" />
+    <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +76,7 @@
     <ClInclude Include="luadebugprompt.h" />
     <ClInclude Include="luareg.h" />
     <ClInclude Include="PhysicsComponent.h" />
+    <ClInclude Include="renderableshapes.h" />
     <ClInclude Include="sys.h" />
     <ClInclude Include="tassert.h" />
     <ClInclude Include="AssetManager.h" />
@@ -106,6 +109,7 @@
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transformation2D.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

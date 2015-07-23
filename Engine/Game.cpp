@@ -13,7 +13,7 @@
 #include "chipmunk/chipmunk_private.h"
 #include "collisiontypes.h"
 #include "luareg.h"
-
+#include "renderableshapes.h"
 namespace talga
 {
 	const int MAX_GAMEOBJECTS = 3000;

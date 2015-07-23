@@ -1,6 +1,6 @@
 #include "Vector3.h"
 #include <cmath>
-
+#include "Vector2.h"
 namespace talga
 {
 	Vector3::Vector3(float f, float f1, float f2)
@@ -8,6 +8,13 @@ namespace talga
 		vec[0] = f;
 		vec[1] = f1;
 		vec[2] = f2;
+	}
+
+	Vector3::Vector3(const Vector2& vec2Cpy, float z)
+	{
+		vec[0] = vec2Cpy[0];
+		vec[1] = vec2Cpy[1];
+		vec[2] = z;
 	}
 
 	Vector3::~Vector3()

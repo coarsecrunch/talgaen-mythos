@@ -121,8 +121,6 @@ namespace talga
 					frameTbl.at(3, rectFrame.w);
 					frameTbl.at(4, rectFrame.h);
 					rectFrames.push_back(rectFrame);
-				
-					
 				}
 				oolua_pairs_end()
 

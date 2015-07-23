@@ -8,7 +8,7 @@
 #include "LuaEngine.h"
 #include "sys.h"
 
-extern talga::Game* GAME; // <------------- NOOOOOOOOOOOO DON'T DO IT THIS IS SOOOO BAD WHY DIDN'T I JUST MAKE IT A SINGLETON?
+extern talga::Game* GAME; // <------------- NOOOOOOOOOOOO DON'T DO IT THIS IS SOOOO BAD THIS ISN'T SUPPOSED TO BE A SINGLETON!!
 
 namespace talga
 {

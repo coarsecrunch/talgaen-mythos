@@ -2,6 +2,8 @@
 
 namespace talga
 {
+	class Vector3;
+
 	class Vector2 {
 	public:
 		Vector2(float x = 0, float y = 0);
@@ -10,6 +12,8 @@ namespace talga
 		float& operator[](int index);
 		float operator[](int index) const { return arr[index]; }
 		float operator()(int index);
+
+		const Vector2& operator=(const Vector3& vec3Cpy);
 	private:
 		float arr[2];
 	};

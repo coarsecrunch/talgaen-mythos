@@ -39,6 +39,7 @@ namespace talga
 
 
 	class Rectangle;
+	class Triangle;
 	class Camera;
 
 	class Renderer : public AAsset
@@ -53,8 +54,8 @@ namespace talga
 		//draw 
 		void submit(const Rectangle& imageBox, cpTex texture = nullptr, F32 transparencyScale = 1.0f, UVFrame frame = UVFrame());
 		void submit(const std::string& str, cpFont font, vec3 pos, vec4 color);
-		//draw line
-		//void submit(const fPnt& pnt1, const fPnt& pnt2);
+		void submit(const Rectangle& box, const vec4& color, F32 transparencyScale = 1.0f);
+		void submit(const Triangle& tri, const vec4& color, F32 transparencyScale = 1.0f);
 		void render();
 		void end();
 

@@ -1,5 +1,5 @@
 #include "Vector2.h"
-#include <stdexcept>
+#include "Vector3.h"
 
 namespace talga
 {
@@ -9,26 +9,27 @@ namespace talga
 		arr[1] = y;
 	}
 
+
+
 	Vector2::~Vector2() {
 		// TODO Auto-generated destructor stub
 	}
 
+	const Vector2& Vector2::operator = (const Vector3& vec3Cpy)
+	{
+		arr[0] = vec3Cpy.x();
+		arr[1] = vec3Cpy.y();
+
+		return *this;
+	}
+
 	float& Vector2::operator [](int index)
 	{
-		if (index != 0 && index != 1)
-		{
-			throw std::invalid_argument("Vector2 out of bounds");
-		}
 		return arr[index];
 	}
 
 	float Vector2::operator ()(int index)
 	{
-		if (index != 0 && index != 1)
-		{
-			throw std::invalid_argument("Vector2 out of bounds");
-		}
-
 		return arr[index];
 	}
 }

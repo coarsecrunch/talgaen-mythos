@@ -2,11 +2,13 @@
 #include "Renderer.h"
 #include "Rendering.h"
 #include "Rectangle.h"
+#include "Triangle.h"
 #include "Texture.h"
 #include "AssetManager.h"
 #include <iostream>
 #include "font.h"
 #include "ext/freetype-gl/freetype-gl.h"
+
 
 namespace talga
 {
@@ -108,17 +110,14 @@ namespace talga
     }
 
 	//Verts must already be transformed before submit is called
-	//
+
 	void Renderer::submit(const Rectangle& imageBox, cpTex tex, F32 transparencyScale, UVFrame frame)
 	{
-		vec4 color = imageBox.getColor();
+		vec4 color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 		float texId = -1;
 		bool found = false;
-		
-		//if (!tex) 
-			//tex = AssetManager::NO_TEXTURE;
-		
+
 		if (tex)
 		{
 			if (tex->id() > 0)
@@ -149,28 +148,28 @@ namespace talga
 		}
 
 		mNextVertex->position = mTransformationStack.top() * imageBox.getVerts()[0];
-		mNextVertex->color = imageBox.getColor();
+		mNextVertex->color = color;
 		mNextVertex->uv = frame[0];
 		mNextVertex->tid = texId;
 		mNextVertex->transparencyScale = transparencyScale;
 		++mNextVertex;
 
 		mNextVertex->position = mTransformationStack.top() * imageBox.getVerts()[1];
-		mNextVertex->color = imageBox.getColor();
+		mNextVertex->color = color;
 		mNextVertex->uv = frame[1];
 		mNextVertex->tid = texId;
 		mNextVertex->transparencyScale = transparencyScale;
 		++mNextVertex;
 		
 		mNextVertex->position = mTransformationStack.top() * imageBox.getVerts()[2];
-		mNextVertex->color = imageBox.getColor();
+		mNextVertex->color = color;
 		mNextVertex->uv = frame[2];
 		mNextVertex->tid = texId;
 		mNextVertex->transparencyScale = transparencyScale;
 		++mNextVertex;
 		
 		mNextVertex->position = mTransformationStack.top() * imageBox.getVerts()[3];
-		mNextVertex->color = imageBox.getColor();
+		mNextVertex->color = color;
 		mNextVertex->uv = frame[3];
 		mNextVertex->tid = texId;
 		mNextVertex->transparencyScale = transparencyScale;
@@ -287,6 +286,70 @@ namespace talga
 
 		F32 halfwidth = mFTAtlas->width * 0.5f;
 		F32 halfheight = mFTAtlas->height * 0.5f;
+	}
+
+	void Renderer::submit(const Rectangle& box, const vec4& color, F32 transparencyScale)
+	{
+		float texId = -1.0f;
+		bool found = false;
+
+		mNextVertex->position = mTransformationStack.top() * box.getVerts()[0];
+		mNextVertex->color = color;
+		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
+		++mNextVertex;
+
+		mNextVertex->position = mTransformationStack.top() * box.getVerts()[1];
+		mNextVertex->color = color;
+		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
+		++mNextVertex;
+
+		mNextVertex->position = mTransformationStack.top() * box.getVerts()[2];
+		mNextVertex->color = color;
+		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
+		++mNextVertex;
+
+		mNextVertex->position = mTransformationStack.top() * box.getVerts()[3];
+		mNextVertex->color = color;
+		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
+		++mNextVertex;
+
+		mIndexCount += 6;
+	}
+
+	void Renderer::submit(const Triangle& tri, const vec4& color, F32 transparencyScale)
+	{
+		float texId = -1.0f;
+		bool found = false;
+
+		mNextVertex->position = mTransformationStack.top() * tri.getVerts()[0];
+		mNextVertex->color = color;
+		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
+		++mNextVertex;
+
+		mNextVertex->position = mTransformationStack.top() * tri.getVerts()[1];
+		mNextVertex->color = color;
+		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
+		++mNextVertex;
+
+		mNextVertex->position = mTransformationStack.top() * tri.getVerts()[2];
+		mNextVertex->color = color;
+		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
+		++mNextVertex;
+
+		mNextVertex->position = mTransformationStack.top() * tri.getVerts()[1];
+		mNextVertex->color = color;
+		mNextVertex->tid = texId;
+		mNextVertex->transparencyScale = transparencyScale;
+		++mNextVertex;
+
+		mIndexCount += 6;
 	}
 
 	void Renderer::render()

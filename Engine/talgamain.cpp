@@ -31,6 +31,7 @@
 #include "collisiontypes.h"
 #include "PhysicsComponent.h"
 
+
 const talga::I32 WIDTH = 1200;
 const talga::I32 HEIGHT = 900;
 talga::Game* GAME = nullptr;
@@ -56,7 +57,6 @@ void mouse_move_callback(GLFWwindow * window, double x, double y)
 	GAME->game_mouse_move_callback(window, x, y);
 }
 
-
 int main(int argc, char** argv)
 {
 	TALGA_MSG("working directory: " + talga::getWorkingDirectory());
@@ -73,28 +73,7 @@ int main(int argc, char** argv)
 	talga::AnimationSet set{ GAME->manager()->GetTexture("talgasheet.png"), "talgaAnims" };
 	talga::LuaEngine::instance()->ExecuteStr("print = function(s) if type(s) == \"string\" then GAME:printToLuaPromptStr(s) elseif type(s) == \"number\" then GAME:printToLuaPromptFl(s) end end");
 
-	std::vector<talga::Rect> talgaStandL{ { talga::Rect{ 0, 0, 64, 64 }, talga::Rect{ 64, 0, 64, 64 } } };
-	std::vector<talga::Rect> talgaStandR{ { talga::Rect{ 128, 0, 64, 64 }, talga::Rect{ 192, 0, 64, 64 } } };
-	std::vector<talga::Rect> talgaWalkL;
-	std::vector<talga::Rect> talgaWalkR;
-	
-	for (int i = 0; i < 6; ++i)
-	{
-		talgaWalkL.push_back(talga::Rect{ 64 * i, 64, 64, 64 });
-	}
-
-	for (int i = 6; i < 12; ++i)
-	{
-		talgaWalkR.push_back(talga::Rect{ 64 * i, 64, 64, 64 });
-	}
-
-	set.addAnim("talgaWalkL", talgaWalkL);
-	set.addAnim("talgaWalkR", talgaWalkR);
-
-	talga::AnimSprite* spr = new talga::AnimSprite{ &set };
-
 	talga::cpMap testMap = GAME->manager()->GetMap("sandboxx.tmap");
-
 
 	talga::GameObject* tga = new talga::GameObject("../assets/scripts/talga.lua");
 	
