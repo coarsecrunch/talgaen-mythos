@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\scripts\script.lua" />
+    <None Include="..\assets\scripts\talga.lua" />
     <None Include="..\assets\shaders\renderer2d.frag" />
     <None Include="..\assets\shaders\renderer2d.vert" />
   </ItemGroup>

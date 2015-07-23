@@ -80,15 +80,13 @@ namespace talga
 
 	void Game::addObj(GameObject* obj)
 	{
-		obj->GAME = this;
-		mGameObjects.push_back(obj);
-		mObjectsLayer.add(obj->pmRenderable.get());
-		cpSpaceAddBody(mSpace, obj->mCollider->mBody);
-		cpSpaceAddShape(mSpace, obj->mCollider->mShape);
-		
 		if (obj->stagedFunc)
 			obj->stagedFunc(obj);
 
+		obj->mGAME = this;
+		mGameObjects.push_back(obj);
+		mObjectsLayer.add(obj->pmRenderable);
+		
 		TALGA_MSG("Game object has been added")
 	}
 
@@ -113,13 +111,13 @@ namespace talga
 
 				if (it == mGameObjects.end() - 1)
 				{
-					mObjectsLayer.remove(obj->pmRenderable.get());
+					mObjectsLayer.remove(obj->pmRenderable);
 					delete *it;
 					mGameObjects.pop_back();
 				}
 				else
 				{
-					mObjectsLayer.remove(obj->pmRenderable.get());
+					mObjectsLayer.remove(obj->pmRenderable);
 					delete *it;
 					*it = mGameObjects.back();
 					mGameObjects.pop_back();

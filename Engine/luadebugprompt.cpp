@@ -6,11 +6,11 @@
 #include "font.h"
 #include "Rect.h"
 #include "LuaEngine.h"
+
 namespace talga
 {
 	const int YOFFSET = 10;
 	Rect TEXT_ENTER_BOX;
-
 
 	LuaDebugPrompt::LuaDebugPrompt(cpTex tex, cpFont font)
 		: Sprite(tex)

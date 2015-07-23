@@ -10,14 +10,14 @@
 #include "Cmn.h"
 #include "AnimSet.h"
 #include "font.h"
-
-
+#include "luareg.h"
+#include "Rect.h"
 
 namespace talga
 {
 	/* Amounts for the max amounts for stored assets. If vector are constantly dynamically allocated
 	then the addresses for the elements change and the pointers to them become invalid */
-	const I32 MAX_ANIMATIONS = 100;
+	const I32 MAX_ANIMATIONS = 1000;
 	const I32 MAX_TEXTURES = 1000;
 	const I32 MAX_MAPS = 50;
 	cpTex AssetManager::NO_TEXTURE = nullptr;
@@ -61,7 +61,9 @@ namespace talga
 		
 	}
 
-  cpMap AssetManager::AddMap(std::string path)
+
+
+	cpMap AssetManager::AddMap(std::string path)
 	{
 		Map map;
 
@@ -79,6 +81,64 @@ namespace talga
 		{
 			TALGA_WARN(0, path + " could not be loaded");
 		}
+	}
+
+	cpAnimSet AssetManager::AddAnimationSet(std::string name, std::string texName, OOLUA::Lua_table_ref tbl)
+	{
+		if (tbl.valid())
+		{
+			cpTex tex = GetTexture(texName);
+			
+			if (!tex)
+			{
+				TALGA_WARN(0, "failed to add animation set " + name + " because texture " + texName + " could not be found");
+				return nullptr;
+			}
+			AnimationSet set(GetTexture(texName), name);
+			OOLUA::Table tableTable(tbl);
+
+			oolua_pairs(tableTable)
+			{
+				std::vector<Rect> rectFrames;
+				OOLUA::Lua_table_ref animation;
+				std::string keyTop;
+				OOLUA::pull(tableTable.state(), animation);
+				OOLUA::pull(tableTable.state(), keyTop);
+				OOLUA::Table iterAnimation(animation);
+				TALGA_ASSERT(animation.valid(), "table invalid");
+
+				oolua_pairs(iterAnimation)
+				{
+					OOLUA::Lua_table_ref frame;
+					Rect rectFrame;
+					OOLUA::pull(tableTable.state(), frame);
+					TALGA_ASSERT(frame.valid(), "table invalid");
+
+					OOLUA::Table frameTbl(frame);
+
+					frameTbl.at(1, rectFrame.x);
+					frameTbl.at(2, rectFrame.y);
+					frameTbl.at(3, rectFrame.w);
+					frameTbl.at(4, rectFrame.h);
+					rectFrames.push_back(rectFrame);
+				
+					
+				}
+				oolua_pairs_end()
+
+
+				set.addAnim(keyTop, rectFrames);
+				OOLUA::push(tableTable.state(), keyTop);
+			}
+			oolua_pairs_end()
+
+			mAnimationSets.push_back(set);
+			TALGA_MSG("successfully created animation set " + name)
+			return &mAnimationSets.back();
+		}
+
+		TALGA_WARN(0, "failed to add animation " + name);
+		return nullptr;
 	}
 
   cpFont AssetManager::addFont(const std::string& path, I32 size)

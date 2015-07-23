@@ -2,7 +2,11 @@
 
 #include <string>
 #include <vector>
+#include <array>
+
+#include "Math/Vector2.h"
 #include "Cmn.h"
+#include "oolua/oolua_table.h"
 namespace talga
 {
 	class AnimationSet;
@@ -11,7 +15,11 @@ namespace talga
 	class Font;
 	class AAsset;
 	struct Rect;
-
+	typedef std::array<vec2, 4> UVFrame;
+	typedef std::vector<UVFrame> UVAnimation;
+	typedef std::pair<std::string, UVAnimation> AnimSetPair;
+	
+	
 
 	class AssetManager
 	{
@@ -21,7 +29,8 @@ namespace talga
 		~AssetManager();
 
 		cpTex AddTexture(std::string path);
-		void AddAnimationSet(std::string name, const AnimationSet& anim);
+		cpAnimSet AddAnimationSet(std::string name, std::string texName, std::vector<AnimSetPair>);
+		cpAnimSet AddAnimationSet(std::string name, std::string texName, OOLUA::Lua_table_ref tbl);
 		cpMap AddMap(std::string path);
 		cpTex GetTexture(std::string name) const;
 		cpMap GetMap(std::string name) const;

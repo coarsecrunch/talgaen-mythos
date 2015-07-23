@@ -33,8 +33,8 @@
 
 const talga::I32 WIDTH = 1200;
 const talga::I32 HEIGHT = 900;
-static talga::Game* GAME = nullptr;
-static talga::LuaEngine* LUA_ENGINE = nullptr;
+talga::Game* GAME = nullptr;
+talga::LuaEngine* LUA_ENGINE = nullptr;
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 
 	talga::LuaEngine::instance()->setGame(GAME);
 	talga::LuaEngine::instance()->addGlobal("GAME", GAME);
-	talga::AnimationSet set{ GAME->manager()->GetTexture("talgasheet.png") };
+	talga::AnimationSet set{ GAME->manager()->GetTexture("talgasheet.png"), "talgaAnims" };
 	talga::LuaEngine::instance()->ExecuteStr("print = function(s) if type(s) == \"string\" then GAME:printToLuaPromptStr(s) elseif type(s) == \"number\" then GAME:printToLuaPromptFl(s) end end");
 
 	std::vector<talga::Rect> talgaStandL{ { talga::Rect{ 0, 0, 64, 64 }, talga::Rect{ 64, 0, 64, 64 } } };
@@ -88,8 +88,6 @@ int main(int argc, char** argv)
 		talgaWalkR.push_back(talga::Rect{ 64 * i, 64, 64, 64 });
 	}
 
-	set.addAnim("talgaStandL", talgaStandL);
-	set.addAnim("talgaStandR", talgaStandR);
 	set.addAnim("talgaWalkL", talgaWalkL);
 	set.addAnim("talgaWalkR", talgaWalkR);
 
@@ -97,9 +95,8 @@ int main(int argc, char** argv)
 
 	talga::cpMap testMap = GAME->manager()->GetMap("sandboxx.tmap");
 
-	spr->playAnimation("talgaStandL", 1000, true);
 
-	talga::GameObject* tga = new talga::GameObject(spr, new talga::RectCollider(spr->box().getW(), spr->box().getH()));
+	talga::GameObject* tga = new talga::GameObject("../assets/scripts/talga.lua");
 	
 	GAME->addObj(tga);
 

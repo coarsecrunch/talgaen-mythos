@@ -14,7 +14,7 @@
 #include "Texture.h"
 #include "IRenderable.h"
 #include "PhysicsComponent.h"
-
+#include "AnimSet.h"
 namespace OOLUA
 {
 	typedef talga::Game Game;
@@ -22,12 +22,16 @@ namespace OOLUA
 	typedef talga::Rectangle Rectangle;
 	typedef talga::GameObject GameObject;
 	typedef talga::Sprite Sprite;
+	typedef talga::AnimSprite AnimSprite;
 	typedef talga::Texture Texture;
-	typedef const Texture* cpTex;
+	typedef talga::AnimationSet AnimationSet;
 	typedef talga::AssetManager AssetManager;
 	typedef talga::IRenderable IRenderable;
 	typedef talga::PhysicsComponent PhysicsComponent;
 	typedef talga::RectCollider RectCollider;
+
+	typedef const Texture* cpTex;
+	typedef const AnimationSet* cpAnimSet;
 }
 
 //Texture
@@ -38,6 +42,11 @@ OOLUA_PROXY_END
 //IRenderable
 OOLUA_PROXY(IRenderable)
 OOLUA_TAGS(OOLUA::Abstract)
+OOLUA_PROXY_END
+
+//AnimSet
+OOLUA_PROXY(AnimationSet)
+OOLUA_TAGS(OOLUA::No_public_constructors)
 OOLUA_PROXY_END
 
 //PhysComp
@@ -60,6 +69,7 @@ OOLUA_PROXY(AssetManager)
 	OOLUA_TAGS(OOLUA::No_public_constructors)
 	OOLUA_MFUNC_CONST(GetTexture)
 	OOLUA_MFUNC(AddTexture)
+	OOLUA_MEM_FUNC(cpAnimSet, AddAnimationSet, std::string, std::string, OOLUA::Lua_table_ref)
 OOLUA_PROXY_END
 
 //Rectangle
@@ -81,15 +91,27 @@ OOLUA_CTOR(cpTex)
 )
 OOLUA_PROXY_END
 
+//AnimSprite
+OOLUA_PROXY(AnimSprite, IRenderable)
+OOLUA_TAGS(OOLUA::No_default_constructor)
+OOLUA_CTORS(
+OOLUA_CTOR(cpAnimSet)
+)
+OOLUA_PROXY_END
+
 //GameObject
 OOLUA_PROXY(GameObject)
 OOLUA_TAGS(OOLUA::No_default_constructor)
 	OOLUA_CTORS(
 	OOLUA_CTOR(IRenderable*, PhysicsComponent*)
+	OOLUA_CTOR(const std::string&)
 	)
 	OOLUA_MEM_FUNC(void, addKeyCallback, std::string, Lua_func_ref)
 	OOLUA_MEM_FUNC(void, addCollisionCallback, int, Lua_func_ref)
 	OOLUA_MEM_FUNC(void, setCollisionType, int)
+	OOLUA_MFUNC(setCollider)
+	OOLUA_MFUNC(setRenderable)
+	OOLUA_MFUNC(playAnimation)
 OOLUA_PROXY_END
 
 //Camera

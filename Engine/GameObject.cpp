@@ -6,53 +6,35 @@
 
 #include "oolua/oolua_string.h"
 #include "LuaEngine.h"
-#include "luareg.h"
 #include "sys.h"
+
+extern talga::Game* GAME; // <------------- NOOOOOOOOOOOO DON'T DO IT THIS IS SOOOO BAD WHY DIDN'T I JUST MAKE IT A SINGLETON?
 
 namespace talga
 {
 	GameObject::GameObject(IRenderable* rdr, PhysicsComponent* collider)
-		: GAME(nullptr)
+		: mGAME(GAME)
 		, DESTROY(false)
-		, pmRenderable(rdr)
+		, pmRenderable(nullptr)
 		, isAnimated{false}
-		, mCollider(collider)
+		, mCollider(nullptr)
 		, mBox{ nullptr }
 		, stagedFunc()
 		, updateFunc()
 		, unstagedFunc()
 	{
-		if (rdr)
-		{
-			if (dynamic_cast<Sprite*>(pmRenderable.get()))
-			{
-				Sprite* ptr = (Sprite*) pmRenderable.get();
-				mBox = &ptr->box();
-				setCollisionType(COLL_DEFAULT);
-			}
-			else if (dynamic_cast<AnimSprite*>(pmRenderable.get()))
-			{
-				AnimSprite* ptr = (AnimSprite*)pmRenderable.get();
-				mBox = &ptr->box();
-				isAnimated = true;
-				setCollisionType(COLL_DEFAULT);
-			}
-			else
-			{
-				TALGA_ASSERT(0, "unknown renderable passed to GameObject");
-			}
-		}
-		else
-		{
-			TALGA_ASSERT(0, "nullptr passed to GameObject");
-		}
+		setRenderable(rdr);
+		setCollider(collider);
+		setCollisionType(COLL_DEFAULT);
 	}
 
 	GameObject::GameObject(std::string path)
-		: GAME(nullptr)
+		: mGAME(GAME)
 		, DESTROY(false)
 		, isAnimated{ false }
 		, mBox{ nullptr }
+		, pmRenderable{ nullptr }
+		, mCollider{nullptr}
 		, stagedFunc()
 		, updateFunc()
 		, unstagedFunc()
@@ -94,7 +76,7 @@ namespace talga
 	}
 
 	GameObject::GameObject(const GameObject& cpy)
-		: GAME(cpy.GAME)
+		: mGAME(cpy.mGAME)
 		, DESTROY(false)
 		, pmRenderable(cpy.pmRenderable)
 		, mCollider(cpy.mCollider)
@@ -115,10 +97,11 @@ namespace talga
 
 	void GameObject::update(F32 dt)
 	{
+		if (!mCollider && !pmRenderable) return;
 		if (isAnimated)
 		{
-			static_cast<AnimSprite*>(pmRenderable.get())->update(dt);
-			Rectangle& r = static_cast<AnimSprite*>(pmRenderable.get())->box();
+			static_cast<AnimSprite*>(pmRenderable)->update(dt);
+			Rectangle& r = static_cast<AnimSprite*>(pmRenderable)->box();
 
 			if (mCollider)
 			{
@@ -132,8 +115,8 @@ namespace talga
 		}
 		else
 		{
-			static_cast<Sprite*>(pmRenderable.get())->update(dt);
-			Rectangle& r = static_cast<AnimSprite*>(pmRenderable.get())->box();
+			static_cast<Sprite*>(pmRenderable)->update(dt);
+			Rectangle& r = static_cast<AnimSprite*>(pmRenderable)->box();
 			if (mCollider)
 			{
 				mBox->setX(mCollider->getX());
@@ -172,10 +155,63 @@ namespace talga
 		};
 	}
 
+	void GameObject::setRenderable(IRenderable* renderable)
+	{
+		if (pmRenderable)
+			delete pmRenderable;
+
+		pmRenderable = renderable;
+
+		if (pmRenderable)
+		{
+			if (dynamic_cast<Sprite*>(pmRenderable))
+			{
+				Sprite* ptr = (Sprite*)pmRenderable;
+				mBox = &ptr->box();
+				isAnimated = false;
+			}
+			else if (dynamic_cast<AnimSprite*>(pmRenderable))
+			{
+				AnimSprite* ptr = (AnimSprite*)pmRenderable;
+				mBox = &ptr->box();
+				isAnimated = true;
+			}
+			else
+			{
+				TALGA_ASSERT(0, "unknown renderable passed to GameObject");
+			}
+		}
+		else
+		{
+			TALGA_ASSERT(0, "nullptr passed to GameObject");
+		}
+	}
+
+	void GameObject::setCollider(PhysicsComponent* collider)
+	{
+		if (mCollider)
+		{
+			cpSpaceRemoveBody(mGAME->getSpace(), mCollider->mBody);
+			delete mCollider;
+			mCollider = collider;
+			cpSpaceAddBody(mGAME->getSpace(), mCollider->mBody);
+			cpSpaceAddShape(mGAME->getSpace(), mCollider->mShape);
+		}
+		else
+		{
+			mCollider = collider;
+			cpSpaceAddBody(mGAME->getSpace(), mCollider->mBody);
+			cpSpaceAddShape(mGAME->getSpace(), mCollider->mShape);
+			
+		}
+	}
+
 	void GameObject::setCollisionType(I32 type)
 	{
-		TALGA_ASSERT(mCollider, "tried to set collision type of non exsitent collider")
-		mCollider->setCollisionType(type);
+		TALGA_WARN(mCollider, "tried to set collision type of non exsitent collider")
+		
+		if (mCollider)
+			mCollider->setCollisionType(type);
 	}
 
 	void GameObject::addKeyCallback(char c, KeyCallbackFunc cback)
@@ -194,7 +230,7 @@ namespace talga
 	{
 		if (isAnimated)
 		{
-			static_cast<AnimSprite*>(pmRenderable.get())->playAnimation(animName, speed, loop);
+			static_cast<AnimSprite*>(pmRenderable)->playAnimation(animName, speed, loop);
 		}
 	}
 
@@ -204,6 +240,7 @@ namespace talga
 	}
 	GameObject::~GameObject()
 	{
+		delete pmRenderable;
 		delete mCollider;
 		for (auto it = mData.begin(); it != mData.end(); ++it)
 			delete *it;

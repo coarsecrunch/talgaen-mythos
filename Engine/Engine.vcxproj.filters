@@ -340,5 +340,8 @@
     <None Include="..\assets\scripts\script.lua">
       <Filter>Scripts</Filter>
     </None>
+    <None Include="..\assets\scripts\talga.lua">
+      <Filter>Scripts</Filter>
+    </None>
   </ItemGroup>
 </Project>

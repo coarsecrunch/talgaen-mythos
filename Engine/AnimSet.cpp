@@ -6,13 +6,13 @@
 
 namespace talga
 {
-	AnimationSet::AnimationSet(cpTex tex)
+	AnimationSet::AnimationSet(cpTex tex, const std::string& name)
 		: mTex(tex)
 		, mAnims({AnimSetPair("default", UVAnimation{ WHOLE_TEXTURE }) })
 		, mWidth(-1)
 		, mHeight(-1)
 	{
-		// Sweet baby talga this is ridiculous
+		mName = name;
 	}
 
 	const UVAnimation* AnimationSet::getAnim(const std::string& name) const

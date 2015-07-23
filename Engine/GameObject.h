@@ -10,6 +10,8 @@
 #include "Math/Vector2.h"
 #include "PhysicsComponent.h"
 #include "funkdefs.h"
+
+
 struct cpBody;
 struct cpShape;
 
@@ -29,12 +31,14 @@ namespace talga
 		GameObject(const GameObject& cpy);
 		virtual ~GameObject();
 		
-		void playAnimation(const std::string& animName, I32 speed, bool loop);
 		
-		SharedRdrPtr getRenderable() { return pmRenderable; }
+		void setRenderable(IRenderable* renderable);
+		IRenderable* getRenderable() { return pmRenderable; }
+
+		void setCollider(PhysicsComponent* collider);
+		PhysicsComponent* getCollider() { return mCollider; }
 
 		virtual void update(F32 dt) override;
-		
 		void setCollisionType(I32 type);
 		void addCollisionCallback(I32 collisionWith, OOLUA::Lua_func_ref);
 		CollisionCallbackFunc getCollisionCallback(I32 collsionWith);
@@ -44,6 +48,7 @@ namespace talga
 		
 		void staged();
 		void destroy();
+		void playAnimation(const std::string& animName, I32 speed, bool loop);
 
 		StagedFunc stagedFunc;
 		UpdateFunc updateFunc;
@@ -51,14 +56,15 @@ namespace talga
 	protected:
 		friend class Game;
 
-		SharedRdrPtr pmRenderable;
+		IRenderable* pmRenderable;
 		PhysicsComponent* mCollider;
+		
+		Game* mGAME;
+
+	private:
+		bool DESTROY;
 		Rectangle* mBox;
 		bool isAnimated;
-		
-		bool DESTROY;
-		Game* GAME;
-
 		std::map<I32, CollisionCallbackFunc> mCollisionCallbacks;
 		std::vector<CollisionData*> mData;
 	};
