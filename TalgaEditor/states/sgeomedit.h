@@ -26,11 +26,14 @@ namespace editor
     virtual void mouseMoveEvent(QMouseEvent *e) override;
 
     void addRect(const vec3& pos);
+    void addTri(const vec3& pos);
   protected:
 
     bool mIsMouseDown;
     vec3 mPreviousMousePos;
     QPoint mStartPos;
+    IRenderable* mSelectedGeom;
+    bool isVertex;
   };
 }
 }

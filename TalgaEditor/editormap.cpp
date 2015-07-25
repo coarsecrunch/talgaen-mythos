@@ -3,6 +3,7 @@
 #include "Math/Operations.h"
 #include "Texture.h"
 #include "renderableshapes.h"
+#include "Math/Operations.h"
 
 namespace talga
 {
@@ -46,6 +47,39 @@ namespace talga
     {
       TALGA_ASSERT(dynamic_cast<RdrRect*>(shape) || dynamic_cast<RdrTri*>(shape), "tried to push a non triangle/point into scene geom");
       mStaticSceneGeom.push_back(shape);
+    }
+
+    IRenderable* EditorMap::getSceneGeom(const vec3& pnt)
+    {
+      for (auto it = mStaticSceneGeom.begin(); it != mStaticSceneGeom.end(); ++it)
+      {
+        if (dynamic_cast<RdrRect*>(*it))
+        {
+          RdrRect* rect = static_cast<RdrRect*>(*it);
+
+          for (int i = 0; i < 4; ++i)
+          {
+            if (pointInRenderableRect(rect->getChildren()[i], pnt))
+              return const_cast<IRenderable*>(rect->getChildren()[i]);
+          }
+
+          if (pointInRect(rect->box(), pnt))
+          {
+            return rect;
+          }
+        }
+        else if (dynamic_cast<RdrTri*>(*it))
+        {
+          RdrTri* tri = static_cast<RdrTri*>(*it);
+
+          if (pointIsInTri(tri->getBase(), pnt))
+          {
+            return tri;
+          }
+        }
+      }
+
+      return nullptr;
     }
 
     I32 EditorMap::getOffset(cpTex tex) const

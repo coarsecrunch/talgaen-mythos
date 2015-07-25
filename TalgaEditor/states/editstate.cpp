@@ -11,6 +11,7 @@ namespace editor
 {
 EditState::EditState(GLContext *context)
   :mContext(context)
+  , mShift(false)
 {
 }
 

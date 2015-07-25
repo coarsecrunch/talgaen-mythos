@@ -36,11 +36,14 @@ namespace talga
 
 		inline void setScaleX(F32 value) { mScaleX = value; updateVerts(); }
 		inline void setScaleY(F32 value) { mScaleY = value; updateVerts(); }
+		inline void setX(F32 value) { mPosition[0] = value; updateVertsPosition(); }
+		inline void setY(F32 value) { mPosition[1] = value; updateVertsPosition(); }
 
-		inline void setW(F32 value) { mWidth = value; }
-		inline void setH(F32 value) { mHeight = value; }
+		inline void setW(F32 value) { mWidth = value; updateVertsPosition(); }
+		inline void setH(F32 value) { mHeight = value; updateVertsPosition(); }
 		
 	protected:
+		bool hasChanged;
 		F32 mWidth;
 		F32 mHeight;
 		RectVertList mVerts; // TR TL BR BL

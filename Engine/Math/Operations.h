@@ -1,13 +1,16 @@
 #pragma once
 
 #include "Vector2.h"
+#include "Vector3.h"
 #include "../Point.h"
 namespace talga
 {
 	class Rectangle;
 	class Triangle;
+	class IRenderable;
 
 	bool pointInRect(const Rectangle& rect, vec2 pnt);
+	bool pointInRenderableRect(const IRenderable* rect, vec3 pnt);
 	bool pointIsInTri(const Triangle& tri, vec2 pnt);
   
 	

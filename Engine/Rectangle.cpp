@@ -10,9 +10,9 @@ namespace talga
 		: Transformation2D(position, orientation, scaleX, scaleY)
 		, mWidth(width)
 		, mHeight(height)
+		, hasChanged(true)
 	{
 		mVerts.fill(vec3());
-		updateVerts();
 	}
 
 	Rectangle::Rectangle(const Rectangle& cpy)
@@ -20,6 +20,7 @@ namespace talga
 		, mWidth(cpy.mWidth)
 		, mHeight(cpy.mHeight)
 		, mVerts(cpy.mVerts)
+		, hasChanged(cpy.hasChanged)
 	{
 	}
 
@@ -29,6 +30,7 @@ namespace talga
 		mWidth = cpy.mWidth;
 		mHeight = cpy.mHeight;
 		mVerts = cpy.mVerts;
+		hasChanged = cpy.hasChanged;
 
 		return *this;
 	}

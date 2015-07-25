@@ -1,6 +1,8 @@
 #include "Operations.h"
 #include "../Rectangle.h"
 #include "../Triangle.h"
+#include "../IRenderable.h"
+
 namespace talga
 {
 	vec2 GET_UV(F32 x, F32 xMax, F32 y, F32 yMax)
@@ -23,6 +25,21 @@ namespace talga
 		if (pnt.y() < rect.getY() - rect.getH() * 0.5f)
 			return false;
 		if (pnt.y() > rect.getY() + rect.getH() * 0.5f)
+			return false;
+
+		return true;
+	}
+
+	bool pointInRenderableRect(const IRenderable* rect, vec3 pnt)
+	{
+		vec3 globalPos = rect->getGlobalPosition();
+		if (pnt.x() < globalPos.x() - rect->box().getW() * 0.5f)
+			return false;
+		if (pnt.x() > globalPos.x() + rect->box().getW() * 0.5f)
+			return false;
+		if (pnt.y() < globalPos.y() - rect->box().getH() * 0.5f)
+			return false;
+		if (pnt.y() > globalPos.y() + rect->box().getH() * 0.5f)
 			return false;
 
 		return true;

@@ -41,6 +41,7 @@ namespace talga
       std::string setWorkingLayer(std::string layerName);
 
       void addSceneGeom(IRenderable* shape);
+      IRenderable* getSceneGeom(const vec3& point);
     private:
       MapLayer* mWorkingLayer;
       I32 mWorkingLayerIndex;

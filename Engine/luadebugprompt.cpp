@@ -23,7 +23,7 @@ namespace talga
 		mMaxVisibleLines = ((box().getH() - LUA_DEBUG_BORDER) / font->getMaxGlyphHeight()) - 4;
 		mMaxLinePixelWidth = (box().getW() - LUA_DEBUG_BORDER * 2);
 
-		TEXT_ENTER_BOX = Rect{ 0, YOFFSET, mImageBox.getW(), font->getMaxGlyphHeight() * 2 };
+		TEXT_ENTER_BOX = Rect{ 0, YOFFSET, box().getW(), font->getMaxGlyphHeight() * 2 };
 	}
 
 	void LuaDebugPrompt::pushCToCmd(char c)
@@ -112,7 +112,7 @@ namespace talga
 	void LuaDebugPrompt::render(Renderer* renderer, const Camera* camera) const
 	{
 		Sprite::render(renderer, camera);
-		renderer->tStackPush(mImageBox.getTransformationMatrix());
+		renderer->tStackPush(box().getTransformationMatrix());
 		std::string rdrStr = ">" + mCurrentCommand + "\n";
 		I32 numNewLines = 0;
 		for (auto it = mTextLines.begin(); it != mTextLines.end() && numNewLines <= mMaxVisibleLines; ++it)
@@ -120,7 +120,7 @@ namespace talga
 			numNewLines += std::count(it->begin(), it->end(), '\n');
 			rdrStr += *it;
 		}
-		vec3 tempPos(mImageBox.getW() * -0.5f + LUA_DEBUG_BORDER, (mImageBox.getH() * -0.5f + mFont->getMaxGlyphHeight() + LUA_DEBUG_BORDER * 2) + YOFFSET);
+		vec3 tempPos(box().getW() * -0.5f + LUA_DEBUG_BORDER, (box().getH() * -0.5f + mFont->getMaxGlyphHeight() + LUA_DEBUG_BORDER * 2) + YOFFSET);
 
 		renderer->submit(rdrStr, mFont, tempPos,vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		renderer->tStackPop();
@@ -128,8 +128,8 @@ namespace talga
 
 	bool LuaDebugPrompt::wasSelected(I32 mx, I32 my) const
 	{
-		int imgBoxTLX = (mImageBox.getX() - mImageBox.getW() * 0.5f);
-		int imgBoxTLY = (mImageBox.getY() - mImageBox.getH() * 0.5f);
+		int imgBoxTLX = (box().getX() - box().getW() * 0.5f);
+		int imgBoxTLY = (box().getY() - box().getH() * 0.5f);
 		if (mx >= TEXT_ENTER_BOX.x + imgBoxTLX)
 		{
 			if (mx <= TEXT_ENTER_BOX.x + TEXT_ENTER_BOX.w + imgBoxTLX)

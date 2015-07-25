@@ -142,9 +142,6 @@ void STileEdit::mouseMoveEvent(QMouseEvent *e)
     mContext->update();
   }
 
-  TALGA_PRVAL(mIsMouseDown)
-  TALGA_PRVAL(mShift)
-
   // show transparent selection under mouse
   if ( !(mCurrentSelection.first == "NULL"))
   {

@@ -12,7 +12,6 @@ namespace talga
 	Sprite::Sprite(cpTex tex, UVFrame quords, F32 transScale)
 		: mTex(tex)
 		, mTransparencyScale(transScale)
-		, mImageBox(-1, -1)
 		, mUVCurrentFrame(quords)
 	{
 		TALGA_WARN(tex, "invalid texture passed to Sprite")
@@ -20,37 +19,31 @@ namespace talga
 		//deduce width and height from uv quords
     if (tex)
     {
-      mImageBox.setW(abs(quords[1].x() - quords[0].x()) * tex->w());
-      mImageBox.setH(abs(quords[3].y() - quords[0].y()) * tex->h());
+      box().setW(abs(quords[1].x() - quords[0].x()) * tex->w());
+	  box().setH(abs(quords[3].y() - quords[0].y()) * tex->h());
     }
     else
     {
-      mImageBox.setW(64);
-      mImageBox.setH(64);
+      box().setW(64);
+      box().setH(64);
     }
 
-		mImageBox.updateVerts();
+		box().updateVerts();
 	}
 
 	void Sprite::render(Renderer* renderer, const Camera* camera) const
 	{
-		renderer->submit(mImageBox, mTex, mTransparencyScale, mUVCurrentFrame);
-		for (auto it = getChildren().begin(); it != getChildren().end(); ++it)
-		{
-			renderer->tStackPush(mImageBox.getTransformationMatrix());
-			(*it)->render(renderer, camera);
-			renderer->tStackPop();
-		}
+		renderer->submit(box(), mTex, mTransparencyScale, mUVCurrentFrame);
+		IRenderable::render(renderer, camera);
 	}
 
 	void Sprite::update(F32 dt)
 	{
-		mImageBox.updateVerts();
+		box().updateVerts();
 	}
 
 	AnimSprite::AnimSprite(cpAnimSet anims, I32 width, I32 height)
 		: mAnims(anims)
-		, mImageBox(anims->w(), anims->h())
 		, isAnimated(true)
 		, mCurrentFrame(-1)
 		, mFrameSpeed(-1)
@@ -58,21 +51,18 @@ namespace talga
 		, isLoop(false)
 		, mCurrentAnimation(nullptr)
 	{
+		box().setW(anims->w());
+		box().setH(anims->h());
 	}
 
 	void AnimSprite::render(Renderer* renderer, const Camera* camera) const
 	{
 		if (mCurrentAnimation)
-			renderer->submit(mImageBox, mAnims->tex(), 1.0f, mUVCurrentFrame);
+			renderer->submit(box(), mAnims->tex(), 1.0f, mUVCurrentFrame);
 		else
-			renderer->submit(mImageBox);
+			renderer->submit(box());
 
-		for (auto it = getChildren().begin(); it != getChildren().end(); ++it)
-		{
-			renderer->tStackPush(mImageBox.getTransformationMatrix());
-			(*it)->render(renderer, camera);
-			renderer->tStackPop();
-		}
+		IRenderable::render(renderer, camera);
 	}
 
 	void AnimSprite::update(F32 dt)
@@ -101,7 +91,7 @@ namespace talga
 			}
 		}
 
-		mImageBox.updateVerts();
+		box().updateVerts();
 	}
 
 	void AnimSprite::playAnimation(const std::string& animName, I32 speed, bool loop) // in Milliseconds
@@ -121,9 +111,9 @@ namespace talga
 
 		// should probably be taken out, and just have a seperate array of
 		// rectangles with pixel coords in the animation
-		mImageBox.setW((mCurrentAnimation->at(mCurrentFrame).at(1)[0] - mCurrentAnimation->at(mCurrentFrame).at(0)[0])
+		box().setW((mCurrentAnimation->at(mCurrentFrame).at(1)[0] - mCurrentAnimation->at(mCurrentFrame).at(0)[0])
 			* mAnims->tex()->w());
-		mImageBox.setH((mCurrentAnimation->at(mCurrentFrame).at(0)[1] - mCurrentAnimation->at(mCurrentFrame).at(3)[1])
+		box().setH((mCurrentAnimation->at(mCurrentFrame).at(0)[1] - mCurrentAnimation->at(mCurrentFrame).at(3)[1])
 			* mAnims->tex()->h());
 	}
 
