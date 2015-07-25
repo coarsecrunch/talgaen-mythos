@@ -118,6 +118,9 @@ namespace talga
 		float texId = -1;
 		bool found = false;
 
+		if (!tex)
+			tex = AssetManager::NO_TEXTURE;
+
 		if (tex)
 		{
 			if (tex->id() > 0)

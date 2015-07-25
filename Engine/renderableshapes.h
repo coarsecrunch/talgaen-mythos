@@ -54,5 +54,7 @@ namespace talga
 	};
 
 	typedef RenderableRectangle RdrRect;
+	typedef RenderableTriangle RdrTri;
+	typedef RenderablePoint RdrPnt;
 
 }

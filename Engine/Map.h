@@ -8,7 +8,7 @@
 #include "IRenderable.h"
 #include "Rectangle.h"
 #include "Math/Vector2.h"
-
+#include "renderableshapes.h"
 
 
 namespace talga
@@ -91,14 +91,19 @@ namespace talga
 		I32 getTileWidth() const { return mTileWidth; }
 		
 		const std::vector<cpTex>& getTileSheets() const { return mTileSheets; }
-    bool hasBeenSaved() const { return mIsSaved; }
+		bool hasBeenSaved() const { return mIsSaved; }
+
+		bool getRenderSceneGeom() const { return mRenderSceneGeom; }
+		void setRenderSceneGeom(bool value) { mRenderSceneGeom = value; }
 	protected:
 		I32 mTileWidth;
 		I32 mTileHeight;
-    bool mIsSaved;
+		bool mIsSaved;
+		bool mRenderSceneGeom;
 		I32 mHeight;
 		I32 mWidth;
 
+		std::vector<IRenderable*> mStaticSceneGeom;
 		std::vector<Tile> mTileSet;
 		std::vector<cpTex> mTileSheets;
 		I32 mNumSheets;

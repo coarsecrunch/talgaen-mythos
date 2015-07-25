@@ -40,6 +40,7 @@ namespace talga
       I32 getWorkingLayerIndex() const {return mWorkingLayerIndex;}
       std::string setWorkingLayer(std::string layerName);
 
+      void addSceneGeom(IRenderable* shape);
     private:
       MapLayer* mWorkingLayer;
       I32 mWorkingLayerIndex;

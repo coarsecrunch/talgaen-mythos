@@ -128,21 +128,23 @@ namespace talga
 
 	bool LuaDebugPrompt::wasSelected(I32 mx, I32 my) const
 	{
-		if (mx >= TEXT_ENTER_BOX.x + (mImageBox.getX() - mImageBox.getW() * 0.5f))
+		int imgBoxTLX = (mImageBox.getX() - mImageBox.getW() * 0.5f);
+		int imgBoxTLY = (mImageBox.getY() - mImageBox.getH() * 0.5f);
+		if (mx >= TEXT_ENTER_BOX.x + imgBoxTLX)
 		{
-			if (mx <= TEXT_ENTER_BOX.x + TEXT_ENTER_BOX.w + (mImageBox.getX() - mImageBox.getW() * 0.5f))
+			if (mx <= TEXT_ENTER_BOX.x + TEXT_ENTER_BOX.w + imgBoxTLX)
 			{
-				if (my >= TEXT_ENTER_BOX.y + (mImageBox.getY() - mImageBox.getH() * 0.5f))
+				if (my >= TEXT_ENTER_BOX.y + imgBoxTLY)
 				{
-					if (my <= TEXT_ENTER_BOX.y + TEXT_ENTER_BOX.h + (mImageBox.getY() - mImageBox.getH() * 0.5f))
+					if (my <= TEXT_ENTER_BOX.y + TEXT_ENTER_BOX.h + imgBoxTLY)
 					{
-						TALGA_MSG("INN");
+						return true;
 					}
 				}
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	LuaDebugPrompt::~LuaDebugPrompt()

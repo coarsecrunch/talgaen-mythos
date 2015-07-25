@@ -8,8 +8,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += console \
-    c++11
+CONFIG += console
+CONFIG += c++11
 
 TARGET = TalgaEditor
 TEMPLATE = app
@@ -86,7 +86,11 @@ SOURCES += ../TalgaEditor/main.cpp \
     newmapdialog.cpp \
     ../Engine/GameObject.cpp \
     ../Engine/Triangle.cpp \
-    ../Engine/luareg.cpp
+    ../Engine/luareg.cpp \
+    ../Engine/StateMachine.cpp \
+    states/STileEdit.cpp \
+    states/editstate.cpp \
+    states/sgeomedit.cpp
 
 
 
@@ -156,7 +160,11 @@ HEADERS  += \
     globals.h \
     ../Engine/GameObject.h \
     ../Engine/Triangle.h \
-    ../Engine/luareg.h
+    ../Engine/luareg.h \
+    ../Engine/StateMachine.h \
+    states/STileEdit.h \
+    states/editstate.h \
+    states/sgeomedit.h
 
 
 FORMS    += mainwindow.ui \

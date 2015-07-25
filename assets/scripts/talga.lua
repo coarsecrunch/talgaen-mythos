@@ -1,14 +1,42 @@
 
 local function keyD(self, action)
-
+    if action == TALGA_KEYPRESS then
+        self.applyRight = true
+        self:playAnimation("walkR", 500, true)
+    elseif action == TALGA_KEYRELEASE then
+        self.applyRight = false
+        self:playAnimation("standR", 1000, true)
+    end
+    
+    
 end
 
 local function keyA(self, action)
+    if action == TALGA_KEYPRESS then
+        self.applyLeft = true
+        self:playAnimation("walkL", 500, true)
+    elseif action == TALGA_KEYRELEASE then
+        self.applyLeft = false
+        self:playAnimation("standL", 1000, true)
+    end
+    
+end
 
+local function keyW(self, action)
+    if action == TALGA_KEYPRESS then
+        self:getCollider():applyImpulseY(3000)
+    end
 end
 
 local function updateFuncLoc(self, dt)
-    
+    if self.applyLeft and self:getCollider():getVx() > -150 then
+        self:getCollider():applyImpulseX(-200)
+    end
+
+    if self.applyRight and self:getCollider():getVx() < 150 then
+        self:getCollider():applyImpulseX(200)
+
+    end
 end
 
 local function stagedFuncLoc(self)
@@ -17,10 +45,11 @@ local function stagedFuncLoc(self)
     animation["standR"] = { {128, 0, 64, 64}, {192, 0, 64, 64} };
     animation["walkL"] = {}
     animation["walkR"] = {}
+    self.applyLeft = false
+    self.applyRight = false
 
     for i=0,5 do
         animation.walkL[i+1] = {64 * i, 64,64,64}
-        print(i)
     end
 
     for i=6,11 do
@@ -32,11 +61,20 @@ local function stagedFuncLoc(self)
 
     self:setRenderable(spr)
     self:setCollider(collider)
-    self:playAnimation("walkR", 1000, true)
+    self:playAnimation("standR", 1000, true)
+    self:addKeyCallback("D", talga.keyDCback)
+    self:addKeyCallback("A", talga.keyACback)
+    self:addKeyCallback("W", talga.keyWCback)
+
+    self:setFriction(0.01)
+    self:setMass(100)
 end
 
 talga =
 {
     stagedFunc = stagedFuncLoc,
-    updateFunc = updateFuncLoc
+    updateFunc = updateFuncLoc,
+    keyDCback = keyD,
+    keyACback = keyA,
+    keyWCback = keyW
 }

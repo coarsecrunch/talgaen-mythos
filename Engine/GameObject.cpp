@@ -60,7 +60,6 @@ namespace talga
 		tempTbl.at("unstagedFunc", unstagedFuncRef);
 		tempTbl.at("updateFunc", updateFuncRef);
 
-
 		if (stagedFuncRef.valid())
 			stagedFunc = stagedFuncRef;
 		else

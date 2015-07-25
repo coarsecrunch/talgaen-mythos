@@ -7,6 +7,7 @@ namespace talga
 	class Vector2 {
 	public:
 		Vector2(float x = 0, float y = 0);
+		Vector2(const Vector3& cpy);
 		virtual ~Vector2();
 
 		float& operator[](int index);

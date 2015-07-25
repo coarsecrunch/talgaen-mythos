@@ -13,6 +13,7 @@ class QListWidgetItem;
 class QGraphicsScene;
 class QPixmap;
 class QGraphicsPixmapItem;
+class QActionGroup;
 
 namespace talga
 {
@@ -28,6 +29,11 @@ namespace talga
       ~MainWindow();
 
       Ui::MainWindow* getUi() {return ui;}
+    signals:
+      void sig_setModeCollisionEdit();
+      void sig_setModeTileEdit();
+      void sig_addRect();
+      void sig_addTri();
     private slots:
 
       void on_actionLoad_Assets_triggered();
@@ -48,12 +54,21 @@ namespace talga
 
       void on_actionNew_triggered();
 
+      void on_actionCollisionEditingMode_triggered(bool checked);
+
+      void on_actionTile_Edit_Mode_triggered();
+
+      void on_actionTile_Edit_Mode_triggered(bool checked);
+
+      void on_actionCreate_New_Rectangle_Geometry_triggered();
+
+      void on_actionCreate_New_Triangle_Geometry_triggered();
+
     protected:
       Ui::MainWindow *ui;
 
-      int mTileWidth;
-      int mTileHeight;
-
+      QActionGroup* editModes;
+      QActionGroup* collisionEditModeActions;
       QGraphicsScene* pmImageViewScene;
       QMap<QString, QPixmap* > mTextures;
     };

@@ -2,6 +2,9 @@
 
 #include "glcontext.h"
 
+#include <vector>
+#include <memory>
+
 #include <QSurfaceFormat>
 #include <QDebug>
 #include <QDir>
@@ -9,15 +12,14 @@
 #include <QApplication>
 #include <QMimeData>
 
-#include "Sprite.h"
+
 #include "Texture.h"
 #include "IRenderable.h"
-#include "commands/CInsertTiles.h"
-#include "commands/cchangeworkinglayer.h"
+
+#include "states/STileEdit.h"
+#include "states/sgeomedit.h"
 #include "gdata.h"
 
-#include <vector>
-#include <memory>
 
 namespace talga
 {
@@ -32,17 +34,14 @@ namespace talga
       , mSelectionLayer{nullptr, width(), height()}
       , mSpriteLayer{nullptr, width(), height()}
       , mCurrentMap{nullptr}
-      , mCurrentSelection{"NULL", std::vector<iPnt>{}}
-      , mShift{false}
-      , mIsMouseDown{false}
-      , mPreviousMousePos{0.0f, 0.0f, 0.0f}
-      , mCurrentMapLayerIndex{-1}
-      , mStartNewHistoryItem(true)
+
+      , mState()
     {
       QSurfaceFormat format;
       format.setVersion(3, 3);
       format.setProfile(QSurfaceFormat::CoreProfile);
       setFormat(format);
+      blockSignals(true);
     }
 
     void GLContext::initializeGL()
@@ -73,6 +72,8 @@ namespace talga
 
       camera.box().setX(100);
       camera.box().setY(200);
+
+       GData::getInstance()->sl_loadMap("../assets/maps/sandboxx.tmap");
     }
 
     void GLContext::dragEnterEvent(QDragEnterEvent *e)
@@ -128,22 +129,9 @@ namespace talga
 
     void GLContext::sl_updateSelection(Selection selection)
     {
-      auto tex = GData::getInstance()->getManager()->GetTexture(selection.first);
-
-      if (!tex) return;
-
-      mCurrentMap->insertSheet(tex);
-      mCurrentSelection = selection;
-
-      auto tiles = mCurrentMap->getTiles(mCurrentSelection.second, GData::getInstance()->getManager()->GetTexture(mCurrentSelection.first));
-
-      mSelectionLayer.clear();
-      mSelectionRender.clear();
-      mSelectionRender.reserve(tiles.size());
-      for (auto& t : tiles)
+      if (dynamic_cast<STileEdit*>(mState.getCurrentState()))
       {
-        mSelectionRender.push_back(Sprite{t.first, t.second, 0.5f, });
-        mSelectionLayer.add(&mSelectionRender.back());
+        static_cast<STileEdit*>(mState.getCurrentState())->updateSelection(selection);
       }
     } 
 
@@ -168,7 +156,32 @@ namespace talga
         mTileLayer.add(mCurrentMap);
       }
 
+      sl_setModeTileEdit();
+      blockSignals(false);
       sl_updateGL();
+    }
+
+    void GLContext::sl_setModeCollisionEdit()
+    {
+      if(mCurrentMap)
+        mState.changeState(new SGeomEdit(this));
+    }
+
+    void GLContext::sl_setModeTileEdit()
+    {
+      if (mCurrentMap)
+        mState.changeState(new STileEdit(this));
+    }
+
+    void GLContext::sl_addRect()
+    {
+      if (dynamic_cast<SGeomEdit*>(mState.getCurrentState()))
+        static_cast<SGeomEdit*>(mState.getCurrentState())->addRect(camera.box().getPosition());
+    }
+
+    void GLContext::sl_addTri()
+    {
+
     }
 
     void GLContext::paintGL()
@@ -193,205 +206,44 @@ namespace talga
 
     void GLContext::mousePressEvent(QMouseEvent *e)
     {
-      if (e->button() == Qt::LeftButton)
-      {
-        mIsMouseDown = true;
-        mPreviousMousePos = vec3(e->x(), e->y(), 1.0f);
-        mStartNewHistoryItem = true;
-
-        if (!mShift && !(mCurrentSelection.first == "NULL") && mCurrentMap->getWorkingLayer())
-        {
-          mStartPos = e->pos();
-          vec3 pos = camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
-
-          if (pos(0) >= 0 && pos(0) < mCurrentMap->getTileWidth() * mCurrentMap->getWidth()
-              && pos(1) >= 0 && pos(1) < mCurrentMap->getTileHeight() * mCurrentMap->getHeight())
-          {
-            std::vector<iPnt> tiles;
-
-            //mCurrentMap->insertTile(mCurrentSelection.second, Rect{pos(0) / mCurrentMap->getTileWidth(), pos(1) / mCurrentMap->getTileHeight()}, mManager.GetTexture(mCurrentSelection.first));
-            emit sig_updateHistoryMacro(mStartNewHistoryItem);
-            emit sig_addUndoCommand(new CInsertTiles(mCurrentMap, mCurrentMap->getTiles(mCurrentSelection.second, GData::getInstance()->getManager()->GetTexture(mCurrentSelection.first)),
-                 iPnt(pos(0) / mCurrentMap->getTileWidth(), pos(1) / mCurrentMap->getTileHeight()), mCurrentSelection.second));
-
-            mStartNewHistoryItem = false;
-          }
-        }
-
-      }
+      if (mState.getCurrentState())
+        static_cast<EditState*>(mState.getCurrentState())->mousePressEvent(e);
     }
 
     void GLContext::mouseMoveEvent(QMouseEvent *e)
     {
-      if (mIsMouseDown && !mShift && mCurrentMap && mCurrentMap->getWorkingLayer())
-      {
-        mStartPos = e->pos();
-        vec3 pos = camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
-
-        if (pos(0) >= 0 && pos(0) < mCurrentMap->getTileWidth() * mCurrentMap->getWidth()
-            && pos(1) >= 0 && pos(1) < mCurrentMap->getTileHeight() * mCurrentMap->getHeight())
-        {
-          if ( !(mCurrentSelection.first == "NULL") )
-          {
-            if (mStartNewHistoryItem)
-            {
-              emit sig_updateHistoryMacro(mStartNewHistoryItem);
-              mStartNewHistoryItem = false;
-            }
-
-            emit sig_addUndoCommand(new CInsertTiles(mCurrentMap, mCurrentMap->getTiles(mCurrentSelection.second, GData::getInstance()->getManager()->GetTexture(mCurrentSelection.first)),
-                                                    iPnt(pos(0) / mCurrentMap->getTileWidth(), pos(1) / mCurrentMap->getTileHeight()), mCurrentSelection.second));
-
-          }
-
-          update();
-        }
-      }
-      else if (mIsMouseDown && mShift)
-      {
-        vec3 currentMousePos = vec3(e->x(), e->y(), 1.0f);
-        vec3 dmouse = camera.screenToWorld(currentMousePos) - camera.screenToWorld(mPreviousMousePos);
-        camera.box().setPosition(camera.box().getPosition() - dmouse);
-        camera.update(0);
-        mPreviousMousePos = currentMousePos;
-
-        update();
-      }
-
-      // show transparent selection under mouse
-      if ( !(mCurrentSelection.first == "NULL"))
-      {
-        I32 tW = mCurrentMap->getTileWidth();
-        I32 tH = mCurrentMap->getTileHeight();
-
-        if (mSelectionRender.size() > 0)
-        {
-          I32 greatestX = 0;
-          I32 greatestY = 0;
-          I32 smallestX = 100000;
-          I32 smallestY = 100000;
-          I32 greatestXIndex = 0;
-          I32 greatestYIndex = 0;
-          I32 smallestXIndex = 0;
-          I32 smallestYIndex = 0;
-          I32 count = 0;
-
-          for (const auto& pnt : mCurrentSelection.second)
-          {
-            if (pnt.x() > greatestX)
-            {
-              greatestX = pnt.x();
-              greatestXIndex = count;
-            }
-
-            if (pnt.y() > greatestY)
-            {
-              greatestY = pnt.y();
-              greatestYIndex = count;
-            }
-
-            if (pnt.x() < smallestX)
-            {
-              smallestX = pnt.x();
-              smallestXIndex = pnt.x();
-            }
-
-            if (pnt.y() < smallestY)
-            {
-              smallestY = pnt.y();
-              smallestYIndex = pnt.y();
-            }
-
-            ++count;
-          }
-
-          for (const auto& pnt : mCurrentSelection.second)
-          {
-            vec3 setTo(e->x(), e->y(), 1.0f);
-            setTo = camera.screenToWorld(setTo);
-            setTo[0] -= (I32)setTo(0) % tW - (0.5f * tW);
-            setTo[1] -= (I32)setTo(1) % tH - (0.5f * tH);
-            setTo[0] += (pnt.x() - smallestX) * tW;
-            setTo[1] += (pnt.y() - smallestY) * tH;
-
-            setTo[0] = (I32)setTo(0);
-            setTo[1] = (I32)setTo(1);
-
-            mSelectionRender[ (pnt.y() - smallestY) * (greatestX - smallestX + 1) + (pnt.x() - smallestX)].box().setPosition(setTo);
-            mSelectionRender[ (pnt.y() - smallestY) * (greatestX - smallestX + 1) + (pnt.x() - smallestX)].box().updateVertsPosition();
-          }
-
-          update();
-        }
-      }
-
+      if (mState.getCurrentState())
+        static_cast<EditState*>(mState.getCurrentState())->mouseMoveEvent(e);
     }
 
     void GLContext::mouseReleaseEvent(QMouseEvent *e)
     {
-      if (e->button() == Qt::LeftButton)
-      {
-        mIsMouseDown = false;
-      }
-      if (e->button() == Qt::LeftButton && mCurrentMap && mCurrentMap->getWorkingLayer())
-      {
-        emit sig_updateHistoryMacro(false);
-        mStartNewHistoryItem = true;
-      }
-
+      if (mState.getCurrentState())
+        static_cast<EditState*>(mState.getCurrentState())->mouseReleaseEvent(e);
     }
 
     void GLContext::wheelEvent(QWheelEvent *e)
     {
-      F32 amount = e->delta() / 400.0f;
-
-      camera.box().setScaleX(camera.box().getScaleX() - amount);
-      camera.box().setScaleY(camera.box().getScaleY() - amount);
-
-      if (camera.box().getScaleX() <= 0.1f || camera.box().getScaleY() <= 0.1f)
-      {
-        camera.box().setScaleX(0.1f);
-        camera.box().setScaleY(0.1f);
-      }
-      camera.update(0);
-
-
-      update();
+      if (mState.getCurrentState())
+        static_cast<EditState*>(mState.getCurrentState())->wheelEvent(e);
     }
 
     void GLContext::keyPressEvent(QKeyEvent *e)
     {
-      if (e->key() == Qt::Key_Shift)
-      {
-        mShift = true;
-        QApplication::setOverrideCursor(Qt::PointingHandCursor);
-      }
-
-      if ((e->key() == Qt::Key_Z)  && (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)))
-      {
-        emit sig_ctrlz();
-      }
-
-      if ((e->key() == Qt::Key_Y)  && (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)))
-      {
-        emit sig_ctrly();
-      }
+      if (mState.getCurrentState())
+        static_cast<EditState*>(mState.getCurrentState())->keyPressEvent(e);
     }
 
     void GLContext::keyReleaseEvent(QKeyEvent *e)
     {
-      if (e->key() == Qt::Key_Shift)
-      {
-        mShift = false;
-        QApplication::restoreOverrideCursor();
-      }
+      if (mState.getCurrentState())
+        static_cast<EditState*>(mState.getCurrentState())->keyReleaseEvent(e);
 
     }
 
     GLContext::~GLContext()
     {
       mSelectionLayer.clear();
-      mSelectionRender.clear();
     }
 
   }

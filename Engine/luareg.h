@@ -52,6 +52,23 @@ OOLUA_PROXY_END
 //PhysComp
 OOLUA_PROXY(PhysicsComponent)
 OOLUA_TAGS(OOLUA::Abstract)
+OOLUA_MFUNC(setFriction)
+OOLUA_MFUNC(setMoment)
+OOLUA_MFUNC(setMass)
+OOLUA_MFUNC(applyForceX)
+OOLUA_MFUNC(applyForceY)
+OOLUA_MFUNC(applyImpulseX)
+OOLUA_MFUNC(applyImpulseY)
+OOLUA_MFUNC(setX)
+OOLUA_MFUNC(setY)
+OOLUA_MFUNC_CONST(getFriction)
+OOLUA_MFUNC_CONST(getMoment)
+OOLUA_MFUNC_CONST(getMass)
+OOLUA_MFUNC_CONST(getX)
+OOLUA_MFUNC_CONST(getY)
+OOLUA_MFUNC_CONST(getVx)
+OOLUA_MFUNC_CONST(getVy)
+OOLUA_MFUNC_CONST(getOrientation)
 OOLUA_PROXY_END
 
 //RectCollider
@@ -110,6 +127,7 @@ OOLUA_TAGS(OOLUA::No_default_constructor)
 	OOLUA_MEM_FUNC(void, addCollisionCallback, int, Lua_func_ref)
 	OOLUA_MEM_FUNC(void, setCollisionType, int)
 	OOLUA_MFUNC(setCollider)
+	OOLUA_MFUNC(getCollider)
 	OOLUA_MFUNC(setRenderable)
 	OOLUA_MFUNC(playAnimation)
 OOLUA_PROXY_END

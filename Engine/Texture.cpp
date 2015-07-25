@@ -31,7 +31,6 @@ namespace talga
 		{
 			TALGA_WARN(0, "couldn't open texture " + path);
 			stbi_image_free((void*)data);
-			fclose(imgFile);
 			return false;
 			
 		}

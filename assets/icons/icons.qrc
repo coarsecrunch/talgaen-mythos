@@ -5,6 +5,11 @@
         <file>plus_button.png</file>
         <file>layer_down _button.png</file>
         <file>layer_up_button.png</file>
+        <file>saveicon.png</file>
+        <file>collisionicon.png</file>
+        <file>tileediticon.png</file>
+        <file>newrecticon.png</file>
+        <file>newtriangleicon.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

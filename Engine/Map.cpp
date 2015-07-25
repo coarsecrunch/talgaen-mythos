@@ -14,6 +14,8 @@
 
 namespace talga
 {
+	const I32 MAP_MAX_COLLIDERS = 1000;
+
 	Map::Map()
 		: AAsset()
 		, mWidth{ -1 }
@@ -23,9 +25,12 @@ namespace talga
 		, mTileHeight{ -1 }
 		, mLayers{}
 		, mTileSheets{}
-    , mIsSaved{false}
+		, mIsSaved{false}
+    , mStaticSceneGeom()
+		, mRenderSceneGeom(false)
 	{
-    mLayers.reserve(MAX_LAYERS);
+		mLayers.reserve(MAX_LAYERS);
+    mStaticSceneGeom.reserve(MAP_MAX_COLLIDERS);
 	}
 
 	Map::Map(const Map& cpy)
@@ -37,7 +42,9 @@ namespace talga
 		, mTileHeight(cpy.mTileHeight)
 		, mTileWidth(cpy.mTileWidth)
 		, mTileSheets(cpy.mTileSheets)
-    , mIsSaved{cpy.mIsSaved}
+		, mIsSaved{cpy.mIsSaved}
+    , mStaticSceneGeom(cpy.mStaticSceneGeom)
+    , mRenderSceneGeom(cpy.mRenderSceneGeom)
 	{
 	}
 
@@ -76,8 +83,11 @@ namespace talga
 		mTileHeight = cpy.mTileHeight;
 		mTileWidth = cpy.mTileHeight;
 		mLayers = cpy.mLayers;
-    mTileSheets = cpy.mTileSheets;
-    mIsSaved = cpy.mIsSaved;
+		mTileSheets = cpy.mTileSheets;
+		mIsSaved = cpy.mIsSaved;
+		mStaticSceneGeom = cpy.mStaticSceneGeom;
+		mRenderSceneGeom = cpy.mRenderSceneGeom;
+
 		return *this;
 	}
 
@@ -119,6 +129,11 @@ namespace talga
 			}
 		}
 
+		if (mRenderSceneGeom)
+    {
+      for (auto it = mStaticSceneGeom.cbegin(); it != mStaticSceneGeom.cend(); ++it)
+        (*it)->render(renderer, camera);
+    }
 
 	}
 

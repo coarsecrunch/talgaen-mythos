@@ -1,4 +1,4 @@
-function doStuff(x, y)
+function makeBlock(x, y)
     sprite = Sprite.new(GAME:manager():GetTexture("testblock.png"))
     phys = RectCollider.new(64,64,x,y)
 

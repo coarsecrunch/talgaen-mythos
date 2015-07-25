@@ -7,11 +7,12 @@ namespace talga
 		: mBase(width, height, vec3(x,y))
 		, mColor(color)
 	{
+		mBase.updateVertsPosition();
 	}
 
 	void RenderableRectangle::render(Renderer* renderer, const Camera* camera) const
 	{
-		renderer->submit(mBase, mColor, 0.5f);
+		renderer->submit(mBase, mColor, 0.7f);
 	}
 
 	RenderableRectangle::~RenderableRectangle()
@@ -22,11 +23,12 @@ namespace talga
 		: mBase(size, size, vec3(point.x(), point.y()))
 		, mColor(color)
 	{
+		mBase.updateVertsPosition();
 	}
 
 	void RenderablePoint::render(Renderer* renderer, const Camera* camera) const
 	{
-		renderer->submit(mBase, mColor, 0.5f);
+		renderer->submit(mBase, mColor, 1.0f);
 	}
 
 	RenderablePoint::~RenderablePoint()
@@ -37,11 +39,12 @@ namespace talga
 		: mBase(list, x, y)
 		, mColor(color)
 	{
+		mBase.updateVertsPosition();
 	}
 
 	void RenderableTriangle::render(Renderer* renderer, const Camera* camera) const
 	{
-		renderer->submit(mBase, mColor, 0.5f);
+		renderer->submit(mBase, mColor, 0.7f);
 	}
 
 	RenderableTriangle::~RenderableTriangle()

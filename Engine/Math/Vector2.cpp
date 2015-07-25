@@ -9,7 +9,11 @@ namespace talga
 		arr[1] = y;
 	}
 
-
+	Vector2::Vector2(const Vector3& cpy)
+	{
+		arr[0] = cpy[0];
+		arr[1] = cpy[1];
+	}
 
 	Vector2::~Vector2() {
 		// TODO Auto-generated destructor stub

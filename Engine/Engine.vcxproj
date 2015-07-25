@@ -50,6 +50,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Rendering.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="StateMachine.cpp" />
     <ClCompile Include="sys.cpp" />
     <ClCompile Include="talgamain.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -77,6 +78,8 @@
     <ClInclude Include="luareg.h" />
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="renderableshapes.h" />
+    <ClInclude Include="IState.h" />
+    <ClInclude Include="StateMachine.h" />
     <ClInclude Include="sys.h" />
     <ClInclude Include="tassert.h" />
     <ClInclude Include="AssetManager.h" />
@@ -113,6 +116,7 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\assets\scripts\globals.lua" />
     <None Include="..\assets\scripts\script.lua" />
     <None Include="..\assets\scripts\talga.lua" />
     <None Include="..\assets\shaders\renderer2d.frag" />

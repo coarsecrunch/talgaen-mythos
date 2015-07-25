@@ -38,3 +38,4 @@
 
 #define TALGA_LOGS_ENABLED
 
+#define TALGA_DUMPSTR(str) DumpString(str, #str)

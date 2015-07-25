@@ -15,9 +15,9 @@ struct GLFWwindow;
 struct cpBody;
 struct cpSpace;
 
-#define TALGA_KEYPRESS 1
-#define TALGA_KEYRELEASE 2
-#define TALGA_KEYCONTINUE 3
+const int TALGA_KEYPRESS = 1;
+const int TALGA_KEYRELEASE = 2;
+const int TALGA_KEYCONTINUE = 3;
 
 namespace talga
 {

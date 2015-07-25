@@ -21,7 +21,7 @@ namespace talga
 
 		Rectangle& box() { return mImageBox; }
 
-		cpTex getTexure() const { return mTex; }
+		cpTex getTexure() const { return mTex; }   
 	protected:
 		Rectangle mImageBox;
 		cpTex mTex;

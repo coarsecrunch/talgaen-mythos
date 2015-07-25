@@ -3,6 +3,7 @@
 #include <QGraphicsPixmapItem>
 #include <QListWidgetItem>
 #include <QUndoStack>
+#include <QActionGroup>
 #include "newmapdialog.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -20,8 +21,8 @@ namespace talga
       ui(new Ui::MainWindow),
       pmImageViewScene(new QGraphicsScene),
       mTextures(),
-      mTileWidth(32),
-      mTileHeight(32)
+      editModes(nullptr),
+      collisionEditModeActions(nullptr)
     {
       ui->setupUi(this);
 
@@ -34,6 +35,21 @@ namespace talga
       connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->layerStack, SLOT(sl_updateChangedMap(EditorMap*)));
       connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->assetList, SLOT(sl_updateChangedMap(EditorMap*)));
       connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->imageView, SLOT(sl_updateChangedMap(EditorMap*)));
+      connect(this, SIGNAL(sig_setModeCollisionEdit()), ui->openGLWidget, SLOT(sl_setModeCollisionEdit()));
+      connect(this, SIGNAL(sig_setModeTileEdit()), ui->openGLWidget, SLOT(sl_setModeTileEdit()));
+      connect(this, SIGNAL(sig_addRect()), ui->openGLWidget, SLOT(sl_addRect()));
+      connect(this, SIGNAL(sig_addTri()), ui->openGLWidget, SLOT(sl_addTri()));
+
+      collisionEditModeActions = new QActionGroup(ui->mainToolBar);
+      collisionEditModeActions->addAction(ui->actionCreate_New_Rectangle_Geometry);
+      collisionEditModeActions->addAction(ui->actionCreate_New_Triangle_Geometry);
+      collisionEditModeActions->setVisible(false);
+
+      editModes = new QActionGroup(ui->mainToolBar);
+      editModes->addAction(ui->actionCollisionEditingMode);
+      editModes->addAction(ui->actionTile_Edit_Mode);
+      on_actionTile_Edit_Mode_triggered(true);
+
     }
 
     MainWindow::~MainWindow()
@@ -158,4 +174,38 @@ void talga::editor::MainWindow::on_actionNew_triggered()
 
   if(dialog.result() == QDialog::Accepted)
     GData::getInstance()->setCurrentMap(dialog.getData());
+}
+
+void talga::editor::MainWindow::on_actionCollisionEditingMode_triggered(bool checked)
+{
+  if (checked)
+  {
+    ui->actionCollisionEditingMode->setChecked(true);
+    collisionEditModeActions->setVisible(true);
+    emit sig_setModeCollisionEdit();
+  }
+}
+
+void talga::editor::MainWindow::on_actionTile_Edit_Mode_triggered()
+{
+  collisionEditModeActions->setVisible(ui->actionCollisionEditingMode->isChecked());
+}
+
+void talga::editor::MainWindow::on_actionTile_Edit_Mode_triggered(bool checked)
+{
+    if (checked)
+    {
+      ui->actionTile_Edit_Mode->setChecked(true);
+      emit sig_setModeTileEdit();
+    }
+}
+
+void talga::editor::MainWindow::on_actionCreate_New_Rectangle_Geometry_triggered()
+{
+  emit sig_addRect();
+}
+
+void talga::editor::MainWindow::on_actionCreate_New_Triangle_Geometry_triggered()
+{
+  emit sig_addTri();
 }

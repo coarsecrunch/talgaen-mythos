@@ -54,14 +54,14 @@ namespace talga
 		mObjectsLayer = Layer{ mRenderer, (F32)width, (F32)height };
 		mUILayer = Layer{ mRenderer, (F32)width, (F32)height };
 		
-		cpVect gravity = cpv(0, -300);
+		cpVect gravity = cpv(0, -600);
 
 		mSpace = cpSpaceNew();
 		cpSpaceSetGravity(mSpace, gravity);
 		cpSpaceSetIterations(mSpace, 20);
 
 		cpShape* ground = cpSegmentShapeNew(mSpace->staticBody, cpv(0, -5 * 32), cpv(20 * 32, -5 * 32), 0);
-		cpShapeSetFriction(ground, 0.97f);
+		cpShapeSetFriction(ground, 0.99f);
 		cpShapeSetCollisionType(ground, COLL_MAPGEOM);
 		cpSpaceAddShape(mSpace, ground);
 
@@ -74,6 +74,10 @@ namespace talga
 
 		mPrompt->box().updateVertsPosition();
 		mUILayer.add(mPrompt);
+
+		LuaEngine::instance()->addGlobal("TALGA_KEYPRESS", TALGA_KEYPRESS);
+		LuaEngine::instance()->addGlobal("TALGA_KEYRELEASE", TALGA_KEYRELEASE);
+		LuaEngine::instance()->addGlobal("TALGA_KEYCONTINUE", TALGA_KEYCONTINUE);
 
 		return 0;
 	}
@@ -170,12 +174,13 @@ namespace talga
 	// currently relies on the fact that glfw defines keys as their ascii value, probably should define my own constants
 	void Game::game_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		if (action == GLFW_PRESS || action == GLFW_REPEAT || action == GLFW_RELEASE)
 		{
 			if (key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) return;
 
 			if (mPromptIsSelected)
 			{
+				if (action == GLFW_RELEASE) return;
 				if (key == GLFW_KEY_BACKSPACE)
 				{
 					mPrompt->popCmd();
@@ -190,12 +195,14 @@ namespace talga
 
 				if (mods & GLFW_MOD_SHIFT)
 				{
+					
 					switch (key)
 					{
 					case GLFW_KEY_9: mPrompt->pushCToCmd('('); break;
 					case GLFW_KEY_0: mPrompt->pushCToCmd(')'); break;
 					case GLFW_KEY_APOSTROPHE: mPrompt->pushCToCmd('\"'); break;
 					case GLFW_KEY_SEMICOLON: mPrompt->pushCToCmd(':'); break;
+					case GLFW_KEY_8: mPrompt->pushCToCmd('*'); break;
 					default: mPrompt->pushCToCmd(toupper(key)); break;
 					}
 				}

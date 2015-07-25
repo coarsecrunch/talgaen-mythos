@@ -43,11 +43,11 @@ namespace talga
 	}
 	F32 PhysicsComponent::getVx() const
 	{
-		return cpBodyGetForce(mBody).x;
+		return cpBodyGetVelocity(mBody).x;
 	}
 	F32 PhysicsComponent::getVy() const
 	{
-		return cpBodyGetForce(mBody).y;
+		return cpBodyGetVelocity(mBody).y;
 	}
 	F32 PhysicsComponent::getX() const
 	{

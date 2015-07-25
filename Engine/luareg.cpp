@@ -9,14 +9,16 @@ OOLUA_EXPORT_FUNCTIONS_CONST(Texture)
 //IRenderable
 OOLUA_EXPORT_FUNCTIONS(IRenderable)
 OOLUA_EXPORT_FUNCTIONS_CONST(IRenderable)
-
-//IRenderable
+//AnimSet
 OOLUA_EXPORT_FUNCTIONS(AnimationSet)
 OOLUA_EXPORT_FUNCTIONS_CONST(AnimationSet)
 
 //PhysComp
-OOLUA_EXPORT_FUNCTIONS(PhysicsComponent)
-OOLUA_EXPORT_FUNCTIONS_CONST(PhysicsComponent)
+OOLUA_EXPORT_FUNCTIONS(PhysicsComponent, setFriction, setMoment, setMass, applyForceX, applyForceY,
+applyImpulseX, applyImpulseY, setX, setY)
+OOLUA_EXPORT_FUNCTIONS_CONST(PhysicsComponent, getFriction, getMoment, getMass, getX, getY,
+getVx, getVy, getOrientation)
+
 
 //RectCollider
 OOLUA_EXPORT_FUNCTIONS(RectCollider)
@@ -36,7 +38,7 @@ OOLUA_EXPORT_FUNCTIONS_CONST(AnimSprite)
 
 //GameObject
 OOLUA_EXPORT_FUNCTIONS(GameObject, addKeyCallback, addCollisionCallback,
-setCollisionType, setCollider, setRenderable, playAnimation)
+setCollisionType, setCollider, setRenderable, playAnimation, getCollider)
 OOLUA_EXPORT_FUNCTIONS_CONST(GameObject)
 
 //Rectangle

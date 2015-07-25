@@ -2,6 +2,7 @@
 #include "Rect.h"
 #include "Math/Operations.h"
 #include "Texture.h"
+#include "renderableshapes.h"
 
 namespace talga
 {
@@ -39,6 +40,12 @@ namespace talga
     {
       Map::operator =(cpy);
       return *this;
+    }
+
+    void EditorMap::addSceneGeom(IRenderable *shape)
+    {
+      TALGA_ASSERT(dynamic_cast<RdrRect*>(shape) || dynamic_cast<RdrTri*>(shape), "tried to push a non triangle/point into scene geom");
+      mStaticSceneGeom.push_back(shape);
     }
 
     I32 EditorMap::getOffset(cpTex tex) const

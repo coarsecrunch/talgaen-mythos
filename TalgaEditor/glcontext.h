@@ -13,6 +13,7 @@
 #include "editormap.h"
 #include "Rect.h"
 #include "Point.h"
+#include "StateMachine.h"
 
 class QDragEnterEvent;
 class QUndoCommand;
@@ -57,8 +58,14 @@ namespace talga
       void sl_updateSelection(Selection);
       void sl_updateGL();
       void sl_updateChangedMap(EditorMap* newMap);
-
+      void sl_setModeCollisionEdit();
+      void sl_setModeTileEdit();
+      void sl_addRect();
+      void sl_addTri();
     protected:
+      friend class EditState;
+      friend class SGeomEdit;
+      friend class STileEdit;
       Camera camera;
       Layer mSpriteLayer;
       Layer mTileLayer;
@@ -66,16 +73,9 @@ namespace talga
       std::shared_ptr<Renderer> mRenderer2D;
       EditorMap* mCurrentMap;
 
-      //tracking
-      Selection mCurrentSelection;
-      QPoint mStartPos;
-      vec3 mPreviousMousePos;
-      bool mIsMouseDown;
-      bool mShift;
-      bool mStartNewHistoryItem;
-      std::vector<Sprite> mSelectionRender;
 
-      I32 mCurrentMapLayerIndex;
+      StateMachine mState;
+      //tracking
     };
 
   }

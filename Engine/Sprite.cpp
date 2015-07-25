@@ -18,8 +18,16 @@ namespace talga
 		TALGA_WARN(tex, "invalid texture passed to Sprite")
 
 		//deduce width and height from uv quords
-		mImageBox.setW(abs(quords[1].x() - quords[0].x()) * tex->w());
-		mImageBox.setH(abs(quords[3].y() - quords[0].y()) * tex->h());
+    if (tex)
+    {
+      mImageBox.setW(abs(quords[1].x() - quords[0].x()) * tex->w());
+      mImageBox.setH(abs(quords[3].y() - quords[0].y()) * tex->h());
+    }
+    else
+    {
+      mImageBox.setW(64);
+      mImageBox.setH(64);
+    }
 
 		mImageBox.updateVerts();
 	}

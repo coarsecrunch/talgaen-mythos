@@ -21,7 +21,7 @@ namespace talga
 	const I32 MAX_TEXTURES = 1000;
 	const I32 MAX_MAPS = 50;
 	cpTex AssetManager::NO_TEXTURE = nullptr;
-
+	const std::string NO_TEXTURE_PATH = "../assets/textures/notex.png";
 	AssetManager::AssetManager()
 		: mTextures{}
 		, mMaps{}
@@ -31,8 +31,8 @@ namespace talga
 		mTextures.reserve(MAX_TEXTURES);
 		mMaps.reserve(MAX_MAPS);
 
-		//AddTexture("../assets/notex.png");
-		//NO_TEXTURE = GetTexture("notex.png");
+#ifndef TALGA_QT_BUILD
+#endif
 	}
 
 	cpTex AssetManager::AddTexture(std::string path)

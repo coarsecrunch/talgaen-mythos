@@ -1,21 +1,29 @@
 #pragma once
 
-#include "../Cmn.h"
 #include "Vector2.h"
-
+#include "../Point.h"
 namespace talga
 {
-  template<typename T>
-  T abs(T num)
-  {
-    if (num >= 0)
-    {
-      return num;
-    }
+	class Rectangle;
+	class Triangle;
 
-    return -num;
-  }
+	bool pointInRect(const Rectangle& rect, vec2 pnt);
+	bool pointIsInTri(const Triangle& tri, vec2 pnt);
+  
+	
+	template<typename T>
+	T abs(T num)
+	{
+		if (num >= 0)
+		{
+			return num;
+		}
 
-	vec2 GET_UV(F32 x, F32 xMax, F32 y, F32 yMax);
+		return -num;
+	}
+
+  vec2 GET_UV(float x, float xMax, float y, float yMax);
+
+  
 }
 
