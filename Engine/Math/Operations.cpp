@@ -2,7 +2,7 @@
 #include "../Rectangle.h"
 #include "../Triangle.h"
 #include "../IRenderable.h"
-
+#include "../renderableshapes.h"
 namespace talga
 {
 	vec2 GET_UV(F32 x, F32 xMax, F32 y, F32 yMax)
@@ -44,6 +44,22 @@ namespace talga
 
 		return true;
 	}
+
+  bool pointInRenderableRectParentTri(const IRenderable* rect, vec3 pnt)
+  {
+    vec3 globalPos = ((RdrTri*) ((IRenderable*)rect)->getParent())->getBase().getTransformationMatrix() * rect->box().getPosition();
+
+    if (pnt.x() < globalPos.x() - rect->box().getW() * 0.5f)
+      return false;
+    if (pnt.x() > globalPos.x() + rect->box().getW() * 0.5f)
+      return false;
+    if (pnt.y() < globalPos.y() - rect->box().getH() * 0.5f)
+      return false;
+    if (pnt.y() > globalPos.y() + rect->box().getH() * 0.5f)
+      return false;
+
+    return true;
+  }
 
 	bool pointIsInTri(const Triangle& tri, vec2 pnt)
 	{

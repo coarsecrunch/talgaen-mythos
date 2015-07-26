@@ -181,7 +181,8 @@ namespace talga
 
     void GLContext::sl_addTri()
     {
-
+      if (dynamic_cast<SGeomEdit*>(mState.getCurrentState()))
+        static_cast<SGeomEdit*>(mState.getCurrentState())->addTri(camera.box().getPosition());
     }
 
     void GLContext::paintGL()

@@ -12,7 +12,7 @@ namespace talga
 	bool pointInRect(const Rectangle& rect, vec2 pnt);
 	bool pointInRenderableRect(const IRenderable* rect, vec3 pnt);
 	bool pointIsInTri(const Triangle& tri, vec2 pnt);
-  
+  bool pointInRenderableRectParentTri(const IRenderable* rect, vec3 pnt);
 	
 	template<typename T>
 	T abs(T num)

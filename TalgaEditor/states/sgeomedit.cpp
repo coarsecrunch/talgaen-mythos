@@ -23,6 +23,7 @@ SGeomEdit::SGeomEdit(GLContext* context)
 void SGeomEdit::begin()
 {
   mContext->mCurrentMap->setRenderSceneGeom(true);
+  mContext->update();
 }
 
 void SGeomEdit::update(I32 dt)
@@ -33,6 +34,7 @@ void SGeomEdit::update(I32 dt)
 void SGeomEdit::exit()
 {
   mContext->mCurrentMap->setRenderSceneGeom(false);
+  mContext->update();
 }
 
 void SGeomEdit::mousePressEvent(QMouseEvent *e)
@@ -100,6 +102,14 @@ void SGeomEdit::mouseMoveEvent(QMouseEvent *e)
         rect->box().updateVertsPosition();
 
         mContext->update();
+    }
+    else if (dynamic_cast<RdrTri*>(mSelectedGeom) && !isVertex)
+    {
+      RdrTri* tri = static_cast<RdrTri*>(mSelectedGeom);
+      tri->getBase().setPosition(tri->getBase().getPosition() + dmouse);
+      tri->getBase().updateVertsPosition();
+
+      mContext->update();
     }
     else if (isVertex)
     {
@@ -176,7 +186,47 @@ void SGeomEdit::mouseMoveEvent(QMouseEvent *e)
         updateParent(parent, childrenNC);
       }
 
+      if (dynamic_cast<RdrTri*>((IRenderable*)mSelectedGeom->getParent()))
+      {
+        RdrRect* vertex = static_cast<RdrRect*>(mSelectedGeom);
+        RdrTri* parent = const_cast<RdrTri*>( static_cast<const RdrTri*>(mSelectedGeom->getParent()));
+        std::vector<IRenderable*> childrenNC;
+        vec3 newpos = vertex->getGlobalPosition() + dmouse;
 
+        for (auto i : parent->getChildren())
+          childrenNC.push_back(const_cast<IRenderable*>(i));
+
+        if (vertex == childrenNC[0])
+        {
+          if (newpos.y() > childrenNC[1]->getGlobalPosition().y() - MIN_VERT_DISTANCE || newpos.y() > childrenNC[2]->getGlobalPosition().y() - MIN_VERT_DISTANCE )
+            return;
+
+          vertex->box().setPosition(vertex->box().getPosition() + dmouse);
+          vertex->box().updateVertsPosition();
+          parent->getBase().getRealVerts()[0] = vertex->box().getPosition() + dmouse;
+          parent->getBase().updateVertsPosition();
+        }
+        else if (vertex == childrenNC[1])
+        {
+          if (newpos.y() < childrenNC[0]->getGlobalPosition().y() + MIN_VERT_DISTANCE || newpos.x() < childrenNC[2]->getGlobalPosition().x() + MIN_VERT_DISTANCE )
+            return;
+
+          vertex->box().setPosition(vertex->box().getPosition() + dmouse);
+          vertex->box().updateVertsPosition();
+          parent->getBase().getRealVerts()[1] = vertex->box().getPosition() + dmouse;
+          parent->getBase().updateVertsPosition();
+        }
+        else if (vertex == childrenNC[2])
+        {
+          if (newpos.y() < childrenNC[0]->getGlobalPosition().y() + MIN_VERT_DISTANCE || newpos.x() > childrenNC[1]->getGlobalPosition().x() - MIN_VERT_DISTANCE )
+            return;
+
+          vertex->box().setPosition(vertex->box().getPosition() + dmouse);
+          vertex->box().updateVertsPosition();
+          parent->getBase().getRealVerts()[2] = vertex->box().getPosition() + dmouse;
+          parent->getBase().updateVertsPosition();
+        }
+      }
 
       mContext->update();
     }
@@ -216,6 +266,24 @@ void SGeomEdit::addRect(const vec3 &pos)
   mContext->update();
 }
 
+void SGeomEdit::addTri(const vec3& pos)
+{
+  RdrTri* tri = new RdrTri( {vec2{-0.5f * mContext->mCurrentMap->getTileWidth(), -0.5f * mContext->mCurrentMap->getTileWidth()},
+                             vec2{0.5f * mContext->mCurrentMap->getTileWidth(), 0.5f * mContext->mCurrentMap->getTileWidth()},
+                             vec2{-0.5f * mContext->mCurrentMap->getTileWidth(),0.5f * mContext->mCurrentMap->getTileWidth()}},
+                            pos.x(), pos.y(), vec4(0.0f, 1.0f, 0.0f, 1.0f) );
+
+  RdrRect* T = new RdrRect(VERT_SIZE, VERT_SIZE, -0.5f * mContext->mCurrentMap->getTileWidth(), -0.5f * mContext->mCurrentMap->getTileWidth(), vec4(1.0f, 0.0f, 1.0f, 1.0f));
+  RdrRect* BR = new RdrRect(VERT_SIZE, VERT_SIZE,0.5f * mContext->mCurrentMap->getTileWidth(), 0.5f * mContext->mCurrentMap->getTileWidth(), vec4(1.0f, 0.0f, 1.0f, 1.0f));
+  RdrRect* BL = new RdrRect(VERT_SIZE, VERT_SIZE, -0.5f * mContext->mCurrentMap->getTileWidth(),0.5f * mContext->mCurrentMap->getTileWidth(), vec4(1.0f, 0.0f, 1.0f, 1.0f));
+
+  tri->addChild(T);
+  tri->addChild(BR);
+  tri->addChild(BL);
+
+  mContext->mCurrentMap->addSceneGeom(tri);
+  mContext->update();
+}
 
 }
 }

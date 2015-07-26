@@ -72,6 +72,12 @@ namespace talga
         {
           RdrTri* tri = static_cast<RdrTri*>(*it);
 
+          for (int i = 0; i < 3; ++i)
+          {
+            if (pointInRenderableRectParentTri(tri->getChildren()[i], pnt))
+              return const_cast<IRenderable*>(tri->getChildren()[i]);
+          }
+
           if (pointIsInTri(tri->getBase(), pnt))
           {
             return tri;

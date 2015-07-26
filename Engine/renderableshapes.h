@@ -43,8 +43,8 @@ namespace talga
 	public:
 		RenderableTriangle(TriVertList list, F32 x = 0.0f, F32 y = 0.0f, vec4 color = vec4());
 		virtual ~RenderableTriangle();
-		void setX(F32 value) { mBase.setX(value); mBase.updateVertsPosition(); }
-		void setY(F32 value) { mBase.setY(value); mBase.updateVertsPosition(); }
+		void setX(F32 value) { mBase.setX(value); mBase.updateVerts(); }
+		void setY(F32 value) { mBase.setY(value); mBase.updateVerts(); }
 
 		const Triangle& getBase() const { return mBase; }
 		virtual void render(Renderer* renderer, const Camera* camera) const override;

@@ -129,7 +129,7 @@ namespace talga
 			}
 		}
 
-		if (mRenderSceneGeom)
+	if (mRenderSceneGeom)
     {
       for (auto it = mStaticSceneGeom.cbegin(); it != mStaticSceneGeom.cend(); ++it)
         (*it)->render(renderer, camera);

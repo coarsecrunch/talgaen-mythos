@@ -19,10 +19,13 @@ namespace talga
 		/*Only updates vertices position, completely avoids using matrix multiplication
 		so much faster*/
 
-		const TriVertList& getVerts() const { return mVerts; }
+		const TriVertList& getVerts() const { return outputVerts; }
+		TriVertList& getRealVerts() { return mVerts; }
+		TriVertList& getVerts() { return outputVerts; }
 		void updateVertsPosition();
 
 	private:
 		TriVertList mVerts;
+		TriVertList outputVerts;
 	};
 }
