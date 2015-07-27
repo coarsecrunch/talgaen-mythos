@@ -1,7 +1,10 @@
 #include "PhysicsComponent.h"
 #include "chipmunk/chipmunk_private.h"
+
 namespace talga
 {
+
+
 	RectCollider::RectCollider(F32 width, F32 height, F32 x, F32 y)
 		: mWidth(width)
 		, mHeight(height)

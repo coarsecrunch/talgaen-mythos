@@ -42,8 +42,6 @@ namespace talga
 		void setSolid(bool value) { mSolid = value; }
 		void resize(I32 size) { mIndices.clear();  mIndices.resize(size); }
 		void setName(std::string value) { mName = value; }
-
-
 	protected:
 		std::vector<I32> mIndices;
 		
@@ -92,6 +90,8 @@ namespace talga
 		
 		const std::vector<cpTex>& getTileSheets() const { return mTileSheets; }
 		bool hasBeenSaved() const { return mIsSaved; }
+
+		const std::vector<IRenderable*>& getSceneGeom() const { return mStaticSceneGeom; }
 
 		bool getRenderSceneGeom() const { return mRenderSceneGeom; }
 		void setRenderSceneGeom(bool value) { mRenderSceneGeom = value; }

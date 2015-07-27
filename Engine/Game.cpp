@@ -32,6 +32,8 @@ namespace talga
 		, mMouseX{0.0}
 		, mMouseY{0.0}
 		, mPromptIsSelected{false}
+		, mCurrentMap()
+		, mSceneGeom()
 	{
 		mGameObjects.reserve(MAX_GAMEOBJECTS);
 	}
@@ -43,6 +45,12 @@ namespace talga
 		mCamera.box().setW(width);
 		mCamera.box().setH(height);
 
+		cpVect gravity = cpv(0, -600);
+
+		mSpace = cpSpaceNew();
+		cpSpaceSetGravity(mSpace, gravity);
+		cpSpaceSetIterations(mSpace, 20);
+
 		mRenderer = std::shared_ptr<Renderer>(new Renderer{ "../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag" });
 		mManager.AddTexture("../assets/textures/testblock.png");
 		mManager.AddTexture("../assets/textures/talgasheet.png");
@@ -50,24 +58,15 @@ namespace talga
 		mManager.AddMap("../assets/maps/sandboxx.tmap");
 		mManager.addFont("../assets/fonts/EnvyR.ttf", 15);
 
+		loadmap("../assets/maps/sandboxx.tmap");
+
 		mMapLayer = Layer{ mRenderer, (F32)width, (F32)height };
 		mObjectsLayer = Layer{ mRenderer, (F32)width, (F32)height };
 		mUILayer = Layer{ mRenderer, (F32)width, (F32)height };
 		
-		cpVect gravity = cpv(0, -600);
-
-		mSpace = cpSpaceNew();
-		cpSpaceSetGravity(mSpace, gravity);
-		cpSpaceSetIterations(mSpace, 20);
-
-		cpShape* ground = cpSegmentShapeNew(mSpace->staticBody, cpv(0, -5 * 32), cpv(20 * 32, -5 * 32), 0);
-		cpShapeSetFriction(ground, 0.99f);
-		cpShapeSetCollisionType(ground, COLL_MAPGEOM);
-		cpSpaceAddShape(mSpace, ground);
-
 		mRenderer->setCamera(&mCamera);
 
-		mMapLayer.add(mManager.GetMap("sandboxx.tmap"));
+		mMapLayer.add(&mCurrentMap);
 		mPrompt = new LuaDebugPrompt( mManager.GetTexture("luaprompt.png"), mManager.getFont("EnvyR.ttf"));
 		mPrompt->box().setX(-width * 0.5f + mPrompt->box().getW() * 0.5f + 20);
 		mPrompt->box().setY(-height * 0.5f + mPrompt->box().getH() * 0.5f + 20);
@@ -78,6 +77,8 @@ namespace talga
 		LuaEngine::instance()->addGlobal("TALGA_KEYPRESS", TALGA_KEYPRESS);
 		LuaEngine::instance()->addGlobal("TALGA_KEYRELEASE", TALGA_KEYRELEASE);
 		LuaEngine::instance()->addGlobal("TALGA_KEYCONTINUE", TALGA_KEYCONTINUE);
+
+		
 
 		return 0;
 	}
@@ -139,6 +140,9 @@ namespace talga
 			if ((*it)->unstagedFunc)
 				(*it)->unstagedFunc(*it);
 
+			cpSpaceRemoveShape(mSpace, (*it)->mCollider->mShape);
+			cpSpaceRemoveBody(mSpace, (*it)->mCollider->mBody);
+
 			delete *it;
 		}
 
@@ -159,6 +163,7 @@ namespace talga
 					--it;
 			}
 		}
+
 	}
 
 	void Game::render()
@@ -169,6 +174,76 @@ namespace talga
 		mMapLayer.getRenderer()->tStackPop();
 
 		mUILayer.render();
+	}
+
+	void Game::clearMap()
+	{
+		for (auto it = mSceneGeom.begin(); it != mSceneGeom.end(); ++it)
+		{
+			cpSpaceRemoveShape(mSpace, it->second);
+			cpSpaceRemoveBody(mSpace, it->first);
+			
+			cpShapeFree(it->second);
+			cpBodyFree(it->first);
+		}
+		mSceneGeom.clear();
+		clearObjs();
+		
+	}
+
+	void Game::loadmap(const std::string& path)
+	{
+		clearMap();
+		mCurrentMap = Map();
+		mCurrentMap.load(path, mManager);
+		mCurrentMap.setRenderSceneGeom(true);
+		for (auto it = mCurrentMap.getSceneGeom().cbegin(); it != mCurrentMap.getSceneGeom().cend(); ++it)
+		{
+			if (dynamic_cast<const RdrRect*>(*it))
+			{
+				RdrRect* rect = (RdrRect*)*it;
+				rect->box().updateVerts();
+				cpBody* body = cpSpaceAddBody(mSpace, cpBodyNewStatic());;
+				cpBodySetPosition(body, cpv(rect->box().getX(), -rect->box().getY()));
+
+				cpShape* shape = cpBoxShapeNew(body, rect->box().getW(), rect->box().getH(), 0);
+				cpShapeSetFriction(shape, 0.99f);
+				cpShapeSetCollisionType(shape, COLL_MAPGEOM);
+				cpSpaceAddShape(mSpace, shape);
+				
+
+				mSceneGeom.push_back(std::pair<cpBody*, cpShape*>(body, shape));
+			}
+			else if (dynamic_cast<const RdrTri*>(*it))
+			{
+				RdrTri* tri = (RdrTri*)*it;
+				tri->getBase().updateVerts();
+				cpBody* body = cpSpaceAddBody(mSpace, cpBodyNewStatic());;
+				cpBodySetPosition(body, cpv(tri->getBase().getX(), -tri->getBase().getY()));
+	
+				cpVect verts[3] = { cpv(tri->getBase().getRealVerts()[0].x(), -tri->getBase().getRealVerts()[0].y()),
+					cpv(tri->getBase().getRealVerts()[1].x(), -tri->getBase().getRealVerts()[1].y()),
+					cpv(tri->getBase().getRealVerts()[2].x(), -tri->getBase().getRealVerts()[2].y()) };
+
+				
+
+				cpShape* shape = cpPolyShapeNew(body, 3, verts, cpTransform{ 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f }, 0.0f);
+				
+				TALGA_PRVAL(tri->getBase().getRealVerts()[0].x())
+					TALGA_PRVAL(tri->getBase().getRealVerts()[0].y())
+					TALGA_PRVAL(cpPolyShapeGetVert(shape, 0).x)
+					TALGA_PRVAL(cpPolyShapeGetVert(shape, 0).y)
+
+
+				cpShapeSetFriction(shape, 0.99f);
+				cpShapeSetCollisionType(shape, COLL_MAPGEOM);
+				cpSpaceAddShape(mSpace, shape);
+
+
+				mSceneGeom.push_back(std::pair<cpBody*, cpShape*>(body, shape));
+			}
+		}
+		
 	}
 
 	// currently relies on the fact that glfw defines keys as their ascii value, probably should define my own constants
@@ -292,8 +367,9 @@ namespace talga
 
 	Game::~Game()
 	{
+		clearMap();
 		cpSpaceFree(mSpace);
-		clearObjs();
+
 		mMapLayer.clear();
 		mObjectsLayer.clear();
 		mUILayer.clear();

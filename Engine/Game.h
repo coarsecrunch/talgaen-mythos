@@ -14,6 +14,7 @@
 struct GLFWwindow;
 struct cpBody;
 struct cpSpace;
+struct cpShape;
 
 const int TALGA_KEYPRESS = 1;
 const int TALGA_KEYRELEASE = 2;
@@ -56,6 +57,8 @@ namespace talga
 		
 		void printToLuaPrompt(const std::string& str);
 		void printToLuaPrompt(float str);
+		void loadmap(const std::string& path);
+		void clearMap();
 	protected:
 		std::vector<GameObject*> mGameObjects;
 		Camera mCamera;
@@ -66,11 +69,12 @@ namespace talga
 		std::shared_ptr<Renderer> mRenderer;
 		cpSpace* mSpace;
 		AssetManager mManager;
-		
+		Map mCurrentMap;
 		std::multimap<char, std::pair<GameObject*, KeyCallbackFunc>> mKeyCallbacks;
 		GameObject* mPlayer;
 		Window mWindow;
 		LuaDebugPrompt* mPrompt;
+		std::vector< std::pair<cpBody*, cpShape*> > mSceneGeom;
 
 		double mMouseX;
 		double mMouseY;

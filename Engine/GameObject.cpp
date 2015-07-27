@@ -110,6 +110,7 @@ namespace talga
 				mBox->setX(mCollider->getX());
 				mBox->setY(-mCollider->getY());
 				mBox->setOrientation(-mCollider->getOrientation());
+				mBox->updateVerts();
 			}
 
 			if (updateFunc)
@@ -124,6 +125,8 @@ namespace talga
 				mBox->setX(mCollider->getX());
 				mBox->setY(-mCollider->getY());
 				mBox->setOrientation(-mCollider->getOrientation());
+				mBox->updateVerts();
+
 			}
 			if (updateFunc)
 				updateFunc(this, dt);

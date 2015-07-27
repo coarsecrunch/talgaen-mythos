@@ -66,8 +66,7 @@ local function stagedFuncLoc(self)
     self:addKeyCallback("A", talga.keyACback)
     self:addKeyCallback("W", talga.keyWCback)
 
-    self:setFriction(0.01)
-    self:setMass(100)
+    self:getCollider():setY(300)
 end
 
 talga =

@@ -15,7 +15,9 @@
 namespace talga
 {
 	const I32 MAP_MAX_COLLIDERS = 1000;
-
+#ifdef TALGA_QT_BUILD
+  int VERT_SIZE = 6;
+#endif
 	Map::Map()
 		: AAsset()
 		, mWidth{ -1 }
@@ -200,6 +202,8 @@ namespace talga
 		I32 mapHeight;
 		I32 numTextures;
 		I32 numLayers;
+    I32 numRects;
+    I32 numTris;
 
 		std::vector<Tile> tiles;
 		std::string tempTexPath;
@@ -208,9 +212,10 @@ namespace talga
 		stream >> tileHeight; // tileHeight
 		stream >> mapWidth; // mapWidth
 		stream >> mapHeight; // mapHeight
+    stream >> numRects;
+    stream >> numTris;
 		stream >> numTextures; // numTiles
 		stream >> numLayers;
-
 		
 		for (auto i = 0; i < numTextures; ++i)
 		{
@@ -247,6 +252,64 @@ namespace talga
 				tiles.push_back(Tile{ tex, UVFrame{ { vec2{ 0.0f, 1.0f }, vec2{ 1.0f, 1.0f }, vec2{ 1.0f, 0.0f }, vec2{ 0.0f, 0.0f } } } });
 			}
 		}
+
+    for (int i = 0; i < numRects; ++i)
+    {
+      F32 x = -1;
+      F32 y = -1;
+      F32 w = -1;
+      F32 h = -1;
+
+      stream >> x;
+      stream >> y;
+      stream >> w;
+      stream >> h;
+
+      RdrRect* tmpRect = new RdrRect(w, h, x, y, vec4(0.0f, 0.0f, 1.0f, 1.0f));
+#ifdef TALGA_QT_BUILD
+      RdrRect* TL = new RdrRect(VERT_SIZE, VERT_SIZE, tmpRect->box().getW() * -0.5f, tmpRect->box().getH() * -0.5f, vec4(1.0f, 0.0f, 1.0f, 1.0f));
+      RdrRect* TR = new RdrRect(VERT_SIZE, VERT_SIZE, tmpRect->box().getW() * 0.5f, tmpRect->box().getH() * -0.5f, vec4(1.0f, 0.0f, 1.0f, 1.0f));
+      RdrRect* BR = new RdrRect(VERT_SIZE, VERT_SIZE, tmpRect->box().getW() * 0.5f, tmpRect->box().getH() * 0.5f, vec4(1.0f, 0.0f, 1.0f, 1.0f));
+      RdrRect* BL = new RdrRect(VERT_SIZE, VERT_SIZE, tmpRect->box().getW() * -0.5f, tmpRect->box().getH() * 0.5f, vec4(1.0f, 0.0f, 1.0f, 1.0f));
+
+      tmpRect->addChild(TL);
+      tmpRect->addChild(TR);
+      tmpRect->addChild(BR);
+      tmpRect->addChild(BL);
+#endif
+      mStaticSceneGeom.push_back(tmpRect);
+    }
+
+    for (int i = 0; i < numTris; ++i)
+    {
+      F32 x;
+      F32 y;
+      vec2 T;
+      vec2 BR;
+      vec2 BL;
+
+      stream >> x;
+      stream >> y;
+      stream >> T[0];
+      stream >> T[1];
+      stream >> BR[0];
+      stream >> BR[1];
+      stream >> BL[0];
+      stream >> BL[1];
+
+      RdrTri* tmpTri = new RdrTri( {T, BR, BL}, x, y, vec4(0.0f, 1.0f, 0.0f, 1.0f) );
+#ifdef TALGA_QT_BUILD
+      RdrRect* TT = new RdrRect(VERT_SIZE, VERT_SIZE, T[0], T[1], vec4(1.0f, 0.0f, 1.0f, 1.0f));
+      RdrRect* BRR = new RdrRect(VERT_SIZE, VERT_SIZE,BR[0], BR[1], vec4(1.0f, 0.0f, 1.0f, 1.0f));
+      RdrRect* BLL = new RdrRect(VERT_SIZE, VERT_SIZE, BL[0],BL[1], vec4(1.0f, 0.0f, 1.0f, 1.0f));
+
+      tmpTri->addChild(TT);
+      tmpTri->addChild(BRR);
+      tmpTri->addChild(BLL);
+#endif
+      mStaticSceneGeom.push_back(tmpTri);
+    }
+
 
 		std::vector<std::string> layerNames(numLayers);
 
@@ -305,7 +368,24 @@ namespace talga
 		stream << mTileHeight << std::endl;
 		stream << mWidth << std::endl;
 		stream << mHeight << std::endl;
-		
+
+    std::vector<RdrRect*> rects;
+    std::vector<RdrTri*> tris;
+
+    for (auto it = mStaticSceneGeom.begin(); it != mStaticSceneGeom.end(); ++it)
+    {
+      if (dynamic_cast<RdrRect*>(*it))
+      {
+        rects.push_back((RdrRect*)*it);
+      }
+      else if (dynamic_cast<RdrTri*>(*it))
+      {
+        tris.push_back((RdrTri*)*it);
+      }
+    }
+
+    stream << rects.size() << std::endl;
+    stream << tris.size() << std::endl;
 
 		std::string lastTex = "";
 		std::vector<std::string> sheetNames;
@@ -329,6 +409,18 @@ namespace talga
 		{
       stream << *it << std::endl;
 		}
+
+    for (auto it = rects.begin(); it != rects.end(); ++it)
+    {
+      stream << (*it)->box().getX() << " " << (*it)->box().getY() << " " << (*it)->box().getW() << " " << (*it)->box().getH() << std::endl;
+    }
+
+    for (auto it = tris.begin(); it!= tris.end(); ++it)
+    {
+      auto verts = (*it)->getBase().getRealVerts();
+      stream << (*it)->getBase().getX() <<  " " << (*it)->getBase().getY() <<  " " << verts[0].x() << " " <<
+                verts[0].y() << " " << verts[1].x() << " " << verts[1].y() << " " << verts[2].x() << " " << verts[2].y() << std::endl;
+    }
 
 		for (auto it = mLayers.begin(); it != mLayers.end(); ++it)
 		{

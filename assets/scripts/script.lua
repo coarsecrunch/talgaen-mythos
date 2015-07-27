@@ -3,5 +3,7 @@ function makeBlock(x, y)
     phys = RectCollider.new(64,64,x,y)
 
     obj = GameObject.new(sprite, phys)
+    obj:getCollider():setMass(40)
+    print("jelly")
     GAME:addObj(obj)
 end
