@@ -5,6 +5,7 @@ namespace talga
 {
 	RenderableRectangle::RenderableRectangle(F32 width, F32 height, F32 x, F32 y, vec4 color)
 		: mColor(color)
+		, mTransparency(0.7f)
 	{
 		box().setW(width);
 		box().setH(height);
@@ -14,7 +15,7 @@ namespace talga
 
 	void RenderableRectangle::render(Renderer* renderer, const Camera* camera) const
 	{
-		renderer->submit(box(), mColor, 0.7f);
+		renderer->submit(box(), mColor, mTransparency);
 		IRenderable::render(renderer, camera);
 	}
 
@@ -42,13 +43,14 @@ namespace talga
 	RenderableTriangle::RenderableTriangle(TriVertList list, F32 x, F32 y, vec4 color)
 		: mBase(list, x, y)
 		, mColor(color)
+		, mTransparency(0.3f)
 	{
 		mBase.updateVerts();
 	}
 
 	void RenderableTriangle::render(Renderer* renderer, const Camera* camera) const
 	{
-		renderer->submit(mBase, mColor, 0.7f);
+		renderer->submit(mBase, mColor, mTransparency);
 		renderer->tStackPush(mBase.getTransformationMatrix());
 		IRenderable::render(renderer, camera);
 		renderer->tStackPop();

@@ -42,6 +42,8 @@ namespace talga
 
 	void Layer::render()
 	{
+		if (!isVisible) return;
+
 		mRenderer->begin();
 		for (const IRenderable* rdr : mRenderList)
 		{

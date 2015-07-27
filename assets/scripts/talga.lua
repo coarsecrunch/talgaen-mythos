@@ -24,17 +24,17 @@ end
 
 local function keyW(self, action)
     if action == TALGA_KEYPRESS then
-        self:getCollider():applyImpulseY(3000)
+        self:getCollider():applyImpulseY(20000)
     end
 end
 
 local function updateFuncLoc(self, dt)
     if self.applyLeft and self:getCollider():getVx() > -150 then
-        self:getCollider():applyImpulseX(-200)
+        self:getCollider():applyImpulseX(-2000)
     end
 
     if self.applyRight and self:getCollider():getVx() < 150 then
-        self:getCollider():applyImpulseX(200)
+        self:getCollider():applyImpulseX(2000)
 
     end
 end
@@ -66,7 +66,8 @@ local function stagedFuncLoc(self)
     self:addKeyCallback("A", talga.keyACback)
     self:addKeyCallback("W", talga.keyWCback)
 
-    self:getCollider():setY(300)
+    self:getCollider():setMass(100)
+    self:getCollider():setMoment(INFINITY)
 end
 
 talga =

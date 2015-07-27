@@ -24,6 +24,8 @@ namespace editor
     virtual void mousePressEvent(QMouseEvent* e) override;
     virtual void mouseReleaseEvent(QMouseEvent* e) override;
     virtual void mouseMoveEvent(QMouseEvent *e) override;
+    virtual void keyPressEvent(QKeyEvent* e) override;
+    virtual void keyReleaseEvent(QKeyEvent *e) override;
 
     void addRect(const vec3& pos);
     void addTri(const vec3& pos);
@@ -33,6 +35,7 @@ namespace editor
     vec3 mPreviousMousePos;
     QPoint mStartPos;
     IRenderable* mSelectedGeom;
+    IRenderable* mSelectedParent;
     bool isVertex;
   };
 }

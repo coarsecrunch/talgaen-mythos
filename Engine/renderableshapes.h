@@ -17,9 +17,11 @@ namespace talga
 		void setY(F32 value) { box().setY(value); box().updateVertsPosition(); }
 		void setW(F32 value) { box().setW(value); box().updateVertsPosition(); }
 		void setH(F32 value) { box().setH(value); box().updateVertsPosition(); }
+		void setTransparency(F32 value) { mTransparency = value; }
 
 		virtual void render(Renderer* renderer, const Camera* camera) const override;
 	private:
+		F32 mTransparency;
 		vec4 mColor;
 	};
 
@@ -49,9 +51,11 @@ namespace talga
 		const Triangle& getBase() const { return mBase; }
 		virtual void render(Renderer* renderer, const Camera* camera) const override;
 		Triangle& getBase() { return mBase; }
+		void setTransparency(F32 value) { mTransparency = value; }
 	private:
 		Triangle mBase;
 		vec4 mColor;
+		F32 mTransparency;
 	};
 
 	typedef RenderableRectangle RdrRect;

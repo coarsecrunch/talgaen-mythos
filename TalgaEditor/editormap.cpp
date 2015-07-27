@@ -88,6 +88,29 @@ namespace talga
       return nullptr;
     }
 
+    void EditorMap::removeSceneGeom(const IRenderable *rdr)
+    {
+      for (auto& itm : mStaticSceneGeom)
+      {
+        if (rdr == itm)
+        {
+          if (mStaticSceneGeom.size() == 1)
+          {
+            delete itm;
+            mStaticSceneGeom.pop_back();
+            return;
+          }
+          else
+          {
+            delete itm;
+            itm = mStaticSceneGeom.back();
+            mStaticSceneGeom.pop_back();
+            return;
+          }
+        }
+      }
+    }
+
     I32 EditorMap::getOffset(cpTex tex) const
     {
       for (I32 i = 0; i < mTileSet.size(); ++i)

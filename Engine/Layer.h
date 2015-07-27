@@ -23,9 +23,12 @@ namespace talga
 		void setRenderer(std::shared_ptr<Renderer> renderer);
 		//only call when the previous projection is on top
 		void setProjectionMatrix(I32 w, I32 h);
+		bool visible() const { return isVisible; }
+		void setVisible(bool value) { isVisible = value; }
 	protected:
 		F32 mWidth, mHeight;
 		std::shared_ptr<Renderer> mRenderer;
 		std::vector<const IRenderable*> mRenderList;
+		bool isVisible;
 	};
 }

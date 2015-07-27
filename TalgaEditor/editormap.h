@@ -42,6 +42,7 @@ namespace talga
 
       void addSceneGeom(IRenderable* shape);
       IRenderable* getSceneGeom(const vec3& point);
+      void removeSceneGeom(const IRenderable* rdr);
     private:
       MapLayer* mWorkingLayer;
       I32 mWorkingLayerIndex;

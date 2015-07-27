@@ -81,6 +81,7 @@ namespace talga
 		I32 mWidth;
 		I32 mHeight;
 		bool mPromptIsSelected;
+		bool mDebugMode;
 	};
 	
 }

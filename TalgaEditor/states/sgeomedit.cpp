@@ -1,7 +1,7 @@
 #include "sgeomedit.h"
 
 #include <QMouseEvent>
-
+#include <QApplication>
 #include "glcontext.h"
 #include "renderableshapes.h"
 
@@ -15,6 +15,7 @@ SGeomEdit::SGeomEdit(GLContext* context)
   : EditState(context)
   , mIsMouseDown(false)
   , mSelectedGeom(nullptr)
+  , mSelectedParent(nullptr)
   , isVertex(false)
 {
 
@@ -47,9 +48,121 @@ void SGeomEdit::mousePressEvent(QMouseEvent *e)
     mSelectedGeom = mContext->mCurrentMap->getSceneGeom(mContext->camera.screenToWorld(mPreviousMousePos));
 
     if (mSelectedGeom)
+    {
       if (mSelectedGeom->getParent())
+      {
         isVertex = true;
+
+        if (mSelectedParent)
+        {
+          if (dynamic_cast<RdrRect*>(mSelectedParent))
+          {
+            ((RdrRect*)mSelectedParent)->setTransparency(0.5f);
+          }
+          else if (dynamic_cast<RdrTri*>(mSelectedParent))
+          {
+            ((RdrTri*)mSelectedParent)->setTransparency(0.3f);
+          }
+        }
+
+        mSelectedParent = (IRenderable*)mSelectedGeom->getParent();
+
+        if (mSelectedParent)
+        {
+          if (dynamic_cast<RdrRect*>(mSelectedParent))
+          {
+            ((RdrRect*)mSelectedParent)->setTransparency(0.9f);
+          }
+          else if (dynamic_cast<RdrTri*>(mSelectedParent))
+          {
+            ((RdrTri*)mSelectedParent)->setTransparency(0.7f);
+          }
+        }
+      }
+      else
+      {
+        if (mSelectedParent)
+        {
+          if (dynamic_cast<RdrRect*>(mSelectedParent))
+          {
+            ((RdrRect*)mSelectedParent)->setTransparency(0.5f);
+          }
+          else if (dynamic_cast<RdrTri*>(mSelectedParent))
+          {
+            ((RdrTri*)mSelectedParent)->setTransparency(0.3f);
+          }
+        }
+
+        mSelectedParent = mSelectedGeom;
+
+        if (mSelectedParent)
+        {
+          if (dynamic_cast<RdrRect*>(mSelectedParent))
+          {
+            ((RdrRect*)mSelectedParent)->setTransparency(0.9f);
+          }
+          else if (dynamic_cast<RdrTri*>(mSelectedParent))
+          {
+            ((RdrTri*)mSelectedParent)->setTransparency(0.7f);
+          }
+        }
+      }
+    }
+    else
+    {
+      if (dynamic_cast<RdrRect*>(mSelectedParent))
+      {
+        ((RdrRect*)mSelectedParent)->setTransparency(0.5f);
+      }
+      else if (dynamic_cast<RdrTri*>(mSelectedParent))
+      {
+        ((RdrTri*)mSelectedParent)->setTransparency(0.3f);
+      }
+      mSelectedParent = nullptr;
+      mContext->update();
+    }
+
+    mContext->update();
   }
+}
+
+void SGeomEdit::keyPressEvent(QKeyEvent *e)
+{
+  if (e->key() == Qt::Key_Shift)
+  {
+    mShift = true;
+    QApplication::setOverrideCursor(Qt::PointingHandCursor);
+  }
+
+  if ((e->key() == Qt::Key_Z)  && (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)))
+  {
+    emit mContext->sig_ctrlz();
+  }
+
+  if ((e->key() == Qt::Key_Y)  && (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)))
+  {
+    emit mContext->sig_ctrly();
+  }
+
+  if (e->key() == Qt::Key_Delete)
+  {
+    if (mSelectedParent)
+    {
+      mContext->mCurrentMap->removeSceneGeom(mSelectedParent);
+      mSelectedParent = nullptr;
+      mContext->update();
+    }
+  }
+}
+
+void SGeomEdit::keyReleaseEvent(QKeyEvent *e)
+{
+  if (e->key() == Qt::Key_Shift)
+  {
+    mShift = false;
+    QApplication::restoreOverrideCursor();
+  }
+
 }
 
 void SGeomEdit::mouseReleaseEvent(QMouseEvent *e)
@@ -66,8 +179,8 @@ static void updateParent(IRenderable* rect, std::vector<IRenderable*>& children)
 {
   F32 x = (children[0]->getGlobalPosition().x() + children[1]->getGlobalPosition().x()) / 2.0f;
   F32 y = (children[0]->getGlobalPosition().y() + children[3]->getGlobalPosition().y()) / 2.0f;
-  TALGA_PRVAL(x)
-      TALGA_PRVAL(y)
+
+
   rect->box().setX(x);
   rect->box().setY(y);
   rect->box().setW(children[1]->getGlobalPosition().x() - children[0]->getGlobalPosition().x());
@@ -227,6 +340,7 @@ void SGeomEdit::mouseMoveEvent(QMouseEvent *e)
           parent->getBase().updateVertsPosition();
         }
       }
+
 
       mContext->update();
     }

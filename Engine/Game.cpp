@@ -17,7 +17,7 @@
 namespace talga
 {
 	const int MAX_GAMEOBJECTS = 3000;
-
+	const F32 TINFINITY = INFINITY;
 	Game::Game()
 		: mCamera(1200, 900)
 		, mWindow(1200, 900)
@@ -34,6 +34,7 @@ namespace talga
 		, mPromptIsSelected{false}
 		, mCurrentMap()
 		, mSceneGeom()
+		, mDebugMode{false}
 	{
 		mGameObjects.reserve(MAX_GAMEOBJECTS);
 	}
@@ -63,7 +64,8 @@ namespace talga
 		mMapLayer = Layer{ mRenderer, (F32)width, (F32)height };
 		mObjectsLayer = Layer{ mRenderer, (F32)width, (F32)height };
 		mUILayer = Layer{ mRenderer, (F32)width, (F32)height };
-		
+		mUILayer.setVisible(false);
+
 		mRenderer->setCamera(&mCamera);
 
 		mMapLayer.add(&mCurrentMap);
@@ -77,6 +79,8 @@ namespace talga
 		LuaEngine::instance()->addGlobal("TALGA_KEYPRESS", TALGA_KEYPRESS);
 		LuaEngine::instance()->addGlobal("TALGA_KEYRELEASE", TALGA_KEYRELEASE);
 		LuaEngine::instance()->addGlobal("TALGA_KEYCONTINUE", TALGA_KEYCONTINUE);
+
+		LuaEngine::instance()->addGlobal("INFINITY", TINFINITY);
 
 		
 
@@ -196,7 +200,6 @@ namespace talga
 		clearMap();
 		mCurrentMap = Map();
 		mCurrentMap.load(path, mManager);
-		mCurrentMap.setRenderSceneGeom(true);
 		for (auto it = mCurrentMap.getSceneGeom().cbegin(); it != mCurrentMap.getSceneGeom().cend(); ++it)
 		{
 			if (dynamic_cast<const RdrRect*>(*it))
@@ -253,7 +256,15 @@ namespace talga
 		{
 			if (key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) return;
 
-			if (mPromptIsSelected)
+			if (key == GLFW_KEY_F10 && action == GLFW_PRESS)
+			{
+				mDebugMode = !mDebugMode;
+				
+				mUILayer.setVisible(mDebugMode);
+				mCurrentMap.setRenderSceneGeom(mDebugMode);
+			}
+
+			if (mPromptIsSelected && mDebugMode)
 			{
 				if (action == GLFW_RELEASE) return;
 				if (key == GLFW_KEY_BACKSPACE)
@@ -353,7 +364,7 @@ namespace talga
 
 	void Game::game_mouse_press_callback(GLFWwindow* window, int button, int action, int mods)
 	{
-		if (mPrompt->wasSelected(mMouseX - 0.5f * mWidth, mMouseY - 0.5f * mHeight))
+		if (mPrompt->wasSelected(mMouseX - 0.5f * mWidth, mMouseY - 0.5f * mHeight) && mDebugMode)
 			mPromptIsSelected = true;
 		else
 			mPromptIsSelected = false;
