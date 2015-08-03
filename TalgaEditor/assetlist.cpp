@@ -13,6 +13,9 @@
 #include "Cmn.h"
 #include "editormap.h"
 #include "Texture.h"
+#include "gdata.h"
+#include "AssetManager.h"
+#include "sys.h"
 
 namespace talga
 {
@@ -26,19 +29,19 @@ namespace talga
       , mScriptsFolder(nullptr)
       , mLevelFolder{nullptr}
       , mMap{nullptr}
+      , mAssets{}
     {
     }
 
     AssetList::~AssetList()
     {
-      qDeleteAll(mAssets);
     }
 
     void AssetList::sl_chooseAssets()
     {
       QFileDialog dialog;
       dialog.setFileMode(QFileDialog::ExistingFiles);
-      dialog.setNameFilter(tr("Images (*.png *.jpg)"));
+      dialog.setNameFilter(tr("Textures (*.png)"));
       QStringList filePaths;
 
       if(dialog.exec())
@@ -54,8 +57,11 @@ namespace talga
     {
       QString fileName = QFileInfo(QFile(path).fileName()).fileName();
       QString fileExtension = QFile(path).fileName().split(".").at(QFile(path).fileName().split(".").size() - 1);
+      cpAsset asset = GData::getInstance()->getManager()->AddAsset(path.toStdString());
 
-      mAssets.insert(fileName, new QImage(path));
+      if (!asset) return;
+
+      mAssets.push_back(asset);
 
       if (fileExtension == "png")
       {
@@ -78,7 +84,7 @@ namespace talga
       if (mLevelFolder)
         delete mLevelFolder;
 
-      qDeleteAll(mAssets);
+      mAssets.clear();
 
       if (map)
       {
@@ -100,10 +106,24 @@ namespace talga
 
     }
 
+    void AssetList::sl_updateAssetsNames()
+    {
+      for (auto it = mAssets.begin(); it != mAssets.end(); ++it)
+      {
+        if ( getFileExtension((*it)->getName()) == ".png" )
+      }
+    }
+
     void AssetList::sl_assetSelected(QTreeWidgetItem* item, int column)
     {
-      if (item == mTexturesFolder || item == mMapsFolder || item == mScriptsFolder || item == mLevelFolder)
+      if (item == mTexturesFolder || item == mMapsFolder || item == mScriptsFolder)
         return;
+
+      if (item == mLevelFolder)
+      {
+        emit sig_assetSelected((EditorMap*)GData::getInstance()->getCurrentMap());
+        return;
+      }
 
       emit sig_textureSelected(TextureAsset(item->text(column), mAssets[item->text(column)]));
     }

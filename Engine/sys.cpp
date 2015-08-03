@@ -196,7 +196,16 @@ namespace talga
 
     return folders;
   }
-
+std::string getFileExtension(const std::string& str)
+{
+	int countback = str.size();
+	for (auto it = str.rbegin(); it != str.rend(); ++it)
+	{
+		--countback;
+		if (*it == '.')
+			return str.substr(countback, str.size() - countback);
+	}
+}
   bool isAbs(const std::string &path)
   {
 #ifdef TALGA_WINDOWS_BUILD

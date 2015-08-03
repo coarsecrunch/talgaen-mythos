@@ -7,6 +7,7 @@
 #include "Math/Vector2.h"
 #include "Cmn.h"
 #include "oolua/oolua_table.h"
+
 namespace talga
 {
 	class AnimationSet;
@@ -19,8 +20,6 @@ namespace talga
 	typedef std::vector<UVFrame> UVAnimation;
 	typedef std::pair<std::string, UVAnimation> AnimSetPair;
 	
-	
-
 	class AssetManager
 	{
 	public:
@@ -32,8 +31,15 @@ namespace talga
 		cpAnimSet AddAnimationSet(std::string name, std::string texName, std::vector<AnimSetPair>);
 		cpAnimSet AddAnimationSet(std::string name, std::string texName, OOLUA::Lua_table_ref tbl);
 		cpMap AddMap(std::string path);
+		cpAsset AddAsset(std::string path);
 		cpTex GetTexture(std::string name) const;
 		cpMap GetMap(std::string name) const;
+		
+		cpAsset GetAsset(const std::string& name) const;
+
+		cpScript AddScript(const std::string& path);
+		cpScript GetScript(const std::string& name) const;
+
 
 		const std::vector<Texture>& getTextures() const { return mTextures; }
 		const std::vector<Map>& getMaps() const { return mMaps; }
@@ -45,10 +51,10 @@ namespace talga
 	private:
 		const AAsset* assetExists(const std::string& name) const;
 
-
 		std::vector<Texture> mTextures;
 		std::vector<AnimationSet> mAnimationSets;
 		std::vector<Map> mMaps;
 		std::vector<Font> mFonts;
+		std::vector<Script> mScripts;
 	};
 }

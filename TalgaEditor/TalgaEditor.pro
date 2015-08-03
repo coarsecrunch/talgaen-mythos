@@ -90,7 +90,9 @@ SOURCES += ../TalgaEditor/main.cpp \
     ../Engine/StateMachine.cpp \
     states/STileEdit.cpp \
     states/editstate.cpp \
-    states/sgeomedit.cpp
+    states/sgeomedit.cpp \
+    ../Engine/Script.cpp \
+    propertiesviewer.cpp
 
 
 
@@ -164,7 +166,9 @@ HEADERS  += \
     ../Engine/StateMachine.h \
     states/STileEdit.h \
     states/editstate.h \
-    states/sgeomedit.h
+    states/sgeomedit.h \
+    ../Engine/Script.h \
+    propertiesviewer.h
 
 
 FORMS    += mainwindow.ui \

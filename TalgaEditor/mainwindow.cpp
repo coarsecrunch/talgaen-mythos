@@ -4,6 +4,11 @@
 #include <QListWidgetItem>
 #include <QUndoStack>
 #include <QActionGroup>
+#include <QProcess>
+#include <QDir>
+#include <QMessageBox>
+#include <QDebug>
+
 #include "newmapdialog.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -23,9 +28,10 @@ namespace talga
       mTextures(),
       editModes(nullptr),
       collisionEditModeActions(nullptr)
+    , mEngineProcess{nullptr}
+    , mTerminalProcess{nullptr}
     {
       ui->setupUi(this);
-
       //for updating the display every time you undo or redo
       connect(ui->historyView->stack(), SIGNAL(indexChanged(int)), ui->openGLWidget, SLOT(sl_updateGL()));
 
@@ -49,19 +55,27 @@ namespace talga
       editModes->addAction(ui->actionCollisionEditingMode);
       editModes->addAction(ui->actionTile_Edit_Mode);
       on_actionTile_Edit_Mode_triggered(true);
-
+      on_actionHistory_triggered(false);
     }
 
     MainWindow::~MainWindow()
     {
+      saveState();
       pmImageViewScene->clear();
       delete pmImageViewScene;
-
+      delete mEngineProcess;
       GData::getInstance()->destroy();
       qDeleteAll(mTextures.values());
       mTextures.clear();
 
       delete ui;
+    }
+
+    void MainWindow::sl_pipeEngineOutput()
+    {
+      QString dbg = mEngineProcess->readAllStandardOutput();
+
+      qDebug() << dbg;
     }
 
   }
@@ -139,6 +153,22 @@ void talga::editor::MainWindow::on_actionAssetViewer_triggered(bool checked)
   }
 }
 
+
+void talga::editor::MainWindow::on_actionProperties_triggered(bool checked)
+{
+  if (checked)
+  {
+    ui->propertiesDock->show();
+    ui->actionProperties->setChecked(true);
+  }
+  else
+  {
+    ui->actionProperties->setChecked(false);
+    ui->propertiesDock->hide();
+  }
+}
+
+
 void talga::editor::MainWindow::on_actionHistory_triggered(bool checked)
 {
   if (checked)
@@ -208,4 +238,42 @@ void talga::editor::MainWindow::on_actionCreate_New_Rectangle_Geometry_triggered
 void talga::editor::MainWindow::on_actionCreate_New_Triangle_Geometry_triggered()
 {
   emit sig_addTri();
+}
+
+void talga::editor::MainWindow::on_actionInvoke_Engine_triggered()
+{
+  if (GData::getInstance()->getCurrentMap())
+  {
+    if (GData::getInstance()->getCurrentMap()->getPath() == "")
+    {
+      QMessageBox msgBox;
+      msgBox.setText(QString::fromStdString("current map must be saved before you run it"));
+      msgBox.exec();
+
+      return;
+    }
+    QStringList args;
+    args.push_back(QString::fromStdString(GData::getInstance()->getCurrentMap()->getPath() + GData::getInstance()->getCurrentMap()->getName()));
+
+#ifdef QT_DEBUG
+    mEngineProcess = new QProcess(this);
+    mEngineProcess->setWorkingDirectory(QDir::currentPath());
+    mEngineProcess->setProcessChannelMode(QProcess::MergedChannels);
+    mEngineProcess->setReadChannel(QProcess::StandardOutput);
+
+    connect(mEngineProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(sl_pipeEngineOutput()));
+#else
+    mEngineProcess->setStandardOutputFile("../build/logs/EngineLog.log");
+#endif
+    mEngineProcess->start("Engine.exe", args, QProcess::ReadWrite);
+
+  }
+}
+void talga::editor::MainWindow::on_actionStop_Engine_triggered()
+{
+  if (mEngineProcess)
+  {
+    delete mEngineProcess;
+    mEngineProcess = nullptr;
+  }
 }

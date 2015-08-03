@@ -18,7 +18,7 @@
     <normaloff>:/new/ico/Talgapng.png</normaloff>:/new/ico/Talgapng.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout_5">
     <property name="leftMargin">
      <number>0</number>
     </property>
@@ -78,6 +78,7 @@
     <addaction name="actionAssetViewer"/>
     <addaction name="actionHistory"/>
     <addaction name="actionLayers"/>
+    <addaction name="actionProperties"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -97,6 +98,9 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionSave"/>
+   <addaction name="separator"/>
+   <addaction name="actionInvoke_Engine"/>
+   <addaction name="actionStop_Engine"/>
    <addaction name="separator"/>
    <addaction name="actionTile_Edit_Mode"/>
    <addaction name="actionCollisionEditingMode"/>
@@ -391,6 +395,56 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="propertiesDock">
+   <property name="windowTitle">
+    <string>Properties</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_5">
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="talga::editor::PropertiesViewer" name="propertiesViewer">
+       <property name="columnCount">
+        <number>2</number>
+       </property>
+       <attribute name="headerHighlightSections">
+        <bool>false</bool>
+       </attribute>
+       <attribute name="headerShowSortIndicator" stdset="0">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>property</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>value</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionLoad_Assets">
    <property name="text">
     <string>Load Assets...</string>
@@ -404,6 +458,9 @@
    </property>
    <property name="text">
     <string>Save...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionOpen">
@@ -507,6 +564,37 @@
     <string>Create New Triangle Geometry</string>
    </property>
   </action>
+  <action name="actionInvoke_Engine">
+   <property name="icon">
+    <iconset resource="../assets/icons/icons.qrc">
+     <normaloff>:/new/ico/invokeengine_button.png</normaloff>:/new/ico/invokeengine_button.png</iconset>
+   </property>
+   <property name="text">
+    <string>Invoke Engine</string>
+   </property>
+  </action>
+  <action name="actionStop_Engine">
+   <property name="icon">
+    <iconset resource="../assets/icons/icons.qrc">
+     <normaloff>:/new/ico/stopengine_button.png</normaloff>:/new/ico/stopengine_button.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop Engine</string>
+   </property>
+  </action>
+  <action name="actionProperties">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Properties</string>
+   </property>
+  </action>
+  <zorder>historyDock</zorder>
+  <zorder>propertiesDock</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -526,6 +614,7 @@
    <slots>
     <signal>sig_textureSelected(TextureAsset)</signal>
     <signal>sig_assetChosen(QString)</signal>
+    <signal>sig_assetSelected(AAsset*)</signal>
     <slot>sl_assetSelected(QTreeWidgetItem*,int)</slot>
     <slot>sl_loadAsset(QString)</slot>
    </slots>
@@ -571,6 +660,14 @@
     <slot>sl_removeLayer()</slot>
     <slot>sl_moveWorkingLayerUp()</slot>
     <slot>sl_moveWorkingLayerDown()</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>talga::editor::PropertiesViewer</class>
+   <extends>QTreeWidget</extends>
+   <header>propertiesviewer.h</header>
+   <slots>
+    <slot>sl_assetSelected(AAsset*)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -713,8 +810,8 @@
    <slot>sl_updateGL()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>943</x>
-     <y>524</y>
+     <x>1150</x>
+     <y>413</y>
     </hint>
     <hint type="destinationlabel">
      <x>755</x>
@@ -729,12 +826,12 @@
    <slot>sl_changeWorkingLayer(QTreeWidgetItem*,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1012</x>
-     <y>417</y>
+     <x>1150</x>
+     <y>413</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1012</x>
-     <y>422</y>
+     <x>1150</x>
+     <y>413</y>
     </hint>
    </hints>
   </connection>
@@ -749,8 +846,8 @@
      <y>380</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1012</x>
-     <y>273</y>
+     <x>1150</x>
+     <y>230</y>
     </hint>
    </hints>
   </connection>
@@ -781,8 +878,8 @@
      <y>47</y>
     </hint>
     <hint type="destinationlabel">
-     <x>943</x>
-     <y>59</y>
+     <x>1150</x>
+     <y>106</y>
     </hint>
    </hints>
   </connection>
@@ -793,12 +890,12 @@
    <slot>sl_addLayer()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>895</x>
-     <y>600</y>
+     <x>922</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
-     <x>943</x>
-     <y>541</y>
+     <x>1150</x>
+     <y>413</y>
     </hint>
    </hints>
   </connection>
@@ -809,12 +906,12 @@
    <slot>sl_removeLayer()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>927</x>
-     <y>600</y>
+     <x>950</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
-     <x>943</x>
-     <y>540</y>
+     <x>1150</x>
+     <y>413</y>
     </hint>
    </hints>
   </connection>
@@ -825,12 +922,12 @@
    <slot>sl_moveWorkingLayerUp()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>959</x>
-     <y>600</y>
+     <x>978</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
-     <x>943</x>
-     <y>538</y>
+     <x>1150</x>
+     <y>413</y>
     </hint>
    </hints>
   </connection>
@@ -841,12 +938,12 @@
    <slot>sl_moveWorkingLayerDown()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>600</y>
+     <x>1006</x>
+     <y>440</y>
     </hint>
     <hint type="destinationlabel">
-     <x>943</x>
-     <y>536</y>
+     <x>1150</x>
+     <y>413</y>
     </hint>
    </hints>
   </connection>
@@ -858,7 +955,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>200</x>
-     <y>39</y>
+     <y>86</y>
     </hint>
     <hint type="destinationlabel">
      <x>257</x>
@@ -905,12 +1002,28 @@
    <slot>on_actionHistory_triggered(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>927</x>
-     <y>35</y>
+     <x>1150</x>
+     <y>82</y>
     </hint>
     <hint type="destinationlabel">
      <x>895</x>
      <y>37</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>assetList</sender>
+   <signal>sig_assetSelected(AAsset*)</signal>
+   <receiver>propertiesViewer</receiver>
+   <slot>sl_assetSelected(AAsset*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>244</x>
+     <y>163</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>906</x>
+     <y>488</y>
     </hint>
    </hints>
   </connection>

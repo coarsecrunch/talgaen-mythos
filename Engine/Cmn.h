@@ -11,10 +11,12 @@
 
 namespace talga
 {
+	class AAsset;
 	class Texture;
 	class Map;
 	class AnimationSet;
 	class Font;
+	class Script;
 
 #ifdef TALGA_WINDOWS_BUILD
 	typedef signed __int8 I8;
@@ -55,6 +57,8 @@ namespace talga
 	typedef const Map* cpMap;
 	typedef const Map& crMap;
 	typedef const Font* cpFont;
+	typedef const Script* cpScript;
+	typedef const AAsset* cpAsset;
 
 	const F32 GRAVITY = 0.25f;
 	const F32 MAX_SPEED = 14.0f;

@@ -12,6 +12,8 @@
 #include "font.h"
 #include "luareg.h"
 #include "Rect.h"
+#include "Script.h"
+#include "sys.h"
 
 namespace talga
 {
@@ -20,8 +22,12 @@ namespace talga
 	const I32 MAX_ANIMATIONS = 1000;
 	const I32 MAX_TEXTURES = 1000;
 	const I32 MAX_MAPS = 50;
+	const I32 MAX_SCRIPTS = 1000;
+	const I32 MAX_FONTS = 1000;
+
 	cpTex AssetManager::NO_TEXTURE = nullptr;
 	const std::string NO_TEXTURE_PATH = "../assets/textures/notex.png";
+
 	AssetManager::AssetManager()
 		: mTextures{}
 		, mMaps{}
@@ -30,9 +36,8 @@ namespace talga
 		mAnimationSets.reserve(MAX_ANIMATIONS);
 		mTextures.reserve(MAX_TEXTURES);
 		mMaps.reserve(MAX_MAPS);
-
-#ifndef TALGA_QT_BUILD
-#endif
+		mScripts.reserve(MAX_SCRIPTS);
+		mFonts.reserve(MAX_FONTS);
 	}
 
 	cpTex AssetManager::AddTexture(std::string path)
@@ -61,8 +66,6 @@ namespace talga
 		
 	}
 
-
-
 	cpMap AssetManager::AddMap(std::string path)
 	{
 		Map map;
@@ -82,7 +85,17 @@ namespace talga
 			TALGA_WARN(0, path + " could not be loaded");
 		}
 	}
+	cpAsset AssetManager::AddAsset(std::string path)
+	{
+		std::string fileExt = getFileExtension(path);
 
+		if (fileExt == ".png")
+			return AddTexture(path);
+		else if (fileExt == ".tmap")
+			return AddMap(path);
+
+		return nullptr;
+	}
 	cpAnimSet AssetManager::AddAnimationSet(std::string name, std::string texName, OOLUA::Lua_table_ref tbl)
 	{
 		if (tbl.valid())
@@ -138,7 +151,38 @@ namespace talga
 		TALGA_WARN(0, "failed to add animation " + name);
 		return nullptr;
 	}
+	cpScript AssetManager::AddScript(const std::string& path)
+	{
+		Script font;
 
+		if (font.load(path, *this))
+		{
+			cpScript exists = static_cast<cpScript>(assetExists(font.getName()));
+			if (exists)
+				return exists;
+
+			TALGA_MSG(path + " was successfully loaded");
+			mScripts.push_back(font);
+			return &mScripts.back();
+		}
+		else
+		{
+			TALGA_WARN(0, path + " could not be loaded");
+			return nullptr;
+		}
+	}
+
+	cpScript AssetManager::GetScript(const std::string& name) const
+	{
+		for (int i = 0; i < mScripts.size(); ++i)
+		{
+			if (mScripts[i].getName() == name)
+				return &mScripts[i];
+		}
+
+		TALGA_WARN(0, std::string("failed to find script ") + name);
+		return nullptr;
+	}
   cpFont AssetManager::addFont(const std::string& path, I32 size)
   {
 	  Font font(size);
@@ -156,6 +200,7 @@ namespace talga
 	  else
 	  {
 		  TALGA_WARN(0, path + " could not be loaded");
+		  return nullptr;
 	  }
   }
 
@@ -202,6 +247,45 @@ namespace talga
 		return nullptr;
 	}
 
+
+	cpAsset AssetManager::GetAsset(const std::string& name) const
+	{
+		for (int i = 0; i < mTextures.size(); ++i)
+		{
+			if (mTextures[i].getName() == name)
+			{
+				return &mTextures[i];
+			}
+		}
+
+		for (int i = 0; i < mAnimationSets.size(); ++i)
+		{
+			if (mAnimationSets[i].getName() == name)
+			{
+				return &mAnimationSets[i];
+			}
+		}
+
+
+		for (int i = 0; i < mMaps.size(); ++i)
+		{
+			if (mMaps[i].getName() == name)
+			{
+				return &mMaps[i];
+			}
+		}
+
+		for (int i = 0; i < mFonts.size(); ++i)
+		{
+			if (mFonts[i].getName() == name)
+			{
+				return &mFonts[i];
+			}
+		}
+		
+		TALGA_WARN(0, std::string("failed to find asset ") + name);
+		return nullptr;
+	}
 	const AAsset* AssetManager::assetExists(const std::string& name) const
 	{
 		for (auto it = mTextures.begin(); it != mTextures.end(); ++it)

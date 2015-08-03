@@ -3,6 +3,12 @@
 #include "LuaEngine.h"
 
 //Texture
+OOLUA_EXPORT_FUNCTIONS(vec2)
+OOLUA_EXPORT_FUNCTIONS_CONST(vec2, x, y)
+
+OOLUA_EXPORT_FUNCTIONS(vec3)
+OOLUA_EXPORT_FUNCTIONS_CONST(vec3, x, y, z)
+
 OOLUA_EXPORT_FUNCTIONS(Texture)
 OOLUA_EXPORT_FUNCTIONS_CONST(Texture)
 
@@ -26,10 +32,12 @@ OOLUA_EXPORT_FUNCTIONS_CONST(RectCollider)
 
 //AssetManager
 OOLUA_EXPORT_FUNCTIONS(AssetManager, AddTexture, AddAnimationSet)
+
 OOLUA_EXPORT_FUNCTIONS_CONST(AssetManager, GetTexture)
 
 //Sprite
 OOLUA_EXPORT_FUNCTIONS(Sprite)
+
 OOLUA_EXPORT_FUNCTIONS_CONST(Sprite)
 
 //Sprite
@@ -38,7 +46,7 @@ OOLUA_EXPORT_FUNCTIONS_CONST(AnimSprite)
 
 //GameObject
 OOLUA_EXPORT_FUNCTIONS(GameObject, addKeyCallback, addCollisionCallback,
-setCollisionType, setCollider, setRenderable, playAnimation, getCollider)
+addDefaultCollisionCallback, setCollisionType, setCollider, setRenderable, playAnimation, getCollider, updateLua, staged, unstaged)
 OOLUA_EXPORT_FUNCTIONS_CONST(GameObject)
 
 //Rectangle
@@ -55,6 +63,8 @@ OOLUA_EXPORT_FUNCTIONS_CONST(Game)
 
 void LUA_REGISTER_TYPES()
 {
+	talga::LuaEngine::instance()->regClass<talga::vec2>();
+	talga::LuaEngine::instance()->regClass<talga::vec3>();
 	talga::LuaEngine::instance()->regClass<talga::Texture>();
 	talga::LuaEngine::instance()->regClass<talga::IRenderable>();
 	talga::LuaEngine::instance()->regClass<talga::AnimationSet>();

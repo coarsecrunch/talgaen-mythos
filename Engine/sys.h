@@ -13,6 +13,7 @@ namespace talga
 	std::string getFileNameFromPathWithoutExtension(const std::string& path);
 	std::string getPathFromFilePath(const std::string& path);
 	std::string getRelFromAbs(const std::string& relativeToAbs, const std::string& path);
+	std::string getFileExtension(const std::string& str);
 	bool isAbs(const std::string& path);
 	//std::string 
 }

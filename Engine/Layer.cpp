@@ -10,6 +10,7 @@ namespace talga
 		: mRenderer(renderer)
 		, mWidth{ renderWidth }
 		, mHeight{ renderHeight }
+		, isVisible{true}
 	{
         setProjectionMatrix(renderWidth, renderHeight);
 	}

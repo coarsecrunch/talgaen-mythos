@@ -8,7 +8,8 @@ namespace talga
 		{
 			if (isLua == TALGA_FUNC_TYPE::LUA)
 			{
-				luaFunc(ref, obj, ms);
+				if (!luaFunc(ref, obj, ms))
+					LuaEngine::instance()->reportError();
 			}
 			else
 			{
@@ -23,7 +24,8 @@ namespace talga
 		{
 			if (isLua == TALGA_FUNC_TYPE::LUA)
 			{
-				luaFunc(ref, obj);
+				if (!luaFunc(ref, obj))
+					LuaEngine::instance()->reportError();
 			}
 			else
 			{
@@ -38,7 +40,8 @@ namespace talga
 		{
 			if (isLua == TALGA_FUNC_TYPE::LUA)
 			{
-				luaFunc(ref, obj, action);
+				if (!luaFunc(ref, obj, action))
+					LuaEngine::instance()->reportError();
 			}
 			else
 			{
@@ -53,7 +56,8 @@ namespace talga
 		{
 			if (isLua == TALGA_FUNC_TYPE::LUA)
 			{
-				luaFunc(ref, obj);
+				if (!luaFunc(ref, obj))
+					LuaEngine::instance()->reportError();
 			}
 			else
 			{

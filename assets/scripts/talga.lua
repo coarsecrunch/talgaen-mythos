@@ -1,3 +1,4 @@
+COLL_PLAYER = 2
 
 local function keyD(self, action)
     if action == TALGA_KEYPRESS then
@@ -7,8 +8,6 @@ local function keyD(self, action)
         self.applyRight = false
         self:playAnimation("standR", 1000, true)
     end
-    
-    
 end
 
 local function keyA(self, action)
@@ -19,12 +18,11 @@ local function keyA(self, action)
         self.applyLeft = false
         self:playAnimation("standL", 1000, true)
     end
-    
 end
 
 local function keyW(self, action)
     if action == TALGA_KEYPRESS then
-        self:getCollider():applyImpulseY(20000)
+        self:getCollider():applyImpulseY(40000)
     end
 end
 
@@ -39,6 +37,10 @@ local function updateFuncLoc(self, dt)
     end
 end
 
+local function onCollideWithGround(self)
+    print("collided with ground")
+end
+
 local function stagedFuncLoc(self)
     local animation = {}
     animation["standL"] = { {0, 0, 64, 64}, {64, 0, 64, 64} };
@@ -47,6 +49,7 @@ local function stagedFuncLoc(self)
     animation["walkR"] = {}
     self.applyLeft = false
     self.applyRight = false
+    self.hasJumped = true
 
     for i=0,5 do
         animation.walkL[i+1] = {64 * i, 64,64,64}
@@ -56,18 +59,24 @@ local function stagedFuncLoc(self)
         animation.walkR[i-5] = {64 * i, 64,64,64}
     end
 
+    GAME:manager():AddTexture("../assets/textures/talgasheet.png")
     spr = AnimSprite.new(GAME:manager():AddAnimationSet("talgaAnim", "talgasheet.png", animation))
     collider = RectCollider.new(64,64)
 
     self:setRenderable(spr)
     self:setCollider(collider)
+    self:setCollisionType(COLL_PLAYER)
     self:playAnimation("standR", 1000, true)
     self:addKeyCallback("D", talga.keyDCback)
     self:addKeyCallback("A", talga.keyACback)
     self:addKeyCallback("W", talga.keyWCback)
+   
+    self:addCollisionCallback(COLL_MAPGEOM, talga.groundColl)
 
     self:getCollider():setMass(100)
     self:getCollider():setMoment(INFINITY)
+    self:getCollider():setFriction(0.94)
+    self:getCollider():setX(200)
 end
 
 talga =
@@ -76,5 +85,6 @@ talga =
     updateFunc = updateFuncLoc,
     keyDCback = keyD,
     keyACback = keyA,
-    keyWCback = keyW
+    keyWCback = keyW,
+    groundColl = onCollideWithGround
 }

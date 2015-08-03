@@ -159,6 +159,9 @@
     <ClCompile Include="StateMachine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Script.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\include\Math\Interpolation.h">
@@ -326,6 +329,9 @@
     <ClInclude Include="IState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\shaders\renderer2d.frag">
@@ -341,6 +347,9 @@
       <Filter>Scripts</Filter>
     </None>
     <None Include="..\assets\scripts\globals.lua">
+      <Filter>Scripts</Filter>
+    </None>
+    <None Include="..\assets\scripts\sandboxx.lua">
       <Filter>Scripts</Filter>
     </None>
   </ItemGroup>

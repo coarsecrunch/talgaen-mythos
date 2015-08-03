@@ -54,7 +54,6 @@ namespace talga
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		
 		glBindTexture(GL_TEXTURE_2D, 0);
-		
 
 		mWidth = imgW;
 		mHeight = imgH;

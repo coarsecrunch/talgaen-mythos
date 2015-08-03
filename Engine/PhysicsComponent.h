@@ -33,6 +33,7 @@ namespace talga
 		F32 getOrientation() const;
 
 		void setCollisionType(I32 type);
+		I32 getCollisionType() const;
 	protected:
 		friend class GameObject;
 		friend class Game;

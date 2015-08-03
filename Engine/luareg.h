@@ -15,8 +15,17 @@
 #include "IRenderable.h"
 #include "PhysicsComponent.h"
 #include "AnimSet.h"
+#include "Math/Vector2.h"
+#include "Math/Vector3.h"
+#include "Math/Vector4.h"
+#include "Math/Matrix4x4.h"
+
 namespace OOLUA
 {
+	typedef talga::vec2 vec2;
+	typedef talga::vec3 vec3;
+	typedef talga::vec4 vec4;
+	typedef talga::mat4 mat4;
 	typedef talga::Game Game;
 	typedef talga::Camera Camera;
 	typedef talga::Rectangle Rectangle;
@@ -30,9 +39,32 @@ namespace OOLUA
 	typedef talga::PhysicsComponent PhysicsComponent;
 	typedef talga::RectCollider RectCollider;
 
+
 	typedef const Texture* cpTex;
 	typedef const AnimationSet* cpAnimSet;
 }
+
+OOLUA_PROXY(vec3)
+OOLUA_TAGS(Add_op, Sub_op)
+OOLUA_CTORS(
+OOLUA_CTOR(float, float, float)
+OOLUA_CTOR(float, float)
+OOLUA_CTOR(float)
+)
+OOLUA_MFUNC_CONST(x)
+OOLUA_MFUNC_CONST(y)
+OOLUA_MFUNC_CONST(z)
+OOLUA_PROXY_END
+
+OOLUA_PROXY(vec2)
+OOLUA_TAGS(Add_op, Sub_op)
+OOLUA_CTORS(
+OOLUA_CTOR(float, float)
+OOLUA_CTOR(float)
+)
+OOLUA_MFUNC_CONST(x)
+OOLUA_MFUNC_CONST(y)
+OOLUA_PROXY_END
 
 //Texture
 OOLUA_PROXY(Texture)
@@ -118,18 +150,21 @@ OOLUA_PROXY_END
 
 //GameObject
 OOLUA_PROXY(GameObject)
-OOLUA_TAGS(OOLUA::No_default_constructor)
 	OOLUA_CTORS(
 	OOLUA_CTOR(IRenderable*, PhysicsComponent*)
 	OOLUA_CTOR(const std::string&)
 	)
 	OOLUA_MEM_FUNC(void, addKeyCallback, std::string, Lua_func_ref)
-	OOLUA_MEM_FUNC(void, addCollisionCallback, int, Lua_func_ref)
-	OOLUA_MEM_FUNC(void, setCollisionType, int)
+	OOLUA_MFUNC(addCollisionCallback)
+	OOLUA_MFUNC(addDefaultCollisionCallback)
+	OOLUA_MFUNC(setCollisionType)
 	OOLUA_MFUNC(setCollider)
 	OOLUA_MFUNC(getCollider)
 	OOLUA_MFUNC(setRenderable)
 	OOLUA_MFUNC(playAnimation)
+	OOLUA_MFUNC(updateLua)
+	OOLUA_MFUNC(staged)
+	OOLUA_MFUNC(unstaged)
 OOLUA_PROXY_END
 
 //Camera

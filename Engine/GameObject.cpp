@@ -29,6 +29,22 @@ namespace talga
 		setRenderable(rdr);
 		setCollider(collider);
 		setCollisionType(COLL_DEFAULT);
+
+		init();
+	}
+
+	GameObject::GameObject()
+		: mGAME(GAME)
+		, DESTROY(false)
+		, pmRenderable(nullptr)
+		, isAnimated{ false }
+		, mCollider(nullptr)
+		, mBox{ nullptr }
+		, stagedFunc()
+		, updateFunc()
+		, unstagedFunc()
+	{
+		init();
 	}
 
 	GameObject::GameObject(std::string path)
@@ -90,13 +106,6 @@ namespace talga
 	{
 	}
 
-	void GameObject::staged()
-	{
-		if (stagedFunc)
-			stagedFunc(this);
-
-	}
-
 	void GameObject::update(F32 dt)
 	{
 		if (!mCollider && !pmRenderable) return;
@@ -131,6 +140,25 @@ namespace talga
 			if (updateFunc)
 				updateFunc(this, dt);
 		}
+
+		updateLua(dt);
+	}
+
+	void GameObject::updateLua(I32 dt)
+	{
+	}
+
+	void GameObject::staged()
+	{
+	}
+
+	void GameObject::unstaged()
+	{
+	}
+
+	void GameObject::init()
+	{
+
 	}
 
 	CollisionCallbackFunc GameObject::getCollisionCallback(I32 collisionWith)
@@ -155,6 +183,27 @@ namespace talga
 		{
 			CollisionData* colData = (CollisionData*)data;
 			colData->obj->getCollisionCallback(colData->collisionWith)(colData->obj);
+
+			return true;
+		};
+	}
+
+	void GameObject::addDefaultCollisionCallback(OOLUA::Lua_func_ref ref)
+	{
+		I32 mycoltype = cpShapeGetCollisionType(mCollider->mShape);
+		CollisionCallbackFunc func;
+		func = ref;
+		mCollisionCallbacks.insert(std::pair<I32, CollisionCallbackFunc>(mycoltype, func));
+		mData.push_back(new CollisionData{ this, mycoltype });
+
+		cpCollisionHandler* handler = cpSpaceAddWildcardHandler(GAME->getSpace(), cpShapeGetCollisionType(mCollider->mShape));
+		handler->userData = (cpDataPointer)mData.back();
+		handler->beginFunc =
+
+			[](cpArbiter *arb, struct cpSpace *space, cpDataPointer data) -> cpBool
+		{
+			CollisionData* colData = (CollisionData*)data;
+			colData->obj->getCollisionCallback(colData->obj->getCollisionType())(colData->obj);
 
 			return true;
 		};
@@ -217,6 +266,12 @@ namespace talga
 		
 		if (mCollider)
 			mCollider->setCollisionType(type);
+	}
+
+	I32 GameObject::getCollisionType() const
+	{
+		if (mCollider)
+			return mCollider->getCollisionType();
 	}
 
 	void GameObject::addKeyCallback(char c, KeyCallbackFunc cback)

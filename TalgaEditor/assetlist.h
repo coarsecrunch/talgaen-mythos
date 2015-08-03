@@ -11,6 +11,8 @@ class QTreeWidgetItem;
 
 namespace talga
 {
+  class AAsset;
+
   namespace editor
   {
     typedef QPair<QString, QImage*> TextureAsset;
@@ -24,7 +26,6 @@ namespace talga
       explicit AssetList( QWidget* parent = nullptr);
       ~AssetList();
 
-
       //for dragging and dropping items into the GLContext
       void mousePressEvent(QMouseEvent *e);
       void mouseMoveEvent(QMouseEvent *e);
@@ -35,14 +36,16 @@ namespace talga
       void sig_textureSelected(TextureAsset);
       void sig_mapSelcted();
       void sig_scriptSelected();
+      void sig_assetSelected(AAsset*);
 
     public slots:
       void sl_assetSelected(QTreeWidgetItem*, int);
       void sl_chooseAssets();
       void sl_loadAsset(QString path);
       void sl_updateChangedMap(EditorMap*);
+      void sl_updateAssetsNames();
     protected:
-      QMap<QString, QImage*> mAssets;
+      std::vector<const AAsset*> mAssets;
       QTreeWidgetItem* mTexturesFolder;
       QTreeWidgetItem* mMapsFolder;
       QTreeWidgetItem* mScriptsFolder;

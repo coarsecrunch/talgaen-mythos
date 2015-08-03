@@ -14,6 +14,8 @@
 #include "collisiontypes.h"
 #include "luareg.h"
 #include "renderableshapes.h"
+
+
 namespace talga
 {
 	const int MAX_GAMEOBJECTS = 3000;
@@ -53,13 +55,8 @@ namespace talga
 		cpSpaceSetIterations(mSpace, 20);
 
 		mRenderer = std::shared_ptr<Renderer>(new Renderer{ "../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag" });
-		mManager.AddTexture("../assets/textures/testblock.png");
-		mManager.AddTexture("../assets/textures/talgasheet.png");
 		mManager.AddTexture("../assets/textures/luaprompt.png");
-		mManager.AddMap("../assets/maps/sandboxx.tmap");
 		mManager.addFont("../assets/fonts/EnvyR.ttf", 15);
-
-		loadmap("../assets/maps/sandboxx.tmap");
 
 		mMapLayer = Layer{ mRenderer, (F32)width, (F32)height };
 		mObjectsLayer = Layer{ mRenderer, (F32)width, (F32)height };
@@ -81,14 +78,16 @@ namespace talga
 		LuaEngine::instance()->addGlobal("TALGA_KEYCONTINUE", TALGA_KEYCONTINUE);
 
 		LuaEngine::instance()->addGlobal("INFINITY", TINFINITY);
-
+		LuaEngine::instance()->addGlobal("COLL_MAPGEOM", COLL_MAPGEOM);
+		LuaEngine::instance()->addGlobal("COLL_DEFAULT", COLL_DEFAULT);
 		
-
 		return 0;
 	}
 
 	void Game::addObj(GameObject* obj)
 	{
+		obj->staged();
+
 		if (obj->stagedFunc)
 			obj->stagedFunc(obj);
 
@@ -111,6 +110,7 @@ namespace talga
 
 			if (*it == obj)
 			{
+				(*it)->unstaged();
 				if ( (*it)->unstagedFunc )
 					(*it)->unstagedFunc(*it);
 
@@ -176,7 +176,8 @@ namespace talga
 		mMapLayer.render();
 		mObjectsLayer.render();
 		mMapLayer.getRenderer()->tStackPop();
-
+	
+		
 		mUILayer.render();
 	}
 
@@ -199,7 +200,11 @@ namespace talga
 	{
 		clearMap();
 		mCurrentMap = Map();
-		mCurrentMap.load(path, mManager);
+		if (!mCurrentMap.load(path, mManager))
+		{
+			TALGA_WARN(0, "COULD NOT FIND MAP!");
+			return;
+		}
 		for (auto it = mCurrentMap.getSceneGeom().cbegin(); it != mCurrentMap.getSceneGeom().cend(); ++it)
 		{
 			if (dynamic_cast<const RdrRect*>(*it))
@@ -344,6 +349,7 @@ namespace talga
 			}
 		}
 		mPrompt->print(temp);
+		TALGA_MSG("LuaPrompt: " << f)
 	}
 
 	void Game::game_resize_window(GLFWwindow* window, int w, int h)

@@ -41,10 +41,11 @@ namespace talga
 		void ExecuteFile(std::string path);
 		void ExecuteStr(std::string str);
 		void setGame(Game* game) { mGame = game; }
+		void reportError();
 	protected:
 		LuaEngine();
 		OOLUA::Script mScript;
 		Game* mGame;
-		void reportError();
+		
 	};
 }

@@ -26,6 +26,7 @@ namespace talga
 	class GameObject : public IDynamic
 	{
 	public:
+		GameObject();
 		GameObject(IRenderable* rdr, PhysicsComponent* collider);
 		GameObject(std::string script);
 		GameObject(const GameObject& cpy);
@@ -40,19 +41,26 @@ namespace talga
 
 		virtual void update(F32 dt) override;
 		void setCollisionType(I32 type);
+		I32 getCollisionType() const;
 		void addCollisionCallback(I32 collisionWith, OOLUA::Lua_func_ref);
+		void addDefaultCollisionCallback(OOLUA::Lua_func_ref);
 		CollisionCallbackFunc getCollisionCallback(I32 collsionWith);
 
 		void addKeyCallback(char c, KeyCallbackFunc cback);
+
 		void addKeyCallback(std::string c, OOLUA::Lua_func_ref ref);
 		
-		void staged();
 		void destroy();
 		void playAnimation(const std::string& animName, I32 speed, bool loop);
 
 		StagedFunc stagedFunc;
 		UpdateFunc updateFunc;
 		UnstagedFunc unstagedFunc;
+		
+		virtual void updateLua(I32 dt);
+		virtual void staged();
+		virtual void unstaged();
+		virtual void init();
 	protected:
 		friend class Game;
 

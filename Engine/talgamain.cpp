@@ -63,43 +63,54 @@ int main(int argc, char** argv)
 	talga::Clock clock;
 	clock.Init();
 
+	std::string mapPath;
+	if (argc != 2)
+	{
+		TALGA_WARN(0, "tried to start program with incorrect arguments")
+
+		//return -1;
+	}
+	else
+	{
+		mapPath = argv[1];
+		TALGA_MSG("loading map " << mapPath);
+	}
+
 	GAME = new talga::Game();
 	GAME->Init(WIDTH, HEIGHT, "hello talga");
-	
-	LUA_REGISTER_TYPES();
 
-	talga::LuaEngine::instance()->setGame(GAME);
-	talga::LuaEngine::instance()->addGlobal("GAME", GAME);
-	talga::AnimationSet set{ GAME->manager()->GetTexture("talgasheet.png"), "talgaAnims" };
-	talga::LuaEngine::instance()->ExecuteStr("print = function(s) if type(s) == \"string\" then GAME:printToLuaPromptStr(s) elseif type(s) == \"number\" then GAME:printToLuaPromptFl(s) end end");
-
-	talga::cpMap testMap = GAME->manager()->GetMap("sandboxx.tmap");
-
-	talga::GameObject* tga = new talga::GameObject("../assets/scripts/talga.lua");
-	
-	GAME->addObj(tga);
-
-	talga::LuaEngine::instance()->ExecuteFile("../assets/scripts/script.lua");
-	
 	glfwSetWindowSizeCallback(GAME->getWindow().getWindow(), resize_callback);
 	glfwSetKeyCallback(GAME->getWindow().getWindow(), key_callback);
 	glfwSetMouseButtonCallback(GAME->getWindow().getWindow(), mouse_press_callback);
 	glfwSetCursorPosCallback(GAME->getWindow().getWindow(), mouse_move_callback);
 
+	LUA_REGISTER_TYPES();
+	talga::LuaEngine::instance()->setGame(GAME);
+	talga::LuaEngine::instance()->addGlobal("GAME", GAME);
+	talga::LuaEngine::instance()->ExecuteStr("package.path = package.path .. \";../assets/scripts/?.lua\"");
+	talga::LuaEngine::instance()->ExecuteStr("print = function(s) if type(s) == \"string\" then GAME:printToLuaPromptStr(s) elseif type(s) == \"number\" then GAME:printToLuaPromptFl(s) end end");
+	talga::LuaEngine::instance()->ExecuteFile("../assets/scripts/script.lua");
+
+	GAME->loadmap("../assets/maps/sandboxx.tmap");
+	GAME->manager()->AddAsset("../assets/textures/talgasheet.png");
 	talga::U32 previousTime = 0;
 	talga::U32 dt = 0;
 	talga::U32 fps = 0;
 	talga::U32 timeSince = 0;
 	while (!glfwWindowShouldClose(GAME->getWindow().getWindow()))
 	{
+		dt = (clock.TimePassed()) - previousTime;
+		timeSince += dt;
+		previousTime = clock.TimePassed();
+
+		if (dt >= 20)
+			dt = 17;
+
 		GAME->getWindow().swap();
 		GAME->getWindow().clear();
 
 		glfwPollEvents();
-		dt = clock.TimePassed() - previousTime;
-		timeSince += dt;
-		previousTime = clock.TimePassed();
-
+		
 		if (timeSince >= 1000)
 		{
 			timeSince = 0;

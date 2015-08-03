@@ -13,7 +13,10 @@ namespace talga
 		float& operator[](int index);
 		float operator[](int index) const { return arr[index]; }
 		float operator()(int index);
+		Vector2 operator+(const Vector2& vec) const;
+		Vector2 operator-(const Vector2& vec) const;
 
+		
 		const Vector2& operator=(const Vector3& vec3Cpy);
 
 		float x() const { return arr[0]; }

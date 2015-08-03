@@ -9,14 +9,15 @@
 #include "Math/RandomGen.h"
 #include "Math/Operations.h"
 #include "sys.h"
+#include "Script.h"
 
 #define RELATIVE_ASSETS_PATH std::string("../assets/")
 
 namespace talga
 {
-	const I32 MAP_MAX_COLLIDERS = 1000;
+const I32 MAP_MAX_COLLIDERS = 1000;
 #ifdef TALGA_QT_BUILD
-  int VERT_SIZE = 6;
+  const int VERT_SIZE = 6;
 #endif
 	Map::Map()
 		: AAsset()
@@ -28,11 +29,12 @@ namespace talga
 		, mLayers{}
 		, mTileSheets{}
 		, mIsSaved{false}
-    , mStaticSceneGeom()
+		, mStaticSceneGeom()
 		, mRenderSceneGeom(false)
+		, mInitScript()
 	{
 		mLayers.reserve(MAX_LAYERS);
-    mStaticSceneGeom.reserve(MAP_MAX_COLLIDERS);
+		mStaticSceneGeom.reserve(MAP_MAX_COLLIDERS);
 	}
 
 	Map::Map(const Map& cpy)
@@ -45,8 +47,9 @@ namespace talga
 		, mTileWidth(cpy.mTileWidth)
 		, mTileSheets(cpy.mTileSheets)
 		, mIsSaved{cpy.mIsSaved}
-    , mStaticSceneGeom(cpy.mStaticSceneGeom)
-    , mRenderSceneGeom(cpy.mRenderSceneGeom)
+		, mStaticSceneGeom(cpy.mStaticSceneGeom)
+		, mRenderSceneGeom(cpy.mRenderSceneGeom)
+		, mInitScript(cpy.mInitScript)
 	{
 	}
 
@@ -89,6 +92,7 @@ namespace talga
 		mIsSaved = cpy.mIsSaved;
 		mStaticSceneGeom = cpy.mStaticSceneGeom;
 		mRenderSceneGeom = cpy.mRenderSceneGeom;
+		mInitScript = cpy.mInitScript;
 
 		return *this;
 	}
@@ -181,7 +185,7 @@ namespace talga
 	}
 	bool Map::load(std::string path, AssetManager& manager)
 	{
-    *this = createEmptyMap(-1,-1,-1,-1, "");
+		*this = createEmptyMap(-1,-1,-1,-1, "");
 		std::ifstream stream;
 
 		stream.open(path);
@@ -190,38 +194,57 @@ namespace talga
 			return false;
 
 		std::string tempName = getFileNameFromPath(path);
-    std::string tempPath;
-    if (!isAbs(path))
-      tempPath = getAbsFromRel(getWorkingDirectory(), getPathFromFilePath(path));
-    else
-      tempPath = getPathFromFilePath(path);
+		std::string tempPath;
+		if (!isAbs(path))
+			tempPath = getAbsFromRel(getWorkingDirectory(), getPathFromFilePath(path));
+		else
+			tempPath = getPathFromFilePath(path);
 
-    I32 tileWidth;
+		std::string initScriptPath;
+		I32 tileWidth;
 		I32 tileHeight;
 		I32 mapWidth;
 		I32 mapHeight;
 		I32 numTextures;
 		I32 numLayers;
-    I32 numRects;
-    I32 numTris;
+		I32 numRects;
+		I32 numTris;
 
 		std::vector<Tile> tiles;
 		std::string tempTexPath;
 
+		stream >> initScriptPath;
 		stream >> tileWidth;
 		stream >> tileHeight; // tileHeight
 		stream >> mapWidth; // mapWidth
 		stream >> mapHeight; // mapHeight
-    stream >> numRects;
-    stream >> numTris;
+		stream >> numRects;
+		stream >> numTris;
 		stream >> numTextures; // numTiles
 		stream >> numLayers;
 		
+
+		mInitScript = manager.AddScript(getAbsFromRel(tempPath, getPathFromFilePath(initScriptPath)) + getFileNameFromPath(initScriptPath));
+		if (!mInitScript)
+		{
+			LuaEngine::instance()->reportError();
+			return false;
+		}
+		mInitScript->execute();
+
+		OOLUA::Lua_func_ref initFunc = LuaEngine::instance()->getGlobalFunction("init");
+		
+		if (!initFunc.valid())
+		{
+			TALGA_WARN(0, "failed to find lua init function for map " + tempName);
+			return false;
+		}
+
 		for (auto i = 0; i < numTextures; ++i)
 		{
 			stream >> tempTexPath;
 
-      std::string tName = getAbsFromRel(tempPath, getPathFromFilePath(tempTexPath)) + getFileNameFromPath(tempTexPath);
+			std::string tName = getAbsFromRel(tempPath, getPathFromFilePath(tempTexPath)) + getFileNameFromPath(tempTexPath);
 			cpTex tex = manager.AddTexture(tName);
 
 			if (tex)
@@ -347,7 +370,14 @@ namespace talga
 		mTileWidth = tileWidth;
 		mTileHeight = tileHeight;
 		
-		
+
+		OOLUA::Lua_function tempCall(initFunc.state());
+
+#ifndef TALGA_QT_BUILD
+    if (!tempCall(initFunc))
+			LuaEngine::instance()->reportError();
+#endif
+
 		stream.close();
 		return true;
 	}

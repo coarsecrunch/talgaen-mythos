@@ -20,6 +20,10 @@ namespace talga
 		cpBodySetMass(mBody, value);
 		cpBodySetMoment(mBody, cpMomentForBox(cpBodyGetMass(mBody), mWidth, mHeight));
 	}
+	I32 PhysicsComponent::getCollisionType() const
+	{
+		return cpShapeGetCollisionType(mShape);
+	}
 	void PhysicsComponent::setCollisionType(I32 value)
 	{
 		cpShapeSetCollisionType(mShape, value);

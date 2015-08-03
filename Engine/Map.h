@@ -9,7 +9,7 @@
 #include "Rectangle.h"
 #include "Math/Vector2.h"
 #include "renderableshapes.h"
-
+#include "Script.h"
 
 namespace talga
 {
@@ -108,5 +108,6 @@ namespace talga
 		std::vector<cpTex> mTileSheets;
 		I32 mNumSheets;
 		LayerList mLayers;
+		cpScript mInitScript;
 	};
 }

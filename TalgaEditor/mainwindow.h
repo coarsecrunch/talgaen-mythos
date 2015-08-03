@@ -14,6 +14,7 @@ class QGraphicsScene;
 class QPixmap;
 class QGraphicsPixmapItem;
 class QActionGroup;
+class QProcess;
 
 namespace talga
 {
@@ -34,6 +35,8 @@ namespace talga
       void sig_setModeTileEdit();
       void sig_addRect();
       void sig_addTri();
+    public slots:
+      void sl_pipeEngineOutput();
     private slots:
 
       void on_actionLoad_Assets_triggered();
@@ -64,9 +67,17 @@ namespace talga
 
       void on_actionCreate_New_Triangle_Geometry_triggered();
 
+      void on_actionInvoke_Engine_triggered();
+
+      void on_actionStop_Engine_triggered();
+
+      void on_actionProperties_triggered(bool checked);
+
     protected:
       Ui::MainWindow *ui;
 
+      QProcess* mEngineProcess;
+      QProcess* mTerminalProcess;
       QActionGroup* editModes;
       QActionGroup* collisionEditModeActions;
       QGraphicsScene* pmImageViewScene;
