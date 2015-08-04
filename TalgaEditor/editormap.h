@@ -40,6 +40,8 @@ namespace talga
       I32 getWorkingLayerIndex() const {return mWorkingLayerIndex;}
       std::string setWorkingLayer(std::string layerName);
       void setInitScriptPath(const std::string& path);
+      void setWidth(I32 w);
+      void setHeight(I32 h);
 
       void addSceneGeom(IRenderable* shape);
       IRenderable* getSceneGeom(const vec3& point);

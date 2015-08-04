@@ -6,7 +6,6 @@
 #include <memory>
 
 #include <QSurfaceFormat>
-#include <QDebug>
 #include <QDir>
 #include <QDragEnterEvent>
 #include <QApplication>
@@ -72,8 +71,6 @@ namespace talga
 
       camera.box().setX(100);
       camera.box().setY(200);
-
-       GData::getInstance()->sl_loadMap("../assets/maps/trinnador.tmap");
     }
 
     void GLContext::dragEnterEvent(QDragEnterEvent *e)
@@ -84,21 +81,7 @@ namespace talga
 
     void GLContext::dropEvent(QDropEvent *e)
     {
-      QString qassetName = e->mimeData()->text();
 
-      std::string assetname = qassetName.toUtf8().constData();
-
-      QString fileEnding = qassetName.split(".").at(0);
-
-      if ( fileEnding == "png" )
-      {
-        mSpriteLayer.add(new Sprite(GData::getInstance()->getManager()->GetTexture(assetname)));
-        update();
-      }
-      else if (fileEnding == "tmap")
-        qDebug() << "implement map drag motha belly";
-      else
-        TALGA_WARN(0, "tried to pass invalid file type to GLContext, file not loaded\nmust be a .tmap or .png");
     }
 
     void GLContext::sl_addAsset(QString path)

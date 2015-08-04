@@ -1,6 +1,5 @@
 #include "layerstack.h"
 #include <QTreeWidgetItem>
-#include <QDebug>
 #include "commands/cchangeworkinglayer.h"
 #include "commands/caddlayer.h"
 #include "commands/cremovelayer.h"

@@ -121,8 +121,20 @@ void PropertiesViewer::sl_itemDoubleClicked(QTreeWidgetItem *itm, int col)
 void PropertiesViewer::sl_itemChanged(QTreeWidgetItem *itm, int col)
 {
   if (itm->text(1) == "" || itm->text(1) == " ") return;
+
   if (mAssetType == MAP)
   {
+    EditorMap* map = static_cast<EditorMap*>(mAsset);
+    if (itm->text(0) == "width")
+    {
+      map->setWidth(itm->text(1).toInt());
+    }
+    else if (itm->text(0) == "height")
+    {
+      map->setHeight(itm->text(1).toInt());
+    }
+
+    emit sig_updateGL();
   }
 
 

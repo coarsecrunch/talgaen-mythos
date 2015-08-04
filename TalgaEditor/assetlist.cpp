@@ -4,7 +4,6 @@
 #include <QApplication>
 #include <QEvent>
 #include <QMouseEvent>
-#include <QDebug>
 #include <QFileDialog>
 #include <QDrag>
 #include <QMimeData>

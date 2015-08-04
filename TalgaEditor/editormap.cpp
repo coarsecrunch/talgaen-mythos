@@ -53,6 +53,80 @@ namespace talga
 
     }
 
+    void EditorMap::setWidth(I32 w)
+    {
+      for (auto it = mLayers.begin(); it != mLayers.end(); ++it)
+      {
+        std::vector<I32> newIndices( w * mHeight);
+
+        if (w >= mWidth)
+        {
+          I32 zeroOverflow = w - mWidth;
+
+          for (I32 y = 0; y < mHeight; ++y)
+          {
+            for (I32 x = 0; x < w; ++x)
+            {
+              if (x < mWidth)
+                newIndices[y * w + x] = (*it)[y * mWidth + x];
+              else
+                newIndices[y * w + x] = 0;
+            }
+          }
+        }
+        else
+        {
+          for (I32 y = 0; y < mHeight; ++y)
+          {
+            for (I32 x = 0; x < w; ++x)
+            {
+              newIndices[y * w + x] = (*it)[y * mWidth + x];
+            }
+          }
+        }
+        it->mIndices = newIndices;
+      }
+
+      mWidth = w;
+    }
+
+    void EditorMap::setHeight(I32 h)
+    {
+      for (auto it = mLayers.begin(); it != mLayers.end(); ++it)
+      {
+        std::vector<I32> newIndices( mWidth * h);
+
+        if (h > mHeight)
+        {
+          I32 zeroOverflow = h - mHeight;
+
+          for (I32 y = 0; y < h; ++y)
+          {
+            for (I32 x = 0; x < mWidth; ++x)
+            {
+              if (y < mHeight)
+                newIndices[y * mWidth + x] = (*it)[y * mWidth + x];
+              else
+                newIndices[y * mWidth + x] = 0;
+            }
+          }
+        }
+        else
+        {
+          for (I32 y = 0; y < h; ++y)
+          {
+            for (I32 x = 0; x < mWidth; ++x)
+            {
+              newIndices[y * mWidth + x] = (*it)[y * mWidth + x];
+            }
+          }
+        }
+        it->mIndices = newIndices;
+      }
+
+      mHeight = h;
+    }
+
 
     void EditorMap::addSceneGeom(IRenderable *shape)
     {

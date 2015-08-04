@@ -1,5 +1,4 @@
 #include "assetviewer.h"
-#include <QDebug>
 #include <QMouseEvent>
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
@@ -175,7 +174,6 @@ namespace talga
       if (mSelectBox)
       {
         pmImageViewScene->removeItem(mSelectBox);
-        qDebug() << pmImageViewScene->children().size();
         delete mSelectBox;
       }
 

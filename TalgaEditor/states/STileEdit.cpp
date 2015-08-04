@@ -103,10 +103,8 @@ void STileEdit::mouseReleaseEvent(QMouseEvent *e)
     mStartNewHistoryItem = true;
   }
 
-
   if (mCtrl &&  !(mCurrentSelection.first == "NULL"))
   {
-    qDebug() << "worked";
 
     vec3 endPos = vec3(e->x(), e->y(), 1.0f);
 

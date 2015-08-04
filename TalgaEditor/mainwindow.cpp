@@ -34,6 +34,7 @@ namespace talga
       ui->setupUi(this);
       //for updating the display every time you undo or redo
       connect(ui->historyView->stack(), SIGNAL(indexChanged(int)), ui->openGLWidget, SLOT(sl_updateGL()));
+      connect(ui->propertiesViewer, SIGNAL(sig_updateGL()), ui->openGLWidget, SLOT(sl_updateGL()));
 
       //for when maps are loaded
       connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->openGLWidget, SLOT(sl_updateChangedMap(EditorMap*)));
@@ -169,7 +170,6 @@ void talga::editor::MainWindow::on_actionProperties_triggered(bool checked)
   }
 }
 
-
 void talga::editor::MainWindow::on_actionHistory_triggered(bool checked)
 {
   if (checked)
@@ -256,18 +256,8 @@ void talga::editor::MainWindow::on_actionInvoke_Engine_triggered()
     QStringList args;
     args.push_back(QString::fromStdString(GData::getInstance()->getCurrentMap()->getPath() + GData::getInstance()->getCurrentMap()->getName()));
 
-#ifdef QT_DEBUG
-    mEngineProcess = new QProcess(this);
-    mEngineProcess->setWorkingDirectory(QDir::currentPath());
-    mEngineProcess->setProcessChannelMode(QProcess::MergedChannels);
-    mEngineProcess->setReadChannel(QProcess::StandardOutput);
-
-    connect(mEngineProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(sl_pipeEngineOutput()));
-#else
-    mEngineProcess->setStandardOutputFile("../build/logs/EngineLog.log");
-#endif
-    mEngineProcess->start("Engine.exe", args, QProcess::ReadWrite);
-
+    QProcess::startDetached("Engine.exe", args);
+    qDebug() << QDir::currentPath();
   }
 }
 void talga::editor::MainWindow::on_actionStop_Engine_triggered()

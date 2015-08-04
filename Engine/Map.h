@@ -43,6 +43,9 @@ namespace talga
 		void resize(I32 size) { mIndices.clear();  mIndices.resize(size); }
 		void setName(std::string value) { mName = value; }
 	protected:
+#ifdef TALGA_QT_BUILD
+    friend class editor::EditorMap;
+#endif
 		std::vector<I32> mIndices;
 		
 		bool mVisible;

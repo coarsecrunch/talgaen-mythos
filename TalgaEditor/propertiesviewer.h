@@ -18,7 +18,7 @@ public:
 
 signals:
   void sig_assetChanged(const AAsset*, const std::string&);
-
+  void sig_updateGL();
 public slots:
   void sl_assetSelected(AAsset*);
   void sl_updateChangedMap(EditorMap*);
