@@ -66,6 +66,7 @@ namespace talga
 
 	std::string getFileNameFromPath(const std::string& path)
 	{
+    if (!(path.size() > 1)) return std::string("");
 		return seperatePath(path).back();
 	}
 
@@ -93,8 +94,10 @@ namespace talga
 
 	std::string getPathFromFilePath(const std::string& path)
 	{
+    if (!(path.size() > 1)) return std::string("");
+
 		bool isAbsolute = false;
-		if (path.back() == '/')
+    if (isAbs(path))
 			isAbsolute = true;
 		StrList temp = seperatePath(path);
 		temp.pop_back();

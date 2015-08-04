@@ -5,6 +5,8 @@
 #include <QString>
 #include <QMap>
 
+#include "Cmn.h"
+
 class QMouseEvent;
 class QPixmap;
 class QTreeWidgetItem;
@@ -15,7 +17,6 @@ namespace talga
 
   namespace editor
   {
-    typedef QPair<QString, QImage*> TextureAsset;
     class EditorMap;
 
     class AssetList : public QTreeWidget
@@ -33,7 +34,7 @@ namespace talga
       // to signal to GLContext to add an asset to the manager
       void sig_assetChosen(QString path);
 
-      void sig_textureSelected(TextureAsset);
+      void sig_textureSelected(cpAsset);
       void sig_mapSelcted();
       void sig_scriptSelected();
       void sig_assetSelected(AAsset*);
@@ -43,7 +44,7 @@ namespace talga
       void sl_chooseAssets();
       void sl_loadAsset(QString path);
       void sl_updateChangedMap(EditorMap*);
-      void sl_updateAssetsNames();
+      void sl_updateAssetName(const AAsset*, const std::string& oldname);
     protected:
       std::vector<const AAsset*> mAssets;
       QTreeWidgetItem* mTexturesFolder;

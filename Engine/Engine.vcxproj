@@ -202,6 +202,9 @@
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>COPY $(ProjectDir)..\build\debug\Engine.exe $(ProjectDir)..\build\editor\debug\debug\Engine.exe</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -249,6 +252,9 @@
       <AdditionalLibraryDirectories>$(ProjectDir)..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>COPY $(ProjectDir)..\build\final\Engine.exe $(ProjectDir)..\build\editor\release\release\Engine.exe</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -73,7 +73,7 @@ namespace talga
       camera.box().setX(100);
       camera.box().setY(200);
 
-       GData::getInstance()->sl_loadMap("../assets/maps/sandboxx.tmap");
+       GData::getInstance()->sl_loadMap("../assets/maps/trinnador.tmap");
     }
 
     void GLContext::dragEnterEvent(QDragEnterEvent *e)

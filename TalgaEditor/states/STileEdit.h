@@ -28,13 +28,14 @@ public:
     virtual void mouseMoveEvent(QMouseEvent *e) override;
     void updateSelection(Selection selection);
   private:
-
+    vec3 mMouseBeginClick;
     QPoint mStartPos;
     vec3 mPreviousMousePos;
     bool mIsMouseDown;
     bool mStartNewHistoryItem;
     std::vector<Sprite> mSelectionRender;
     Selection mCurrentSelection;
+
   };
 
   }

@@ -1,4 +1,4 @@
-require("script")
+
 function init()
     tga = GameObject.new("../assets/scripts/talga.lua")
 

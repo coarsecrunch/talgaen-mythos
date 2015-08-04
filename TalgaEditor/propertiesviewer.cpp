@@ -1,6 +1,8 @@
 #include "propertiesviewer.h"
 #include "editormap.h"
 #include <QFont>
+#include <QFileDialog>
+#include "sys.h"
 
 namespace talga
 {
@@ -13,6 +15,7 @@ PropertiesViewer::PropertiesViewer(QWidget* parent)
   , mAssetType(NONE)
 {
   connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sl_itemDoubleClicked(QTreeWidgetItem*,int)));
+  connect(this, SIGNAL(itemChanged(QTreeWidgetItem*,int)), this, SLOT(sl_itemChanged(QTreeWidgetItem*,int)));
 }
 
 void PropertiesViewer::sl_assetSelected(AAsset* asset)
@@ -20,13 +23,13 @@ void PropertiesViewer::sl_assetSelected(AAsset* asset)
   QFont unmutableFont;
   unmutableFont.setBold(true);
   unmutableFont.setItalic(true);
-
+  clear();
 
   if (dynamic_cast<EditorMap*>(asset))
   {
     EditorMap* map = static_cast<EditorMap*>(asset);
     mAssetType = MAP;
-    clear();
+    mAsset = asset;
 
     QTreeWidgetItem* tileWidth = new QTreeWidgetItem(this);
     tileWidth->setText(0, "tileWidth");
@@ -48,8 +51,31 @@ void PropertiesViewer::sl_assetSelected(AAsset* asset)
     height->setText(0, "height");
     height->setText(1,QString::number(map->getHeight()));
 
+    QTreeWidgetItem* initScript = new QTreeWidgetItem(this);
+    initScript->setText(0, "initScript");
+
+    if (map->getScript())
+    {
+      initScript->setText(1, QString::fromStdString(map->getScript()->getPath() + map->getScript()->getName()));
+      cpScript script = map->getScript();
+    }
+    else
+    {
+      initScript->setText(1, "");
+    }
     headerItem()->setText(0, "map");
   }
+  else
+  {
+    mAsset = nullptr;
+  }
+}
+
+void PropertiesViewer::sl_updateChangedMap(EditorMap *)
+{
+  clear();
+  mAsset = nullptr;
+  mAssetType = NONE;
 }
 
 void PropertiesViewer::sl_itemDoubleClicked(QTreeWidgetItem *itm, int col)
@@ -68,15 +94,38 @@ void PropertiesViewer::sl_itemDoubleClicked(QTreeWidgetItem *itm, int col)
     break;
   case MAP:
   {
+    EditorMap* map = static_cast<EditorMap*>(mAsset);
     if (text == "width" || text == "height")
     {
       itm->setFlags(itm->flags() | Qt::ItemIsEditable);
+    }
+    else if (text == "initScript")
+    {
+      QString file = QFileDialog::getOpenFileName(
+            this,
+            "select init lua script",
+            "/home",
+            "lua script (*.lua)");
+      if (file == "") return;
+
+      itm->setText(1, file);
+      map->setInitScriptPath(file.toStdString());
     }
   }break;
 
   default:
     break;
   }
+}
+
+void PropertiesViewer::sl_itemChanged(QTreeWidgetItem *itm, int col)
+{
+  if (itm->text(1) == "" || itm->text(1) == " ") return;
+  if (mAssetType == MAP)
+  {
+  }
+
+
 }
 
 }

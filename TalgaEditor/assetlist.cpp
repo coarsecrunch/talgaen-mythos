@@ -100,17 +100,25 @@ namespace talga
         {
           QTreeWidgetItem* temp = new QTreeWidgetItem(mTexturesFolder);
           temp->setText(0, QString::fromStdString( (*it)->getName()));
-          mAssets.insert(QString::fromStdString((*it)->getName()), new QImage(QString::fromStdString((*it)->getPath() + (*it)->getName())));
+          mAssets.push_back(*it);
         }
       }
 
     }
 
-    void AssetList::sl_updateAssetsNames()
+    void AssetList::sl_updateAssetName(const AAsset * asset, const std::string &oldname)
     {
-      for (auto it = mAssets.begin(); it != mAssets.end(); ++it)
+      QString qoldname = QString::fromStdString(oldname);
+
+      for (int i = 0; i < topLevelItemCount(); ++i)
       {
-        if ( getFileExtension((*it)->getName()) == ".png" )
+        QTreeWidgetItem* itm = topLevelItem(i);
+
+        if (itm->text(0) == qoldname)
+        {
+          itm->setText(0, QString::fromStdString(asset->getName()));
+          break;
+        }
       }
     }
 
@@ -125,7 +133,14 @@ namespace talga
         return;
       }
 
-      emit sig_textureSelected(TextureAsset(item->text(column), mAssets[item->text(column)]));
+      for (auto it = mAssets.begin(); it != mAssets.end(); ++it)
+      {
+        if (item->text(0) == QString::fromStdString( (*it)->getName()))
+        {
+          emit sig_textureSelected(*it);
+          return;
+        }
+      }
     }
 
     void AssetList::mousePressEvent(QMouseEvent *e)

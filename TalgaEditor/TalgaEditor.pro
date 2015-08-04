@@ -268,4 +268,9 @@ DISTFILES += \
     ../Engine/ext/freetype-gl/fonts/OldStandard-LICENSE.txt \
     ../Engine/ext/freetype-gl/fonts/SourceCodePro-LICENSE.txt \
     ../Engine/ext/freetype-gl/fonts/SourceSansPro-LICENSE.txt \
-    ../Engine/ext/freetype-gl/fonts/VERA-COPYRIGHT
+    ../Engine/ext/freetype-gl/fonts/VERA-COPYRIGHT \
+    ../assets/scripts/globals.lua \
+    ../assets/scripts/sandboxx.lua \
+    ../assets/scripts/script.lua \
+    ../assets/scripts/talga.lua \
+    ../assets/scripts/testmod.lua

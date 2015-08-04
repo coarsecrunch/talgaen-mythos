@@ -12,6 +12,7 @@
         <file>newtriangleicon.png</file>
         <file>invokeengine_button.png</file>
         <file>stopengine_button.png</file>
+        <file>filedialog_button.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

@@ -12,10 +12,7 @@ class QGraphicsRectItem;
 namespace talga
 {
   namespace editor
-  {  
-
-      typedef QPair<QString, QImage*> TextureAsset;
-
+  {
     class AssetViewer : public QGraphicsView
     {
       Q_OBJECT
@@ -31,12 +28,13 @@ namespace talga
       void sig_updateSelection(Selection);
 
     public slots:
-      void sl_updateTexture(TextureAsset);
+      void sl_updateTexture(cpAsset tex);
       void sl_updateChangedMap(EditorMap* map);
     protected:
       QGraphicsScene* pmImageViewScene;
       QGraphicsRectItem* mSelectBox;
-      TextureAsset mCurrentImage;
+      QPixmap* mCurrentImage;
+      const AAsset* mCurrentAsset;
 
       bool mLeftButtonIsDown;
       QPoint mStartPos;

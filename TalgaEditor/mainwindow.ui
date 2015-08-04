@@ -98,6 +98,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionSave"/>
+   <addaction name="actionLoad_Assets"/>
    <addaction name="separator"/>
    <addaction name="actionInvoke_Engine"/>
    <addaction name="actionStop_Engine"/>
@@ -446,6 +447,10 @@
    </widget>
   </widget>
   <action name="actionLoad_Assets">
+   <property name="icon">
+    <iconset resource="../assets/icons/icons.qrc">
+     <normaloff>:/new/ico/filedialog_button.png</normaloff>:/new/ico/filedialog_button.png</iconset>
+   </property>
    <property name="text">
     <string>Load Assets...</string>
    </property>
@@ -604,7 +609,7 @@
    <header>assetviewer.h</header>
    <slots>
     <signal>sig_updateSelection(Selection)</signal>
-    <slot>sl_updateTexture(TextureAsset)</slot>
+    <slot>sl_updateTexture(cpAsset)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -612,7 +617,7 @@
    <extends>QTreeWidget</extends>
    <header>assetlist.h</header>
    <slots>
-    <signal>sig_textureSelected(TextureAsset)</signal>
+    <signal>sig_textureSelected(cpAsset)</signal>
     <signal>sig_assetChosen(QString)</signal>
     <signal>sig_assetSelected(AAsset*)</signal>
     <slot>sl_assetSelected(QTreeWidgetItem*,int)</slot>
@@ -693,9 +698,9 @@
   </connection>
   <connection>
    <sender>assetList</sender>
-   <signal>sig_textureSelected(TextureAsset)</signal>
+   <signal>sig_textureSelected(cpAsset)</signal>
    <receiver>imageView</receiver>
-   <slot>sl_updateTexture(TextureAsset)</slot>
+   <slot>sl_updateTexture(cpAsset)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>187</x>

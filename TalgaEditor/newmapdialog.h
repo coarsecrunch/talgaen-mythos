@@ -20,6 +20,8 @@ public:
   explicit NewMapDialog(QWidget *parent = 0);
   ~NewMapDialog();
   Map getData() const;
+public slots:
+  void sl_onFolderDialogClicked();
 private:
   Ui::NewMapDialog *ui;
 };

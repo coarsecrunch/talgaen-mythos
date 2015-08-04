@@ -6,6 +6,7 @@
 namespace talga
 {
 	Script::Script()
+    : AAsset()
 	{
 	}
 

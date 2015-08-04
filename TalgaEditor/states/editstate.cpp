@@ -12,26 +12,30 @@ namespace editor
 EditState::EditState(GLContext *context)
   :mContext(context)
   , mShift(false)
+  , mCtrl(false)
 {
 }
 
 void EditState::keyPressEvent(QKeyEvent *e)
 {
-  if (e->key() == Qt::Key_Shift)
+  if(e->key() == Qt::Key_Shift)
   {
     mShift = true;
     QApplication::setOverrideCursor(Qt::PointingHandCursor);
   }
-
-  if ((e->key() == Qt::Key_Z)  && (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)))
+  else if(e->key() == Qt::Key_Control)
+  {
+    mCtrl = true;
+  }
+  else if ((e->key() == Qt::Key_Z)  && (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)))
   {
     emit mContext->sig_ctrlz();
   }
-
-  if ((e->key() == Qt::Key_Y)  && (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)))
+  else if ((e->key() == Qt::Key_Y)  && (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)))
   {
     emit mContext->sig_ctrly();
   }
+
 }
 
 void EditState::keyReleaseEvent(QKeyEvent *e)
@@ -40,6 +44,10 @@ void EditState::keyReleaseEvent(QKeyEvent *e)
   {
     mShift = false;
     QApplication::restoreOverrideCursor();
+  }
+  else if(e->key() == Qt::Key_Control)
+  {
+    mCtrl = false;
   }
 
 }

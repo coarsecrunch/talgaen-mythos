@@ -41,6 +41,7 @@ namespace talga
       connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->layerStack, SLOT(sl_updateChangedMap(EditorMap*)));
       connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->assetList, SLOT(sl_updateChangedMap(EditorMap*)));
       connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->imageView, SLOT(sl_updateChangedMap(EditorMap*)));
+      connect(GData::getInstance(), SIGNAL(sig_mapChanged(EditorMap*)), ui->propertiesViewer, SLOT(sl_updateChangedMap(EditorMap*)));
       connect(this, SIGNAL(sig_setModeCollisionEdit()), ui->openGLWidget, SLOT(sl_setModeCollisionEdit()));
       connect(this, SIGNAL(sig_setModeTileEdit()), ui->openGLWidget, SLOT(sl_setModeTileEdit()));
       connect(this, SIGNAL(sig_addRect()), ui->openGLWidget, SLOT(sl_addRect()));

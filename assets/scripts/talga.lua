@@ -22,7 +22,10 @@ end
 
 local function keyW(self, action)
     if action == TALGA_KEYPRESS then
-        self:getCollider():applyImpulseY(40000)
+        if self.hasJumped == false then
+            self:getCollider():applyImpulseY(40000)
+            self.hasJumped = true
+        end
     end
 end
 
@@ -35,10 +38,13 @@ local function updateFuncLoc(self, dt)
         self:getCollider():applyImpulseX(2000)
 
     end
+
+    GAME:camera():box():setX(self:getCollider():getX())
+    GAME:camera():box():setY(-self:getCollider():getY())
 end
 
 local function onCollideWithGround(self)
-    print("collided with ground")
+    self.hasJumped = false;
 end
 
 local function stagedFuncLoc(self)

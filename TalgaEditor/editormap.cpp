@@ -4,6 +4,9 @@
 #include "Texture.h"
 #include "renderableshapes.h"
 #include "Math/Operations.h"
+#include "sys.h"
+#include "gdata.h"
+#include "AssetManager.h"
 
 namespace talga
 {
@@ -42,6 +45,14 @@ namespace talga
       Map::operator =(cpy);
       return *this;
     }
+
+    void EditorMap::setInitScriptPath(const std::string &path)
+    {
+      Script* script = (Script*)mInitScript;
+      mInitScript = GData::getInstance()->getManager()->AddScript( path);
+
+    }
+
 
     void EditorMap::addSceneGeom(IRenderable *shape)
     {
@@ -286,6 +297,8 @@ namespace talga
       mIsSaved = false;
       return previousName;
     }
+
+
 
   }
 }

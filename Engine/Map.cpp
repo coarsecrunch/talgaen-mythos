@@ -31,7 +31,7 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 		, mIsSaved{false}
 		, mStaticSceneGeom()
 		, mRenderSceneGeom(false)
-		, mInitScript()
+    , mInitScript(nullptr)
 	{
 		mLayers.reserve(MAX_LAYERS);
 		mStaticSceneGeom.reserve(MAP_MAX_COLLIDERS);
@@ -185,7 +185,7 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 	}
 	bool Map::load(std::string path, AssetManager& manager)
 	{
-		*this = createEmptyMap(-1,-1,-1,-1, "");
+    *this = createEmptyMap(-1,-1,-1,-1, "", "", manager);
 		std::ifstream stream;
 
 		stream.open(path);
@@ -224,22 +224,28 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 		stream >> numLayers;
 		
 
-		mInitScript = manager.AddScript(getAbsFromRel(tempPath, getPathFromFilePath(initScriptPath)) + getFileNameFromPath(initScriptPath));
-		if (!mInitScript)
-		{
-			LuaEngine::instance()->reportError();
-			return false;
-		}
-		mInitScript->execute();
+    if (initScriptPath != "null")
+    {
+      mInitScript = manager.AddScript(getAbsFromRel(tempPath, getPathFromFilePath(initScriptPath)) + getFileNameFromPath(initScriptPath));
 
-		OOLUA::Lua_func_ref initFunc = LuaEngine::instance()->getGlobalFunction("init");
+#ifndef TALGA_QT_BUILD
+      mInitScript->execute();
+
+
+      OOLUA::Lua_func_ref initFunc = LuaEngine::instance()->getGlobalFunction("init");
 		
-		if (!initFunc.valid())
-		{
-			TALGA_WARN(0, "failed to find lua init function for map " + tempName);
-			return false;
-		}
+      if (!initFunc.valid())
+      {
+        TALGA_WARN(0, "failed to find lua init function for map " + tempName);
+        return false;
+      }
 
+      OOLUA::Lua_function tempCall(initFunc.state());
+
+      if (!tempCall(initFunc))
+        LuaEngine::instance()->reportError();
+#endif
+    }
 		for (auto i = 0; i < numTextures; ++i)
 		{
 			stream >> tempTexPath;
@@ -333,7 +339,6 @@ const I32 MAP_MAX_COLLIDERS = 1000;
       mStaticSceneGeom.push_back(tmpTri);
     }
 
-
 		std::vector<std::string> layerNames(numLayers);
 
 		for (I32 i = 0; i < numLayers; ++i)
@@ -369,14 +374,7 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 		mHeight = mapHeight;
 		mTileWidth = tileWidth;
 		mTileHeight = tileHeight;
-		
 
-		OOLUA::Lua_function tempCall(initFunc.state());
-
-#ifndef TALGA_QT_BUILD
-    if (!tempCall(initFunc))
-			LuaEngine::instance()->reportError();
-#endif
 
 		stream.close();
 		return true;
@@ -387,14 +385,19 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 
 		stream.open(path);
 
-    if (!stream.is_open()) return false;
+		if (!stream.is_open()) return false;
 
-    mName = getFileNameFromPath(path);
-    if (!isAbs(path))
-      mPath = getAbsFromRel(getWorkingDirectory(), getPathFromFilePath(path));
+		mName = getFileNameFromPath(path);
+		if (!isAbs(path))
+			mPath = getAbsFromRel(getWorkingDirectory(), getPathFromFilePath(path));
+		else
+			mPath = getPathFromFilePath(path);
+		
+    if (mInitScript)
+      stream << getRelFromAbs(getPath(), mInitScript->getPath())  + mInitScript->getName()<< std::endl;
     else
-      mPath = getPathFromFilePath(path);
-		stream << mTileWidth << std::endl;
+      stream << "null" << std::endl;
+    stream << mTileWidth << std::endl;
 		stream << mTileHeight << std::endl;
 		stream << mWidth << std::endl;
 		stream << mHeight << std::endl;
@@ -478,7 +481,7 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 		return true;
 	}
 
-  Map Map::createEmptyMap(I32 tW, I32 tH, I32 w, I32 h, const std::string& name)
+  Map Map::createEmptyMap(I32 tW, I32 tH, I32 w, I32 h, const std::string& name, const std::string& luaInitPath, AssetManager& manager)
   {
     Map map;
 
@@ -490,6 +493,7 @@ const I32 MAP_MAX_COLLIDERS = 1000;
     map.mPath = "";
     map.mLayers.push_back(MapLayer(w * h, "layer0"));
     map.mIsSaved = false;
+    map.mInitScript = manager.AddScript(luaInitPath);
 
     return map;
   }

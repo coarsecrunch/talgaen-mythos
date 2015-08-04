@@ -15,7 +15,8 @@ namespace talga
     AssetViewer::AssetViewer(QWidget* parent)
       : QGraphicsView(parent)
       , pmImageViewScene(new QGraphicsScene())
-      , mCurrentImage{"", nullptr}
+      , mCurrentImage{nullptr}
+      , mCurrentAsset{nullptr}
       , mStartPos{-1,-1}
       , mEndPos{-1, -1}
       , mFill(QColor(50, 50, 50, 150))
@@ -36,6 +37,8 @@ namespace talga
     {
       pmImageViewScene->clear();
       delete pmImageViewScene;
+      if (mCurrentImage)
+        delete mCurrentImage;
     }
 
 
@@ -43,10 +46,10 @@ namespace talga
     {
       if (e->button() == Qt::LeftButton)
       {
-        if (!mCurrentImage.second) return;
+        if (!mCurrentImage) return;
 
 
-        if (e->x() >= 0 && e->x() < mCurrentImage.second->width() && e->y() >= 0 && e->y() < mCurrentImage.second->height())
+        if (e->x() >= 0 && e->x() < mCurrentImage->width() && e->y() >= 0 && e->y() < mCurrentImage->height())
         {
           mStartPos = e->pos();
         }
@@ -72,7 +75,7 @@ namespace talga
         QPoint mEndPos = e->pos();
         Selection s;
 
-        s.first = mCurrentImage.first.toUtf8().constData();
+        s.first = mCurrentAsset->getName();
 
 
         if (mStartPos.x() > currentPos.x())
@@ -131,7 +134,7 @@ namespace talga
 
     }
 
-    void AssetViewer::sl_updateTexture(TextureAsset pix)
+    void AssetViewer::sl_updateTexture(cpAsset tex)
     {
       if (!mMap) return;
       pmImageViewScene->clear();
@@ -139,22 +142,26 @@ namespace talga
 
       static QPen lineProperties(Qt::gray);
       lineProperties.setWidth(1);
+      mCurrentAsset = tex;
+      if (mCurrentImage)
+        delete mCurrentImage;
 
-      mCurrentImage = pix;
-      pmImageViewScene->addItem(new QGraphicsPixmapItem(QPixmap::fromImage(*pix.second)));
+      mCurrentImage = new QPixmap();
 
-      int imageWidth = pix.second->width();
-      int imageHeight = pix.second->height();
-
-      for (int x = 0; x <= imageWidth / mMap->getTileWidth(); x++ )
+      if (!mCurrentImage->load(QString::fromStdString(tex->getPath() + tex->getName())))
       {
-        //pmImageViewScene->addLine(x * mMap->getTileWidth(), 0, x * mMap->getTileWidth(), imageHeight, lineProperties);
+        TALGA_WARN(0, "failed to create pixmap at " << tex->getPath() << tex->getName())
+        return;
       }
 
-      for (int y = 0; y <= imageHeight / mMap->getTileHeight(); y++)
-      {
-        //pmImageViewScene->addLine(0, y * mMap->getTileHeight(), imageWidth, y * mMap->getTileHeight(), lineProperties);
-      }
+      pmImageViewScene->clear();
+      mSelectBox = nullptr;
+      pmImageViewScene->addItem(new QGraphicsPixmapItem(*mCurrentImage));
+
+      int imageWidth = mCurrentImage->width();
+      int imageHeight = mCurrentImage->height();
+
+
     }
 
     void AssetViewer::sl_updateChangedMap(EditorMap* map)
@@ -168,6 +175,7 @@ namespace talga
       if (mSelectBox)
       {
         pmImageViewScene->removeItem(mSelectBox);
+        qDebug() << pmImageViewScene->children().size();
         delete mSelectBox;
       }
 

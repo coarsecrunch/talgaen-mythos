@@ -2,6 +2,7 @@
 #include "glcontext.h"
 
 #include <QMouseEvent>
+#include <QDebug>
 #include "commands/CInsertTiles.h"
 #include "commands/cchangeworkinglayer.h"
 #include "Sprite.h"
@@ -16,6 +17,7 @@ STileEdit::STileEdit(GLContext *context)
   , mPreviousMousePos{0.0f, 0.0f, 0.0f}
   , mStartNewHistoryItem(true)
   , mCurrentSelection{"NULL", std::vector<iPnt>{}}
+  , mMouseBeginClick{0.0f, 0.0f}
 {
 
 }
@@ -66,7 +68,7 @@ void STileEdit::mousePressEvent(QMouseEvent *e)
     mIsMouseDown = true;
     mPreviousMousePos = vec3(e->x(), e->y(), 1.0f);
     mStartNewHistoryItem = true;
-
+    mMouseBeginClick = vec3(e->x(), e->y(), 1.0f);
     if (!mShift && !(mCurrentSelection.first == "NULL") && mContext->mCurrentMap->getWorkingLayer())
     {
       mStartPos = e->pos();
@@ -101,11 +103,50 @@ void STileEdit::mouseReleaseEvent(QMouseEvent *e)
     mStartNewHistoryItem = true;
   }
 
+
+  if (mCtrl &&  !(mCurrentSelection.first == "NULL"))
+  {
+    qDebug() << "worked";
+
+    vec3 endPos = vec3(e->x(), e->y(), 1.0f);
+
+    mMouseBeginClick = mContext->camera.screenToWorld(mMouseBeginClick);
+    endPos = mContext->camera.screenToWorld(endPos);
+
+    I32 smallX = (mMouseBeginClick.x() < endPos.x()) ? mMouseBeginClick.x() : endPos.x();
+    I32 smallY = (mMouseBeginClick.y() < endPos.y()) ? mMouseBeginClick.y() : endPos.y();
+    I32 largeX = (mMouseBeginClick.x() > endPos.x()) ? mMouseBeginClick.x() : endPos.x();
+    I32 largeY = (mMouseBeginClick.y() > endPos.y()) ? mMouseBeginClick.y() : endPos.y();
+
+    smallX /=  mContext->mCurrentMap->getTileWidth();
+    largeX /= mContext->mCurrentMap->getTileWidth();
+
+    smallY /= mContext->mCurrentMap->getTileHeight();
+    largeY /= mContext->mCurrentMap->getTileHeight();
+
+    emit mContext->sig_updateHistoryMacro(true);
+    for (I32 y = smallY; y <= largeY; ++y)
+    {
+      for (I32 x = smallX; x <= largeX; ++x)
+      {
+        emit mContext->sig_addUndoCommand(new CInsertTiles(mContext->mCurrentMap, mContext->mCurrentMap->getTiles(mCurrentSelection.second,
+      GData::getInstance()->getManager()->GetTexture(mCurrentSelection.first)),
+      iPnt(x, y),
+      mCurrentSelection.second));
+      }
+    }
+  emit mContext->sig_updateHistoryMacro(false);
+
+
+    mContext->update();
+
+  }
+
 }
 
 void STileEdit::mouseMoveEvent(QMouseEvent *e)
 {
-  if (mIsMouseDown && !mShift && mContext->mCurrentMap && mContext->mCurrentMap->getWorkingLayer())
+  if (mIsMouseDown && !mShift && mContext->mCurrentMap && mContext->mCurrentMap->getWorkingLayer() && !mCtrl)
   {
     mStartPos = e->pos();
     vec3 pos = mContext->camera.screenToWorld(vec3{(F32)e->x(), (F32)e->y(), 1.0f});
@@ -131,7 +172,7 @@ void STileEdit::mouseMoveEvent(QMouseEvent *e)
       mContext->update();
     }
   }
-  else if (mIsMouseDown && mShift)
+  else if (mIsMouseDown && mShift && !mCtrl)
   {
     vec3 currentMousePos = vec3(e->x(), e->y(), 1.0f);
     vec3 dmouse = mContext->camera.screenToWorld(currentMousePos) - mContext->camera.screenToWorld(mPreviousMousePos);

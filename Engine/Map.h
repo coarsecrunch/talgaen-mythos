@@ -66,7 +66,7 @@ namespace talga
 		virtual bool save(std::string path, AssetManager& manager) override;
 		virtual void destroy() override;
 
-    static Map createEmptyMap(I32 tW, I32 tH, I32 w, I32 h, const std::string& name);
+    static Map createEmptyMap(I32 tW, I32 tH, I32 w, I32 h, const std::string& name, const std::string& luaInitPath, AssetManager& manager);
 
 		const Map& operator=(const Map& cpy);
 
@@ -95,6 +95,7 @@ namespace talga
 
 		bool getRenderSceneGeom() const { return mRenderSceneGeom; }
 		void setRenderSceneGeom(bool value) { mRenderSceneGeom = value; }
+		cpScript getScript() const {return mInitScript;}
 	protected:
 		I32 mTileWidth;
 		I32 mTileHeight;

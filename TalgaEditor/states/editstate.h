@@ -26,6 +26,7 @@ protected:
   GLContext* mContext;
 
   bool mShift;
+  bool mCtrl;
 };
 }
 }
