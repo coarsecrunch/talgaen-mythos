@@ -28,9 +28,6 @@
     <Filter Include="ext">
       <UniqueIdentifier>{67e8245f-4e7d-45e7-b9af-c58b4ff5768d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ext\freetype-gl">
-      <UniqueIdentifier>{f208ad4f-eeaf-49c8-bb61-c2d007ed311b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="talgamain.cpp">
@@ -47,18 +44,6 @@
     </ClCompile>
     <ClCompile Include="funkdefs.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ext\freetype-gl\platform.c">
-      <Filter>ext\freetype-gl</Filter>
-    </ClCompile>
-    <ClCompile Include="ext\freetype-gl\texture-atlas.c">
-      <Filter>ext\freetype-gl</Filter>
-    </ClCompile>
-    <ClCompile Include="ext\freetype-gl\texture-font.c">
-      <Filter>ext\freetype-gl</Filter>
-    </ClCompile>
-    <ClCompile Include="ext\freetype-gl\vector.c">
-      <Filter>ext\freetype-gl</Filter>
     </ClCompile>
     <ClCompile Include="label.cpp">
       <Filter>Source Files</Filter>
@@ -218,31 +203,7 @@
     <ClInclude Include="funkdefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ext\freetype-gl\markup.h">
-      <Filter>ext\freetype-gl</Filter>
-    </ClInclude>
-    <ClInclude Include="ext\freetype-gl\opengl.h">
-      <Filter>ext\freetype-gl</Filter>
-    </ClInclude>
-    <ClInclude Include="ext\freetype-gl\platform.h">
-      <Filter>ext\freetype-gl</Filter>
-    </ClInclude>
-    <ClInclude Include="ext\freetype-gl\texture-atlas.h">
-      <Filter>ext\freetype-gl</Filter>
-    </ClInclude>
-    <ClInclude Include="ext\freetype-gl\texture-font.h">
-      <Filter>ext\freetype-gl</Filter>
-    </ClInclude>
-    <ClInclude Include="ext\freetype-gl\vector.h">
-      <Filter>ext\freetype-gl</Filter>
-    </ClInclude>
-    <ClInclude Include="ext\freetype-gl\freetype-gl.h">
-      <Filter>ext\freetype-gl</Filter>
-    </ClInclude>
     <ClInclude Include="label.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="luadebugprompt.h">
@@ -330,6 +291,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

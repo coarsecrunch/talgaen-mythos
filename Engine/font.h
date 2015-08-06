@@ -2,14 +2,22 @@
 
 #include "Cmn.h"
 #include "AAsset.h"
-namespace ftgl
-{
-	struct texture_atlas_t;
-	struct texture_font_t;
-}
+
+#include <array>
 
 namespace talga
 {
+
+	struct talga_glyph
+	{
+		unsigned short x0, y0, x1, y1; // coordinates of bbox in bitmap
+		float xoff, yoff, xadvance;
+		float xoff2, yoff2;
+		float u0, v0, u1, v1;
+		int w, h;
+	};
+
+
 	class Font : public AAsset
 	{
 	public:
@@ -22,16 +30,16 @@ namespace talga
 		virtual bool save(std::string path, AssetManager& manager) override;
 		virtual void destroy() override;
 
-		ftgl::texture_atlas_t* getAtlas() const { return mTexAtlas; }
-		ftgl::texture_font_t* getFTFont() const { return mTexFont; }
+		const talga_glyph& getGlyph(char c) const { return mGlyphs[c - 32]; }
 
 		I32 getSize() const { return mSize; }
 		I32 getMaxGlyphHeight() const { return mMaxGlyphHeight; }
-		//I32 getStringPixelWidth(const std::string& str);
+		F32 getCharStep(char c);
+		U32 id() const { return glTex; }
 	private:
-		ftgl::texture_atlas_t* mTexAtlas;
-		ftgl::texture_font_t* mTexFont;
 		I32 mSize;
 		size_t mMaxGlyphHeight;
+		U32 glTex;
+		std::array<talga_glyph, 96> mGlyphs;
 	};
 }

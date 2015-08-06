@@ -7,7 +7,6 @@
 #include "AssetManager.h"
 #include <iostream>
 #include "font.h"
-#include "ext/freetype-gl/freetype-gl.h"
 
 
 namespace talga
@@ -93,7 +92,7 @@ namespace talga
 		I32 setTextures = glGetUniformLocation(mProgram, "textures");
 
 		glUniform1iv(setTextures, 32, samplers2Dnums);
-
+		glUseProgram(mProgram);
 		glBindVertexArray(0);
 
 		mTextureSlots.reserve(RENDERER_MAX_ACTIVE_TEXTURES);
@@ -183,18 +182,13 @@ namespace talga
 
 	void Renderer::submit(const std::string& str, cpFont font, vec3 pos, vec4 color)
 	{
-		using namespace ftgl;
-
-		ftgl::texture_atlas_t* mFTAtlas = const_cast<ftgl::texture_atlas_t*>(font->getAtlas());
-		ftgl::texture_font_t* mFTFont = const_cast<ftgl::texture_font_t*>(font->getFTFont());
-
-		float texId = mFTAtlas->id;
+		float texId = font->id();
 		bool found = false;
 
 		for (int i = 0; i < mTextureSlots.size(); ++i)
 		{
 			texId = i;
-			if (mTextureSlots[i] == mFTAtlas->id)
+			if (mTextureSlots[i] == font->id())
 			{
 				found = true;
 				break;
@@ -210,7 +204,7 @@ namespace talga
 				begin();
 			}
 			texId = mTextureSlots.size();
-			mTextureSlots.push_back(mFTAtlas->id);
+			mTextureSlots.push_back(font->id());
 		}
 
 		I32 tempX = pos.x();
@@ -228,16 +222,15 @@ namespace talga
 			}
 			
 
-			texture_glyph_t* glyph = texture_font_get_glyph(mFTFont, c);
-
-			if (glyph)
+			talga_glyph tglyph = font->getGlyph(c);
+			if (true)
 			{
 				if (i > 0)
 				{
-					F32 kerning = texture_glyph_get_kerning(glyph, str[i - 1]);
-					tempX += kerning;
+					//F32 kerning = texture_glyph_get_kerning(glyph, str[i - 1]);
+					//tempX += kerning;
 				}
-				F32 halfwidth = mFTAtlas->width * 0.5f;
+				/*F32 halfwidth = mFTAtlas->width * 0.5f;
 				F32 halfheight = mFTAtlas->height * 0.5f;
 
 				F32 x0 = tempX + glyph->offset_x;
@@ -250,7 +243,19 @@ namespace talga
 				F32 v0 = glyph->t0;
 
 				F32 u1 = glyph->s1;
-				F32 v1 = glyph->t1;
+				F32 v1 = glyph->t1;*/
+
+				F32 x0 = tempX + tglyph.xoff;
+				F32 y0 = tempY + tglyph.yoff;
+
+				F32 x1 = x0 + tglyph.w;
+				F32 y1 = y0 + tglyph.h;
+
+				F32 u0 = tglyph.u0;
+				F32 v0 = tglyph.v0;
+
+				F32 u1 = tglyph.u1;
+				F32 v1 = tglyph.v1;
 
 				mNextVertex->position = mTransformationStack.top() * vec3(x0, y0);
 				mNextVertex->uv = vec2(u0, v0);
@@ -281,14 +286,11 @@ namespace talga
 				mNextVertex->transparencyScale = 1.0f;
 				++mNextVertex;
 
-				tempX += glyph->advance_x;
+				tempX += tglyph.xadvance;
 
 				mIndexCount += 6;
 			}
 		}
-
-		F32 halfwidth = mFTAtlas->width * 0.5f;
-		F32 halfheight = mFTAtlas->height * 0.5f;
 	}
 
 	void Renderer::submit(const Rectangle& box, const vec4& color, F32 transparencyScale)
@@ -363,7 +365,7 @@ namespace talga
 			glBindTexture(GL_TEXTURE_2D, mTextureSlots[i]);
 		}
 
-		glUseProgram(mProgram);
+	
 
 		glDrawElements(GL_TRIANGLES, mIndexCount, GL_UNSIGNED_INT, NULL);
 		

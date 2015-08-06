@@ -2,7 +2,6 @@
 
 #include "luadebugprompt.h"
 #include "Renderer.h"
-#include "ext/freetype-gl/freetype-gl.h"
 #include "font.h"
 #include "Rect.h"
 #include "LuaEngine.h"
@@ -57,12 +56,12 @@ namespace talga
 		{
 			char c = line[i];
 
-			auto glyph = ftgl::texture_font_get_glyph(mFont->getFTFont(), c);
+			auto glyph = mFont->getGlyph(c);
 
 			if (c == ' ')
 			{
 				I32 widthBeforeWord = totalStrWidth / mMaxLinePixelWidth;
-				I32 widthAfterWord = (totalStrWidth + wordWidth + glyph->advance_x) / (F32)mMaxLinePixelWidth;
+				I32 widthAfterWord = (totalStrWidth + wordWidth + glyph.xadvance) / (F32)mMaxLinePixelWidth;
 				
 				
 				if (widthAfterWord > widthAfterWord || widthBeforeWord > previousWidth)
@@ -81,17 +80,17 @@ namespace talga
 				else
 				{
 					proxyStr.append(proxyWord);
-					totalStrWidth += wordWidth + glyph->advance_x;
+					totalStrWidth += wordWidth + glyph.xadvance;
 					proxyWord.clear();
 					proxyStr.push_back(' ');
-					wordWidth = glyph->advance_x;
+					wordWidth = glyph.xadvance;
 				}
 				previousWidth = widthBeforeWord;
 			}
 			else
 			{
 				proxyWord.push_back(c);
-				wordWidth += glyph->advance_x;
+				wordWidth += glyph.xadvance;
 			}
 
 		}

@@ -68,11 +68,11 @@ int main(int argc, char** argv)
 	{
 		TALGA_WARN(0, "tried to start program with incorrect arguments")
 
-		return -1;
+		//return -1;
 	}
 	else
 	{
-		mapPath = argv[1];
+		//mapPath = argv[1];
 		TALGA_MSG("loading map " << mapPath);
 	}
 
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
 	talga::LuaEngine::instance()->ExecuteStr("print = function(s) if type(s) == \"string\" then GAME:printToLuaPromptStr(s) elseif type(s) == \"number\" then GAME:printToLuaPromptFl(s) end end");
 	talga::LuaEngine::instance()->ExecuteFile("../assets/scripts/script.lua");
 
-	GAME->loadmap(mapPath);
+	GAME->loadmap("../assets/maps/sandboxx.tmap");
 	talga::U32 previousTime = 0;
 	talga::U32 dt = 0;
 	talga::U32 fps = 0;

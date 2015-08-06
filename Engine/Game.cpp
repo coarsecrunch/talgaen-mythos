@@ -56,7 +56,7 @@ namespace talga
 
 		mRenderer = std::shared_ptr<Renderer>(new Renderer{ "../assets/shaders/renderer2d.vert", "../assets/shaders/renderer2d.frag" });
 		mManager.AddTexture("../assets/textures/luaprompt.png");
-		mManager.addFont("../assets/fonts/EnvyR.ttf", 15);
+		mManager.addFont("../assets/fonts/EnvyR.ttf", 20);
 
 		mMapLayer = Layer{ mRenderer, (F32)width, (F32)height };
 		mObjectsLayer = Layer{ mRenderer, (F32)width, (F32)height };
@@ -107,7 +107,6 @@ namespace talga
 	{
 		for (auto it = mGameObjects.begin(); it != mGameObjects.end(); ++it)
 		{
-
 			if (*it == obj)
 			{
 				(*it)->unstaged();
@@ -218,7 +217,6 @@ namespace talga
 				cpShapeSetFriction(shape, 0.99f);
 				cpShapeSetCollisionType(shape, COLL_MAPGEOM);
 				cpSpaceAddShape(mSpace, shape);
-				
 
 				mSceneGeom.push_back(std::pair<cpBody*, cpShape*>(body, shape));
 			}
@@ -237,12 +235,7 @@ namespace talga
 
 				cpShape* shape = cpPolyShapeNew(body, 3, verts, cpTransform{ 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f }, 0.0f);
 				
-				TALGA_PRVAL(tri->getBase().getRealVerts()[0].x())
-					TALGA_PRVAL(tri->getBase().getRealVerts()[0].y())
-					TALGA_PRVAL(cpPolyShapeGetVert(shape, 0).x)
-					TALGA_PRVAL(cpPolyShapeGetVert(shape, 0).y)
-
-
+				
 				cpShapeSetFriction(shape, 0.99f);
 				cpShapeSetCollisionType(shape, COLL_MAPGEOM);
 				cpSpaceAddShape(mSpace, shape);

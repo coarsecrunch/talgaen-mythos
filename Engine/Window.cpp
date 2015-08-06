@@ -14,7 +14,8 @@ namespace talga
 		TALGA_ASSERT(glfwState, "Failed to initialize glfw, exiting...");
 
 		mWindow = glfwCreateWindow(mWidth, mHeight, "Talgaen Mythos", NULL, NULL);
-
+		
+		
 		if (!mWindow)
 		{
 			glfwTerminate();
@@ -29,7 +30,6 @@ namespace talga
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		glewExperimental = GL_TRUE;
-
 		GLenum err = glewInit();
 		TALGA_ASSERT(err == GLEW_OK, "Failed to initialize glew, exiting...");
 
@@ -40,14 +40,6 @@ namespace talga
 	void Window::initGL()
 	{	//obselete
 		//TALGA_ASSERT(glfwInit(), "Failed to initialize glfw, exiting...");
-
-		glewExperimental = GL_TRUE;
-
-		GLenum err = glewInit();
-		TALGA_ASSERT(err == GLEW_OK, "Failed to initialize glew, exiting...");
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	void Window::clear()
