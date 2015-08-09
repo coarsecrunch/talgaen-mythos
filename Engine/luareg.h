@@ -47,9 +47,9 @@ namespace OOLUA
 OOLUA_PROXY(vec3)
 OOLUA_TAGS(Add_op, Sub_op)
 OOLUA_CTORS(
-OOLUA_CTOR(float, float, float)
-OOLUA_CTOR(float, float)
 OOLUA_CTOR(float)
+OOLUA_CTOR(float, float)
+OOLUA_CTOR(float, float, float)
 )
 OOLUA_MFUNC_CONST(x)
 OOLUA_MFUNC_CONST(y)
@@ -68,7 +68,7 @@ OOLUA_PROXY_END
 
 //Texture
 OOLUA_PROXY(Texture)
-OOLUA_TAGS(OOLUA::No_public_constructors)
+OOLUA_TAGS(No_public_constructors)
 OOLUA_PROXY_END
 
 //IRenderable
@@ -78,12 +78,12 @@ OOLUA_PROXY_END
 
 //AnimSet
 OOLUA_PROXY(AnimationSet)
-OOLUA_TAGS(OOLUA::No_public_constructors)
+OOLUA_TAGS(No_public_constructors)
 OOLUA_PROXY_END
 
 //PhysComp
 OOLUA_PROXY(PhysicsComponent)
-OOLUA_TAGS(OOLUA::Abstract)
+OOLUA_TAGS(Abstract)
 OOLUA_MFUNC(setFriction)
 OOLUA_MFUNC(setMoment)
 OOLUA_MFUNC(setMass)
@@ -105,7 +105,7 @@ OOLUA_PROXY_END
 
 //RectCollider
 OOLUA_PROXY(RectCollider, PhysicsComponent)
-OOLUA_TAGS(OOLUA::No_default_constructor)
+OOLUA_TAGS(No_default_constructor)
 OOLUA_CTORS(
 OOLUA_CTOR(int, int)
 OOLUA_CTOR(int, int, int)
@@ -115,7 +115,7 @@ OOLUA_PROXY_END
 
 //AssetManager
 OOLUA_PROXY(AssetManager)
-	OOLUA_TAGS(OOLUA::No_public_constructors)
+	OOLUA_TAGS(No_public_constructors)
 	OOLUA_MFUNC_CONST(GetTexture)
 	OOLUA_MFUNC(AddTexture)
 	OOLUA_MEM_FUNC(cpAnimSet, AddAnimationSet, std::string, std::string, OOLUA::Lua_table_ref)
@@ -123,7 +123,7 @@ OOLUA_PROXY_END
 
 //Rectangle
 OOLUA_PROXY(Rectangle)
-	OOLUA_TAGS(OOLUA::No_public_constructors)
+	OOLUA_TAGS(No_public_constructors)
 	OOLUA_MFUNC_CONST(getX)
 	OOLUA_MFUNC_CONST(getY)
 	OOLUA_MFUNC_CONST(getZ)
@@ -134,7 +134,7 @@ OOLUA_PROXY_END
 
 //Sprite
 OOLUA_PROXY(Sprite, IRenderable)
-OOLUA_TAGS(OOLUA::No_default_constructor)
+OOLUA_TAGS(No_default_constructor)
 OOLUA_CTORS(
 OOLUA_CTOR(cpTex)
 )
@@ -142,7 +142,7 @@ OOLUA_PROXY_END
 
 //AnimSprite
 OOLUA_PROXY(AnimSprite, IRenderable)
-OOLUA_TAGS(OOLUA::No_default_constructor)
+OOLUA_TAGS(No_default_constructor)
 OOLUA_CTORS(
 OOLUA_CTOR(cpAnimSet)
 )
@@ -169,13 +169,13 @@ OOLUA_PROXY_END
 
 //Camera
 OOLUA_PROXY(Camera)
-	OOLUA_TAGS(OOLUA::No_public_constructors)
+	OOLUA_TAGS(No_public_constructors)
 	OOLUA_MEM_FUNC(Rectangle&, box)
 OOLUA_PROXY_END
 
 //Game
 OOLUA_PROXY(Game)
-OOLUA_TAGS(OOLUA::No_public_constructors)
+OOLUA_TAGS(No_public_constructors)
 OOLUA_MEM_FUNC(Camera&, camera)
 OOLUA_MEM_FUNC(AssetManager*, manager)
 OOLUA_MFUNC(addObj)

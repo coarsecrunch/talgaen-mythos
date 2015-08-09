@@ -58,6 +58,7 @@ namespace talga
 		, updateFunc()
 		, unstagedFunc()
 	{
+
 		OOLUA::Lua_func_ref stagedFuncRef;
 		OOLUA::Lua_func_ref unstagedFuncRef;
 		OOLUA::Lua_func_ref updateFuncRef;

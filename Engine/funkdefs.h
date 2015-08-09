@@ -63,7 +63,7 @@ namespace talga
 
 		void operator=(StagedStdFunction func)
 		{
-			isLua == TALGA_FUNC_TYPE::STD;
+			isLua = TALGA_FUNC_TYPE::STD;
 			stdFunc = func;
 		}
 
@@ -97,7 +97,7 @@ namespace talga
 
 		void operator=(KeyStdCallback func)
 		{
-			isLua == TALGA_FUNC_TYPE::STD;
+			isLua = TALGA_FUNC_TYPE::STD;
 			stdFunc = func;
 		}
 
@@ -130,7 +130,7 @@ namespace talga
 
 		void operator=(CollisionStdCallback func)
 		{
-			isLua == TALGA_FUNC_TYPE::STD;
+			isLua = TALGA_FUNC_TYPE::STD;
 			stdFunc = func;
 		}
 

@@ -220,6 +220,11 @@ namespace talga
 				tempY += font->getMaxGlyphHeight();
 				continue;
 			}
+			else if (c == '\t')
+			{
+				tempX += font->getTabWidth();
+				continue;
+			}
 			
 
 			talga_glyph tglyph = font->getGlyph(c);

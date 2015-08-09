@@ -34,11 +34,13 @@ namespace talga
 
 		I32 getSize() const { return mSize; }
 		I32 getMaxGlyphHeight() const { return mMaxGlyphHeight; }
+		I32 getTabWidth() const { return mTabWidth; }
 		F32 getCharStep(char c);
 		U32 id() const { return glTex; }
 	private:
 		I32 mSize;
 		size_t mMaxGlyphHeight;
+		I32 mTabWidth;
 		U32 glTex;
 		std::array<talga_glyph, 96> mGlyphs;
 	};

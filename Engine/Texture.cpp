@@ -5,8 +5,10 @@
 #include "sys.h"
 #include <algorithm>
 
+#pragma warning(push, 0)
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
+#pragma warning(pop)
 
 namespace talga
 {
@@ -30,9 +32,7 @@ namespace talga
 		if (!imgFile)
 		{
 			TALGA_WARN(0, "couldn't open texture " + path);
-			stbi_image_free((void*)data);
 			return false;
-			
 		}
 		
 		data = stbi_load_from_file(imgFile, &imgW, &imgH, &channels, 0);
@@ -40,7 +40,6 @@ namespace talga
 		if (!data)
 		{
 			TALGA_WARN(0, "stbi could no load data on texture " + path);
-			stbi_image_free((void*)data);
 			fclose(imgFile);
 			return false;
 		}
@@ -63,7 +62,7 @@ namespace talga
 		std::string tempName = path;
 		std::string tempPath = path;
 
-		for (int i = path.size() - 1; i >= 0; i--)
+		for (size_t i = path.size() - 1; i >= 0; i--)
 		{
 			if (path[i] == '\\' || path[i] == '/') break;
 			tempName = path.substr(i, path.size() - i);

@@ -8,6 +8,7 @@ editor/
 export/
 wiki/
 x64/
+Crap/
 *.obj
 *.log
 *.pdb
@@ -23,6 +24,3 @@ x64/
 *.db
 *.pro.user
 *.cmd
-
-
-

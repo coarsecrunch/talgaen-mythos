@@ -33,7 +33,7 @@ namespace talga
 		virtual bool save(std::string path, AssetManager& manager) override { return true; }
 		virtual void destroy() override {}
 
-		I32 numAnimations() const { return mAnims.size(); }
+		size_t numAnimations() const { return mAnims.size(); }
 		I32 w() const { return mWidth; }
 		I32 h() const { return mHeight; }
 		~AnimationSet();

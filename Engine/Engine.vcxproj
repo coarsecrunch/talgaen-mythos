@@ -117,18 +117,19 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CD8ECB51-C3FE-4D3C-A8F1-E01AB026C838}</ProjectGuid>
     <RootNamespace>Engine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -140,7 +141,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'" Label="Configuration">
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -159,18 +160,20 @@
     <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\</IncludePath>
     <SourcePath>$(SolutionDir)Math\;$(VC_SourcePath)</SourcePath>
     <OutDir>$(ProjectDir)..\build\debug\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)Crap\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <SourcePath>$(SolutionDir)Math\;</SourcePath>
     <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\</IncludePath>
     <OutDir>$(ProjectDir)..\build\release\</OutDir>
+    <IntDir>$(SolutionDir)Crap\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Final|x64'">
     <SourcePath>$(SolutionDir)Math\;</SourcePath>
     <IncludePath>$(VC_IncludePath);$(ProjectDir)..\src\include\;$(ProjectDir);$(WindowsSDK_IncludePath);$(ProjectDir)..\include\</IncludePath>
     <OutDir>$(ProjectDir)..\build\final\</OutDir>
+    <IntDir>$(SolutionDir)Crap\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -180,11 +183,12 @@
       <AdditionalIncludeDirectories>$(ProjectDir)../include/;$(ProjectDir)../src/;$(ProjectDir)../include/freetype/;$(ProjectDir)../assets/scripts/;%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
       <PreprocessorDefinitions>CHIPMUNK_FFI;TALGA_DEBUG;TALGA_ASSERTIONS_ENABLED;TALGA_WARNINGS_ENABLED;TALGA_MESSAGES_ENABLED;TALGA_WINDOWS_BUILD;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>chipmunk.lib;glfw3.lib;glew32.lib;opengl32.lib;lua52.lib;ooluad.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>chipmunkd.lib;glfw3d.lib;glew32.lib;opengl32.lib;ooluad.lib;lua53d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -197,7 +201,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
@@ -213,7 +217,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>chipmunk.lib;glfw3.lib;glew32.lib;opengl32.lib;lua52.lib;oolua.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>chipmunk.lib;glfw3.lib;glew32.lib;opengl32.lib;lua53.lib;oolua.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>

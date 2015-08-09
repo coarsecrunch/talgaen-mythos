@@ -13,11 +13,12 @@
 namespace talga
 {
 	Font::Font(I32 size)
-		: AAsset()
+		: AAsset{}
 		, mSize{ size }
-		, mMaxGlyphHeight{0}
-		, glTex(0)
+		, mMaxGlyphHeight{ 0 }
+		, glTex{0}
 		, mGlyphs{}
+		, mTabWidth{0}
 	{
 	}
 
@@ -73,13 +74,18 @@ namespace talga
 		
 		stbtt_pack_context pack;
 		stbtt_packedchar pcdata[96];
+		stbtt_packedchar tabData;
+
 		int packSuccess = stbtt_PackBegin(&pack, img, TATLAS_SIZE, TATLAS_SIZE, 0, 1, NULL);
-
-
 		int rangeSuc = stbtt_PackFontRange(&pack, buffer, 0, mSize, 32, 95, pcdata);
-		stbtt_PackEnd(&pack);
-		F32 largestY = 0.0f;
+		int tabSuc = stbtt_PackFontRange(&pack, buffer, 0, mSize, '\t', 1, &tabData);
 
+		stbtt_PackEnd(&pack);
+		I32 largestY = 0;
+		I32 tabSize = 0;
+		
+		mTabWidth = tabData.xadvance;
+		
 		for (int i = 0; i < 96; ++i)
 		{
 			mGlyphs[i].x0 = pcdata[i].x0;

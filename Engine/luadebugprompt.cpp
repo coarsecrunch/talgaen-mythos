@@ -22,7 +22,7 @@ namespace talga
 		mMaxVisibleLines = ((box().getH() - LUA_DEBUG_BORDER) / font->getMaxGlyphHeight()) - 4;
 		mMaxLinePixelWidth = (box().getW() - LUA_DEBUG_BORDER * 2);
 
-		TEXT_ENTER_BOX = Rect{ 0, YOFFSET, box().getW(), font->getMaxGlyphHeight() * 2 };
+		TEXT_ENTER_BOX = Rect{ 0, YOFFSET, (I32)box().getW(), font->getMaxGlyphHeight() * 2 };
 	}
 
 	void LuaDebugPrompt::pushCToCmd(char c)
@@ -56,6 +56,27 @@ namespace talga
 		{
 			char c = line[i];
 
+			if (c == '\n')
+			{
+				totalStrWidth += wordWidth;
+				proxyStr.push_back('\n');
+				tempVec.push_back(proxyStr);
+				proxyWord.clear();
+				proxyStr.clear();
+				proxyStr.append(proxyWord);
+
+				wordWidth = 0.0f;
+				totalStrWidth = 0.0f;
+				previousWidth = 0;;
+				continue;
+			}
+			else if (c == '\t')
+			{
+				proxyStr.push_back('\t');
+				totalStrWidth += mFont->getTabWidth();
+
+				continue;
+			}
 			auto glyph = mFont->getGlyph(c);
 
 			if (c == ' ')
