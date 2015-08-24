@@ -86,7 +86,6 @@ namespace talga
 
 	void Game::addObj(GameObject* obj)
 	{
-		obj->staged();
 
 		if (obj->stagedFunc)
 			obj->stagedFunc(obj);
@@ -109,13 +108,13 @@ namespace talga
 		{
 			if (*it == obj)
 			{
-				(*it)->unstaged();
 				if ( (*it)->unstagedFunc )
 					(*it)->unstagedFunc(*it);
 
 				cpSpaceRemoveShape(mSpace, (*it)->mCollider->mShape);
 				cpSpaceRemoveBody(mSpace, (*it)->mCollider->mBody);
 
+				(*it)->destroy();
 
 				if (it == mGameObjects.end() - 1)
 				{
@@ -144,8 +143,9 @@ namespace talga
 				(*it)->unstagedFunc(*it);
 
 			cpSpaceRemoveShape(mSpace, (*it)->mCollider->mShape);
-			cpSpaceRemoveBody(mSpace, (*it)->mCollider->mBody);
-
+			cpSpaceRemoveBody(mSpace, (*it)->mCollider->mBody);;
+			mObjectsLayer.remove((*it)->pmRenderable);
+			(*it)->destroy();
 			delete *it;
 		}
 
@@ -159,12 +159,6 @@ namespace talga
 		for (auto it = mGameObjects.begin(); it != mGameObjects.end(); ++it)
 		{
 			(*it)->update(dt);
-			if ((*it)->DESTROY)
-			{
-				removeObj(*it);
-				if (it != mGameObjects.begin())
-					--it;
-			}
 		}
 
 	}

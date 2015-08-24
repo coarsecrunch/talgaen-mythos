@@ -1,11 +1,10 @@
 #pragma once
 
-//LuaEngine.h must be included BEOFRE luaBridge
-
 #include <string>
 #include "oolua/oolua.h"
 #include "oolua/oolua_script.h"
 #include "oolua/oolua_registration.h"
+#include "oolua/oolua_traits.h"
 struct lua_State;
 
 

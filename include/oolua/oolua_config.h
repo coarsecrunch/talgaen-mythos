@@ -317,8 +317,8 @@ THE SOFTWARE.
 #else
 #			define OOLUA_SHARED_HEADER <tr1/memory>
 #endif
-#			define OOLUA_SHARED_TYPE std::tr1::shared_ptr
-#			define OOLUA_SHARED_CONST_CAST std::tr1::const_pointer_cast
+#			define OOLUA_SHARED_TYPE std::shared_ptr
+#			define OOLUA_SHARED_CONST_CAST std::const_pointer_cast
 #			ifndef OOLUA_NEW_POINTER_DEFAULT_IS_SHARED_TYPE
 #				define OOLUA_NEW_POINTER_DEFAULT_IS_SHARED_TYPE 0
 #			endif

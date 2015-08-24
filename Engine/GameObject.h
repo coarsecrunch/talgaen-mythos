@@ -30,6 +30,7 @@ namespace talga
 		GameObject(IRenderable* rdr, PhysicsComponent* collider);
 		GameObject(std::string script);
 		GameObject(const GameObject& cpy);
+		const GameObject& operator=(const GameObject& cpy);
 		virtual ~GameObject();
 		
 		
@@ -50,17 +51,15 @@ namespace talga
 
 		void addKeyCallback(std::string c, OOLUA::Lua_func_ref ref);
 		
-		void destroy();
 		void playAnimation(const std::string& animName, I32 speed, bool loop);
 
 		StagedFunc stagedFunc;
 		UpdateFunc updateFunc;
 		UnstagedFunc unstagedFunc;
 		
-		virtual void updateLua(I32 dt);
-		virtual void staged();
-		virtual void unstaged();
-		virtual void init();
+		void init(IRenderable* rdr, PhysicsComponent* collider);
+		void destroy();
+
 	protected:
 		friend class Game;
 

@@ -105,7 +105,7 @@ OOLUA_PROXY_END
 
 //RectCollider
 OOLUA_PROXY(RectCollider, PhysicsComponent)
-OOLUA_TAGS(No_default_constructor)
+OOLUA_TAGS(No_default_constructor, No_public_destructor)
 OOLUA_CTORS(
 OOLUA_CTOR(int, int)
 OOLUA_CTOR(int, int, int)
@@ -134,7 +134,7 @@ OOLUA_PROXY_END
 
 //Sprite
 OOLUA_PROXY(Sprite, IRenderable)
-OOLUA_TAGS(No_default_constructor)
+OOLUA_TAGS(No_default_constructor, No_public_destructor)
 OOLUA_CTORS(
 OOLUA_CTOR(cpTex)
 )
@@ -142,7 +142,7 @@ OOLUA_PROXY_END
 
 //AnimSprite
 OOLUA_PROXY(AnimSprite, IRenderable)
-OOLUA_TAGS(No_default_constructor)
+OOLUA_TAGS(No_default_constructor, No_public_destructor)
 OOLUA_CTORS(
 OOLUA_CTOR(cpAnimSet)
 )
@@ -150,6 +150,7 @@ OOLUA_PROXY_END
 
 //GameObject
 OOLUA_PROXY(GameObject)
+	OOLUA_TAGS(No_public_destructor)
 	OOLUA_CTORS(
 	OOLUA_CTOR(IRenderable*, PhysicsComponent*)
 	OOLUA_CTOR(const std::string&)
@@ -162,9 +163,6 @@ OOLUA_PROXY(GameObject)
 	OOLUA_MFUNC(getCollider)
 	OOLUA_MFUNC(setRenderable)
 	OOLUA_MFUNC(playAnimation)
-	OOLUA_MFUNC(updateLua)
-	OOLUA_MFUNC(staged)
-	OOLUA_MFUNC(unstaged)
 OOLUA_PROXY_END
 
 //Camera
@@ -179,6 +177,7 @@ OOLUA_TAGS(No_public_constructors)
 OOLUA_MEM_FUNC(Camera&, camera)
 OOLUA_MEM_FUNC(AssetManager*, manager)
 OOLUA_MFUNC(addObj)
+OOLUA_MFUNC(removeObj)
 OOLUA_MEM_FUNC_RENAME(printToLuaPromptStr, void, printToLuaPrompt, const std::string&)
 OOLUA_MEM_FUNC_RENAME(printToLuaPromptFl, void, printToLuaPrompt, float)
 OOLUA_PROXY_END

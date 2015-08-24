@@ -223,7 +223,7 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 		stream >> numTextures; // numTiles
 		stream >> numLayers;
 		
-
+		
     if (initScriptPath != "null")
     {
       mInitScript = manager.AddScript(getAbsFromRel(tempPath, getPathFromFilePath(initScriptPath)) + getFileNameFromPath(initScriptPath));
@@ -240,10 +240,14 @@ const I32 MAP_MAX_COLLIDERS = 1000;
         return false;
       }
 
-      OOLUA::Lua_function tempCall(initFunc.state());
+	  if (initFunc.valid())
+	  {
+		  OOLUA::Lua_function tempCall(initFunc.state());
 
-      if (!tempCall(initFunc))
-        LuaEngine::instance()->reportError();
+		  if (!tempCall(initFunc))
+			  LuaEngine::instance()->reportError();
+
+	  }
 #endif
     }
 		for (auto i = 0; i < numTextures; ++i)

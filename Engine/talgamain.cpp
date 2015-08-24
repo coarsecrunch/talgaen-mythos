@@ -9,6 +9,7 @@
 #include "GLFW\glfw3.h"
 #include <vector>
 #include <iostream>
+#include <memory>
 #include "Math/Matrix4x4.h"
 #include "Math/Vector3.h"
 
@@ -30,7 +31,6 @@
 
 #include "collisiontypes.h"
 #include "PhysicsComponent.h"
-
 
 const talga::I32 WIDTH = 1200;
 const talga::I32 HEIGHT = 900;
@@ -59,10 +59,17 @@ void mouse_move_callback(GLFWwindow * window, double x, double y)
 
 int main(int argc, char** argv)
 {
+#define STR_VALUE(arg) #arg
+#define TYPE_NAME(name) STR_VALUE(name)
+
+	TALGA_PRVAL(TYPE_NAME(OOLUA_SHARED_CONST_CAST));
+	TALGA_PRVAL(TYPE_NAME(OOLUA_SHARED_TYPE));
+	TALGA_PRVAL(TYPE_NAME(OOLUA_USE_SHARED_PTR));
+	TALGA_PRVAL(TYPE_NAME(OOLUA_NEW_POINTER_DEFAULT_IS_SHARED_TYPE));
 	TALGA_MSG("working directory: " + talga::getWorkingDirectory());
 	talga::Clock clock;
 	clock.Init();
-
+	
 	std::string mapPath;
 	if (argc != 2)
 	{
@@ -75,7 +82,7 @@ int main(int argc, char** argv)
 		//mapPath = argv[1];
 		TALGA_MSG("loading map " << mapPath);
 	}
-
+	
 	GAME = new talga::Game();
 	GAME->Init(WIDTH, HEIGHT, "hello talga");
 
@@ -96,6 +103,9 @@ int main(int argc, char** argv)
 	talga::U32 dt = 0;
 	talga::U32 fps = 0;
 	talga::U32 timeSince = 0;
+
+
+
 	while (!glfwWindowShouldClose(GAME->getWindow().getWindow()))
 	{
 		dt = (clock.TimePassed()) - previousTime;
@@ -123,7 +133,7 @@ int main(int argc, char** argv)
 		++fps;
 	}
 
-	delete GAME;
+	//delete GAME;
 
 	//system("PAUSE");
 

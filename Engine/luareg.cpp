@@ -46,7 +46,7 @@ OOLUA_EXPORT_FUNCTIONS_CONST(AnimSprite)
 
 //GameObject
 OOLUA_EXPORT_FUNCTIONS(GameObject, addKeyCallback, addCollisionCallback,
-addDefaultCollisionCallback, setCollisionType, setCollider, setRenderable, playAnimation, getCollider, updateLua, staged, unstaged)
+addDefaultCollisionCallback, setCollisionType, setCollider, setRenderable, playAnimation, getCollider)
 OOLUA_EXPORT_FUNCTIONS_CONST(GameObject)
 
 //Rectangle
@@ -58,7 +58,7 @@ OOLUA_EXPORT_FUNCTIONS(Camera, box)
 OOLUA_EXPORT_FUNCTIONS_CONST(Camera)
 
 //Game
-OOLUA_EXPORT_FUNCTIONS(Game, camera, manager, addObj, printToLuaPromptStr, printToLuaPromptFl)
+OOLUA_EXPORT_FUNCTIONS(Game, camera, manager, addObj, removeObj, printToLuaPromptStr, printToLuaPromptFl)
 OOLUA_EXPORT_FUNCTIONS_CONST(Game)
 
 void LUA_REGISTER_TYPES()

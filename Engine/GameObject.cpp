@@ -26,11 +26,14 @@ namespace talga
 		, updateFunc()
 		, unstagedFunc()
 	{
+		init(rdr, collider);
+	}
+
+	void GameObject::init(IRenderable* rdr, PhysicsComponent* collider)
+	{
 		setRenderable(rdr);
 		setCollider(collider);
 		setCollisionType(COLL_DEFAULT);
-
-		init();
 	}
 
 	GameObject::GameObject()
@@ -44,7 +47,7 @@ namespace talga
 		, updateFunc()
 		, unstagedFunc()
 	{
-		init();
+		init(nullptr, nullptr);
 	}
 
 	GameObject::GameObject(std::string path)
@@ -58,7 +61,6 @@ namespace talga
 		, updateFunc()
 		, unstagedFunc()
 	{
-
 		OOLUA::Lua_func_ref stagedFuncRef;
 		OOLUA::Lua_func_ref unstagedFuncRef;
 		OOLUA::Lua_func_ref updateFuncRef;
@@ -67,7 +69,7 @@ namespace talga
 
 		OOLUA::Table tempTbl(talga::LuaEngine::instance()->getGlobalTable(tblname));
 		TALGA_WARN(tempTbl.valid(), "incorrect script at " + path + " the table's name MUST match the name of the script");
-
+		
 		if (!tempTbl.valid())
 			return;
 
@@ -91,7 +93,8 @@ namespace talga
 			updateFunc = updateFuncRef;
 		else
 			TALGA_WARN(0, "failed to find updateFunc in table in " + tblname);
-
+		
+		init(nullptr, nullptr);
 	}
 
 	GameObject::GameObject(const GameObject& cpy)
@@ -100,11 +103,25 @@ namespace talga
 		, pmRenderable(cpy.pmRenderable)
 		, mCollider(cpy.mCollider)
 		, isAnimated{ cpy.isAnimated }
-		, mBox{ cpy.mBox } //need to copy functions too
+		, mBox{ cpy.mBox } 
 		, stagedFunc(cpy.stagedFunc)
 		, updateFunc(cpy.updateFunc)
 		, unstagedFunc(cpy.unstagedFunc)
 	{
+	}
+
+	const GameObject& GameObject::operator=(const GameObject& cpy)
+	{
+		mGAME = cpy.mGAME;
+		pmRenderable = cpy.pmRenderable;
+		mCollider = cpy.mCollider;
+		isAnimated = cpy.isAnimated;
+		mBox = cpy.mBox;
+		stagedFunc = cpy.stagedFunc;
+		updateFunc = cpy.updateFunc;
+		unstagedFunc = cpy.unstagedFunc;
+
+		return *this;
 	}
 
 	void GameObject::update(F32 dt)
@@ -141,24 +158,6 @@ namespace talga
 			if (updateFunc)
 				updateFunc(this, dt);
 		}
-
-		updateLua(dt);
-	}
-
-	void GameObject::updateLua(I32 dt)
-	{
-	}
-
-	void GameObject::staged()
-	{
-	}
-
-	void GameObject::unstaged()
-	{
-	}
-
-	void GameObject::init()
-	{
 
 	}
 
@@ -238,27 +237,35 @@ namespace talga
 		}
 		else
 		{
-			TALGA_ASSERT(0, "nullptr passed to GameObject");
+			TALGA_WARN(0, "nullptr passed to GameObject");
 		}
 	}
 
 	void GameObject::setCollider(PhysicsComponent* collider)
 	{
-		if (mCollider)
+		if (mCollider && collider)
 		{
 			cpSpaceRemoveBody(mGAME->getSpace(), mCollider->mBody);
+			cpSpaceRemoveShape(mGAME->getSpace(), mCollider->mShape);
 			delete mCollider;
 			mCollider = collider;
 			cpSpaceAddBody(mGAME->getSpace(), mCollider->mBody);
 			cpSpaceAddShape(mGAME->getSpace(), mCollider->mShape);
 		}
-		else
+		else if (mCollider && !collider)
+		{
+			cpSpaceRemoveBody(mGAME->getSpace(), mCollider->mBody);
+			cpSpaceRemoveShape(mGAME->getSpace(), mCollider->mShape);;
+			delete mCollider;
+			mCollider = collider;
+		}
+		else if (!mCollider && collider)
 		{
 			mCollider = collider;
 			cpSpaceAddBody(mGAME->getSpace(), mCollider->mBody);
 			cpSpaceAddShape(mGAME->getSpace(), mCollider->mShape);
-			
 		}
+		
 	}
 
 	void GameObject::setCollisionType(I32 type)
@@ -297,13 +304,13 @@ namespace talga
 
 	void GameObject::destroy()
 	{
-		DESTROY = true;
-	}
-	GameObject::~GameObject()
-	{
 		delete pmRenderable;
 		delete mCollider;
 		for (auto it = mData.begin(); it != mData.end(); ++it)
 			delete *it;
+	}
+
+	GameObject::~GameObject()
+	{
 	}
 }
