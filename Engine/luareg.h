@@ -38,7 +38,7 @@ namespace OOLUA
 	typedef talga::IRenderable IRenderable;
 	typedef talga::PhysicsComponent PhysicsComponent;
 	typedef talga::RectCollider RectCollider;
-
+	typedef talga::LuaCollisionData CollisionData;
 
 	typedef const Texture* cpTex;
 	typedef const AnimationSet* cpAnimSet;
@@ -103,6 +103,11 @@ OOLUA_MFUNC_CONST(getVy)
 OOLUA_MFUNC_CONST(getOrientation)
 OOLUA_PROXY_END
 
+OOLUA_PROXY(CollisionData)
+OOLUA_TAGS(No_public_constructors)
+OOLUA_MGET(normal, norm)
+OOLUA_PROXY_END
+
 //RectCollider
 OOLUA_PROXY(RectCollider, PhysicsComponent)
 OOLUA_TAGS(No_default_constructor, No_public_destructor)
@@ -153,7 +158,7 @@ OOLUA_PROXY(GameObject)
 	OOLUA_TAGS(No_public_destructor)
 	OOLUA_CTORS(
 	OOLUA_CTOR(IRenderable*, PhysicsComponent*)
-	OOLUA_CTOR(const std::string&)
+	OOLUA_CTOR(Lua_table_ref)
 	)
 	OOLUA_MEM_FUNC(void, addKeyCallback, std::string, Lua_func_ref)
 	OOLUA_MFUNC(addCollisionCallback)
@@ -178,6 +183,7 @@ OOLUA_MEM_FUNC(Camera&, camera)
 OOLUA_MEM_FUNC(AssetManager*, manager)
 OOLUA_MFUNC(addObj)
 OOLUA_MFUNC(removeObj)
+OOLUA_MFUNC(setGravity)
 OOLUA_MEM_FUNC_RENAME(printToLuaPromptStr, void, printToLuaPrompt, const std::string&)
 OOLUA_MEM_FUNC_RENAME(printToLuaPromptFl, void, printToLuaPrompt, float)
 OOLUA_PROXY_END

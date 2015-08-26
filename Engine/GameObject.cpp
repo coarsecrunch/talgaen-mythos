@@ -19,12 +19,14 @@ namespace talga
 		: mGAME(GAME)
 		, DESTROY(false)
 		, pmRenderable(nullptr)
-		, isAnimated{false}
+		, isAnimated{ false }
 		, mCollider(nullptr)
 		, mBox{ nullptr }
 		, stagedFunc()
 		, updateFunc()
 		, unstagedFunc()
+		, initFunc()
+		, destroyFunc()
 	{
 		init(rdr, collider);
 	}
@@ -34,6 +36,9 @@ namespace talga
 		setRenderable(rdr);
 		setCollider(collider);
 		setCollisionType(COLL_DEFAULT);
+
+		if (initFunc)
+			initFunc(this);
 	}
 
 	GameObject::GameObject()
@@ -46,11 +51,13 @@ namespace talga
 		, stagedFunc()
 		, updateFunc()
 		, unstagedFunc()
+		, initFunc()
+		, destroyFunc()
 	{
 		init(nullptr, nullptr);
 	}
 
-	GameObject::GameObject(std::string path)
+	GameObject::GameObject(OOLUA::Lua_table_ref tbl)
 		: mGAME(GAME)
 		, DESTROY(false)
 		, isAnimated{ false }
@@ -60,39 +67,58 @@ namespace talga
 		, stagedFunc()
 		, updateFunc()
 		, unstagedFunc()
+		, initFunc()
+		, destroyFunc()
 	{
 		OOLUA::Lua_func_ref stagedFuncRef;
 		OOLUA::Lua_func_ref unstagedFuncRef;
 		OOLUA::Lua_func_ref updateFuncRef;
-		std::string tblname = getFileNameFromPathWithoutExtension(path);
-		talga::LuaEngine::instance()->ExecuteFile(path);
+		OOLUA::Lua_func_ref initFuncRef;
+		OOLUA::Lua_func_ref destroyFuncRef;
 
-		OOLUA::Table tempTbl(talga::LuaEngine::instance()->getGlobalTable(tblname));
-		TALGA_WARN(tempTbl.valid(), "incorrect script at " + path + " the table's name MUST match the name of the script");
+		OOLUA::Table tempTbl(tbl);
+
+		TALGA_WARN(tempTbl.valid(), "incorrect game object table tried to load");
 		
 		if (!tempTbl.valid())
 			return;
 
-		TALGA_MSG("script " + path + " successfully loaded");
+		TALGA_MSG("game object successfully loaded");
 
-		tempTbl.at("stagedFunc", stagedFuncRef);
-		tempTbl.at("unstagedFunc", unstagedFuncRef);
-		tempTbl.at("updateFunc", updateFuncRef);
+		tempTbl.at("init", initFuncRef);
+		tempTbl.at("destroy", destroyFuncRef);
+		tempTbl.at("staged", stagedFuncRef);
+		tempTbl.at("unstaged", unstagedFuncRef);
+		tempTbl.at("update", updateFuncRef);
+		
+		
+		if (initFuncRef.valid())
+			initFunc = initFuncRef;
+		else
+			TALGA_WARN(0, "failed to find initFunc in gameobject table")
+
+		if (destroyFuncRef.valid())
+			destroyFunc = destroyFuncRef;
+		else
+			TALGA_WARN(0, "failed to find destroyFunc in gameobject table")
+
 
 		if (stagedFuncRef.valid())
 			stagedFunc = stagedFuncRef;
 		else
-			TALGA_WARN(0, "failed to find stagedFunc in table in " + tblname);
+			TALGA_WARN(0, "failed to find stagedFunc in gameobject table");
 
 		if (unstagedFuncRef.valid())
 			unstagedFunc = unstagedFuncRef;
 		else
-			TALGA_WARN(0, "failed to find unstagedFunc in table in " + tblname);
+			TALGA_WARN(0, "failed to find unstagedFunc in gameobject table");
+
 
 		if (updateFuncRef.valid())
 			updateFunc = updateFuncRef;
 		else
-			TALGA_WARN(0, "failed to find updateFunc in table in " + tblname);
+			TALGA_WARN(0, "failed to find updateFunc in gameobject table");
+
 		
 		init(nullptr, nullptr);
 	}
@@ -182,7 +208,9 @@ namespace talga
 		[](cpArbiter *arb, struct cpSpace *space, cpDataPointer data) -> cpBool
 		{
 			CollisionData* colData = (CollisionData*)data;
-			colData->obj->getCollisionCallback(colData->collisionWith)(colData->obj);
+			LuaCollisionData luaData = {};
+			luaData.normal = vec2(arb->n.x, arb->n.y);
+			colData->obj->getCollisionCallback(colData->collisionWith)(colData->obj, &luaData);
 
 			return true;
 		};
@@ -203,7 +231,9 @@ namespace talga
 			[](cpArbiter *arb, struct cpSpace *space, cpDataPointer data) -> cpBool
 		{
 			CollisionData* colData = (CollisionData*)data;
-			colData->obj->getCollisionCallback(colData->obj->getCollisionType())(colData->obj);
+			LuaCollisionData luaData = {};
+			luaData.normal = vec2(arb->n.x, arb->n.y);
+			colData->obj->getCollisionCallback(colData->obj->getCollisionType())(colData->obj, &luaData);
 
 			return true;
 		};
@@ -304,6 +334,9 @@ namespace talga
 
 	void GameObject::destroy()
 	{
+		if (destroyFunc)
+			destroyFunc(this);
+
 		delete pmRenderable;
 		delete mCollider;
 		for (auto it = mData.begin(); it != mData.end(); ++it)

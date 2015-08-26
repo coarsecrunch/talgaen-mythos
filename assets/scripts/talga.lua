@@ -30,6 +30,7 @@ local function keyW(self, action)
 end
 
 local function updateFuncLoc(self, dt)
+
     if self.applyLeft and self:getCollider():getVx() > -150 then
         self:getCollider():applyImpulseX(-2000)
     end
@@ -38,16 +39,16 @@ local function updateFuncLoc(self, dt)
         self:getCollider():applyImpulseX(2000)
 
     end
-
-    GAME:camera():box():setX(self:getCollider():getX())
-    GAME:camera():box():setY(-self:getCollider():getY())
+  
 end
 
-local function onCollideWithGround(self)
-    self.hasJumped = false;
+local function onCollideWithGround(self, data)
+	if math.abs(data:norm():y()) > 0.9 then
+		self.hasJumped = false
+	end
 end
 
-local function stagedFuncLoc(self)
+local function initFunc(self)
     local animation = {}
     animation["standL"] = { {0, 0, 64, 64}, {64, 0, 64, 64} };
     animation["standR"] = { {128, 0, 64, 64}, {192, 0, 64, 64} };
@@ -73,11 +74,11 @@ local function stagedFuncLoc(self)
     self:setCollider(collider)
     self:setCollisionType(COLL_PLAYER)
     self:playAnimation("standR", 1000, true)
-    self:addKeyCallback("D", talga.keyDCback)
-    self:addKeyCallback("A", talga.keyACback)
-    self:addKeyCallback("W", talga.keyWCback)
+    self:addKeyCallback("D", keyD) 
+    self:addKeyCallback("A", keyA)
+    self:addKeyCallback("W", keyW)
    
-    self:addCollisionCallback(COLL_MAPGEOM, talga.groundColl)
+	self:addDefaultCollisionCallback(onCollideWithGround)
 
     self:getCollider():setMass(100)
     self:getCollider():setMoment(INFINITY)
@@ -87,10 +88,6 @@ end
 
 talga =
 {
-    stagedFunc = stagedFuncLoc,
-    updateFunc = updateFuncLoc,
-    keyDCback = keyD,
-    keyACback = keyA,
-    keyWCback = keyW,
-    groundColl = onCollideWithGround
+    init = initFunc,
+    update = updateFuncLoc,
 }

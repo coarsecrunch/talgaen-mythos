@@ -60,9 +60,9 @@ namespace talga
 		return product;
 	}
 
-	Vector3 operator*(const Matrix3x3& mat, const Vector3& vec)
+	vec3 operator*(const Matrix3x3& mat, const vec3& vec)
 	{
-		Vector3 copy;
+		vec3 copy;
 
 		for (int i = 0; i < 3; i++)
 		{

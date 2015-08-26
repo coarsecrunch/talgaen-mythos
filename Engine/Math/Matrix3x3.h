@@ -1,10 +1,9 @@
 #pragma once
 
+#include "Vector3.h"
+
 namespace talga
 {
-
-	class Vector3;
-
 	class Matrix3x3 {
 	public:
 		Matrix3x3(float v00, float v01, float v02,
@@ -25,7 +24,7 @@ namespace talga
 	};
 
 	Matrix3x3 operator*(const Matrix3x3& mat1, const Matrix3x3& mat2);
-	Vector3 operator*(const Matrix3x3& mat, const Vector3& vec);
+	vec3 operator*(const Matrix3x3& mat, const vec3& vec);
 	Matrix3x3 Transpose(const Matrix3x3& mat);
 
 	Matrix3x3 GetOrtho(float r, float l, float t, float b, float n, float f);

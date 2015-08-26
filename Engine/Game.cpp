@@ -94,7 +94,7 @@ namespace talga
 		mGameObjects.push_back(obj);
 		mObjectsLayer.add(obj->pmRenderable);
 		
-		TALGA_MSG("Game object has been added")
+		//TALGA_MSG("Game object has been added")
 	}
 
 	void Game::addKeyCallback(char c, GameObject* obj, KeyCallbackFunc callback)
@@ -239,6 +239,11 @@ namespace talga
 			}
 		}
 		
+	}
+
+	void Game::setGravity(vec2 gravity)
+	{
+		cpSpaceSetGravity(mSpace, cpv(gravity.x(), gravity.y()));
 	}
 
 	// currently relies on the fact that glfw defines keys as their ascii value, probably should define my own constants

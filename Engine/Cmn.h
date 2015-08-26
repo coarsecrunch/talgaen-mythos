@@ -8,6 +8,8 @@
 #define OOLUA_STORE_LAST_ERROR 0
 #endif
 
+#define STR_VALUE(arg) #arg
+#define TYPE_NAME(name) STR_VALUE(name)
 
 namespace talga
 {
@@ -31,6 +33,9 @@ namespace talga
 	typedef wchar_t C16;
 	typedef float F32;
     typedef double F64;
+
+#define inline __inline
+
 #endif
 #ifdef TALGA_UBUNTU_BUILD
     typedef signed char I8;

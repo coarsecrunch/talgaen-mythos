@@ -64,7 +64,7 @@ namespace talga
 	void PrintMat(const Matrix4x4& mat);
 	Matrix4x4 operator*(const Matrix4x4& mat1, const Matrix4x4& mat2);
 	Vector4 operator*(const Matrix4x4& mat, const Vector4& vec);
-	Vector3 operator*(const Matrix4x4& mat, const Vector3& vec);
+	vec3 operator*(const Matrix4x4& mat, const vec3& vec);
 	Matrix4x4 ProjectionPerspectiveMat(F32 near, F32 far, F32 fov, F32 aspectRatio);
 	Matrix4x4 PerspectiveProjctionVFrustum(F32 n, F32 f, F32 r, F32 l, F32 t, F32 b);
 	Matrix4x4 ViewMat(Vector4 eye, Vector4 target, Vector4 up);

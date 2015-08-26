@@ -59,9 +59,6 @@ void mouse_move_callback(GLFWwindow * window, double x, double y)
 
 int main(int argc, char** argv)
 {
-#define STR_VALUE(arg) #arg
-#define TYPE_NAME(name) STR_VALUE(name)
-
 	TALGA_PRVAL(TYPE_NAME(OOLUA_SHARED_CONST_CAST));
 	TALGA_PRVAL(TYPE_NAME(OOLUA_SHARED_TYPE));
 	TALGA_PRVAL(TYPE_NAME(OOLUA_USE_SHARED_PTR));
@@ -112,20 +109,22 @@ int main(int argc, char** argv)
 		timeSince += dt;
 		previousTime = clock.TimePassed();
 
-		if (dt >= 20)
-			dt = 17;
+		if (timeSince >= 1000)
+		{
+			timeSince = 0;
+			glfwSetWindowTitle(GAME->getWindow().getWindow(), (std::string("Talgaen Mythos   |   FPS: ") + std::to_string(fps)).c_str());
+			fps = 0;
+		}
+
+		if (dt >= 31)
+			dt = 31;
 
 		GAME->getWindow().swap();
 		GAME->getWindow().clear();
 
 		glfwPollEvents();
 		
-		if (timeSince >= 1000)
-		{
-			timeSince = 0;
-			std::cout << std::endl << "FPS: " << fps << std::endl;
-			fps = 0;
-		}
+		
 
 		GAME->update(dt);
 		GAME->render();

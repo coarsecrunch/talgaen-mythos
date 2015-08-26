@@ -107,11 +107,14 @@ namespace talga
 		I32 mHeight;
 		I32 mWidth;
 
+		std::vector<U8> mCollisionMap;
+
 		std::vector<IRenderable*> mStaticSceneGeom;
 		std::vector<Tile> mTileSet;
 		std::vector<cpTex> mTileSheets;
 		I32 mNumSheets;
 		LayerList mLayers;
 		cpScript mInitScript;
+
 	};
 }

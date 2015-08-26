@@ -184,6 +184,9 @@
       <ShowIncludes>false</ShowIncludes>
       <PreprocessorDefinitions>CHIPMUNK_FFI;TALGA_DEBUG;TALGA_ASSERTIONS_ENABLED;TALGA_WARNINGS_ENABLED;TALGA_MESSAGES_ENABLED;TALGA_WINDOWS_BUILD;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

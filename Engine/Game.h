@@ -41,7 +41,10 @@ namespace talga
 		Camera& camera() { return mCamera; }
 		Window& getWindow() { return mWindow; }
 		AssetManager* manager() { return &mManager; }
+
+
 		cpSpace* getSpace() { return mSpace; }
+		void setGravity(vec2 gravity);
 
 		void addObj(GameObject* obj);
 		void removeObj(GameObject* obj);

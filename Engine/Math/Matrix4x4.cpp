@@ -115,7 +115,7 @@ namespace talga
 			);
 	}
 
-	Vector3 operator*(const Matrix4x4& mat, const Vector3& vec)
+	vec3 operator*(const Matrix4x4& mat, const vec3& vec)
 	{
 		return vec3(
 			mat[0][0] * vec[0] + mat[0][1] * vec[1] + mat[0][2] * vec[2] + mat[0][3],
