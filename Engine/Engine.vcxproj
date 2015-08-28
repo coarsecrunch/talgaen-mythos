@@ -20,6 +20,8 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Clock.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="font.cpp" />
     <ClCompile Include="funkdefs.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -46,6 +48,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Rendering.cpp" />
     <ClCompile Include="Script.cpp" />
+    <ClCompile Include="SoundPlayer.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="StateMachine.cpp" />
     <ClCompile Include="sys.cpp" />
@@ -60,6 +63,8 @@
     <ClInclude Include="AAsset.h" />
     <ClInclude Include="AnimSet.h" />
     <ClInclude Include="collisiontypes.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="funkdefs.h" />
     <ClInclude Include="GameObject.h" />
@@ -70,6 +75,7 @@
     <ClInclude Include="renderableshapes.h" />
     <ClInclude Include="IState.h" />
     <ClInclude Include="Script.h" />
+    <ClInclude Include="SoundPlayer.h" />
     <ClInclude Include="StateMachine.h" />
     <ClInclude Include="sys.h" />
     <ClInclude Include="tassert.h" />
@@ -101,6 +107,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Rendering.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="TemplateNonsense.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transformation2D.h" />
     <ClInclude Include="Triangle.h" />
