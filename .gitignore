@@ -24,3 +24,5 @@ Crap/
 *.db
 *.pro.user
 *.cmd
+*.opendb
+*.pro.autosave

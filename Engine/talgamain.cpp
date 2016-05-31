@@ -133,7 +133,7 @@ int main(int argc, char** argv)
 		++fps;
 	}
 
-	//delete GAME;
+	delete GAME;
 
 	//system("PAUSE");
 
