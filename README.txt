@@ -1,6 +1,25 @@
-Windows:
+TalgaEngine:
 
-Talga Engine uses msvc2013. To build, open Engine/Engine.sln in Visual Studio 2013
-and build. Then you must copy all of the dll dependencies into both build/release 
-and build/debug to run each executable. Make sure the solution is x64, NOT x86. The
-project WILL NOT work if you try and build it in x86.
+Dependencies
+
+-Chipmunk Physics 7.01 (static)
+-Lua 5.3 (currently static, soon to be dynamic)
+-OOLua 2.0.1 (static)
+-glfw 3.1.2 (dynamic)
+-glew 1.11 (dynamic)
+
+Windows MSVC2015 64bit
+
+Link appropriate lib files in the project
+Build in x64
+
+TalgaEditor:
+
+Depenencies
+-All of TalgaEngine's deps
+-Qt 5.6 with MSVC2015 64bit
+
+Open with Qt Creator
+link all the appropriate libraries
+Build in x64
+

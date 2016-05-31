@@ -9,7 +9,7 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += console
-CONFIG += c++14
+CONFIG += c++11
 
 TARGET = TalgaEditor
 TEMPLATE = app
@@ -164,28 +164,34 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     ../assets/icons/icons.qrc
-
+win32:CONFIG(release, debug|release): LIBS += -'C:/Program Files (x86)/Windows Kits/10/Lib/10.0.10240.0/um/x64/' -lOpenGL32
+else:win32:CONFIG(debug, debug|release): LIBS += -'C:/Program Files (x86)/Windows Kits/10/Lib/10.0.10240.0/um/x64/' -lOpenGL32
 
 unix:!macx: LIBS += -lGLEW
 
 unix:!macx: LIBS += -lglfw
 
-unix:!macx: LIBS += -llua5.2
 
-unix:!macx: LIBS += -L$$PWD/../../../../usr/lib/x86_64-linux-gnu/ -llua5.2
 
 INCLUDEPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
 DEPENDPATH += $$PWD/../../../../usr/lib/x86_64-linux-gnu
 
-unix:!macx: PRE_TARGETDEPS += $$PWD/../../../../usr/lib/x86_64-linux-gnu/liblua5.2.a
-
 win32: LIBS += -L$$PWD/../lib/win64/ -lglew32
+win32: LIBS += -L$$PWD/../lib/win64/ -lglfw3
+win32: LIBS += -L$$PWD/../lib/win64/ -lglfw3dll
+
 
 INCLUDEPATH += $$PWD/../lib/win64
 DEPENDPATH += $$PWD/../lib/win64
 
 win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/glew32.lib
 else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/libglew32.a
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/glfw3.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/libglfw3.a
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/glfw3dll.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../lib/win64/libglfw3dll.a
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../lib/win64/ -llua53
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../lib/win64/ -llua53
@@ -195,9 +201,6 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/l
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/liblua53.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/lua53.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../lib/win64/lua53.lib
-
-win32:CONFIG(release, debug|release): LIBS += "-L$$PWD/C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/" -lOpenGL32
-else:win32:CONFIG(debug, debug|release): LIBS += "-L$$PWD/C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/" -lOpenGL32
 
 
 
@@ -223,3 +226,4 @@ else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../l
 
 INCLUDEPATH += $$PWD/../lib/win64
 DEPENDPATH += $$PWD/../lib/win64
+

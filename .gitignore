@@ -8,6 +8,8 @@ editor/
 export/
 wiki/
 x64/
+lib/
+include/
 Crap/
 *.obj
 *.log

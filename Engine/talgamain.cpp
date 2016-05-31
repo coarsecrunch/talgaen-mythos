@@ -74,7 +74,7 @@ int main(int argc, char** argv)
 	std::string mapPath;
 	if (argc != 2)
 	{
-		TALGA_WARN(0, "tried to start program with incorrect arguments")
+		TALGA_WARN(0, "tried to start talgaengine with incorrect arguments")
 
 		//return -1;
 	}
