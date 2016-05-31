@@ -1,36 +1,17 @@
 #include "luareg.h"
 #include "Cmn.h"
-#include "Rendering.h"
-#include "Map.h"
 #include "Game.h"
-#include "Texture.h"
-#include "Collision.h"
-#include "GL\glew.h"
 #include "GLFW\glfw3.h"
-#include <vector>
 #include <iostream>
-#include <memory>
-#include "Math/Matrix4x4.h"
-#include "Math/Vector3.h"
-
-#include "AssetManager.h"
 #include "Clock.h"
-#include "Rect.h"
-#include "ParticleEmitter.h"
 #include "LuaEngine.h"
-#include "GameObject.h"
 
-#include "Renderer.h"
-#include "Layer.h"
-#include "Sprite.h"
-#include "label.h"
-#include "AnimSet.h"
-#include "Math/RandomGen.h"
 #include "sys.h"
-#include "chipmunk/chipmunk_private.h"
+#include "stb/stb_vorbis.c"
+#include "SoundPlayer.h"
 
-#include "collisiontypes.h"
-#include "PhysicsComponent.h"
+#include "Entity.h"
+#include "Component.h"
 
 const talga::I32 WIDTH = 1200;
 const talga::I32 HEIGHT = 900;
@@ -57,15 +38,35 @@ void mouse_move_callback(GLFWwindow * window, double x, double y)
 	GAME->game_mouse_move_callback(window, x, y);
 }
 
+namespace talga
+{
+	class CheeseComp : public Component
+	{
+	public:
+		std::string pops = "poop";
+	};
+
+	class BellyComp : public Component
+	{
+	public:
+		std::string pops = "belly";
+	};
+}
+
+
+
 int main(int argc, char** argv)
 {
-#define STR_VALUE(arg) #arg
-#define TYPE_NAME(name) STR_VALUE(name)
+	int num = 20;
+	talga::CheeseComp comp;
+	talga::CheeseComp cheese;
+	talga::BellyComp belly;
+	talga::Entity<talga::BellyComp, talga::CheeseComp> hellojello(&belly, &cheese);
 
-	TALGA_PRVAL(TYPE_NAME(OOLUA_SHARED_CONST_CAST));
-	TALGA_PRVAL(TYPE_NAME(OOLUA_SHARED_TYPE));
-	TALGA_PRVAL(TYPE_NAME(OOLUA_USE_SHARED_PTR));
-	TALGA_PRVAL(TYPE_NAME(OOLUA_NEW_POINTER_DEFAULT_IS_SHARED_TYPE));
+	auto t = hellojello.getComponent<talga::BellyComp>();
+	std::cout << t->pops << std::endl;
+
+
 	TALGA_MSG("working directory: " + talga::getWorkingDirectory());
 	talga::Clock clock;
 	clock.Init();
@@ -112,20 +113,22 @@ int main(int argc, char** argv)
 		timeSince += dt;
 		previousTime = clock.TimePassed();
 
-		if (dt >= 20)
-			dt = 17;
+		if (timeSince >= 1000)
+		{
+			timeSince = 0;
+			glfwSetWindowTitle(GAME->getWindow().getWindow(), (std::string("Talgaen Mythos   |   FPS: ") + std::to_string(fps)).c_str());
+			fps = 0;
+		}
+
+		if (dt >= 31)
+			dt = 31;
 
 		GAME->getWindow().swap();
 		GAME->getWindow().clear();
 
 		glfwPollEvents();
 		
-		if (timeSince >= 1000)
-		{
-			timeSince = 0;
-			std::cout << std::endl << "FPS: " << fps << std::endl;
-			fps = 0;
-		}
+		
 
 		GAME->update(dt);
 		GAME->render();

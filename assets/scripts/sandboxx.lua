@@ -1,8 +1,9 @@
 require("script")
+require("talga")
 
 function init()
 	print(TALGA_KEYPRESS)
-    tga = GameObject.new("../assets/scripts/talga.lua")
+    tga = GameObject.new(talga)
 
     GAME:addObj(tga)
 

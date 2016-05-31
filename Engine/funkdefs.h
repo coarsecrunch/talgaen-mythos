@@ -9,11 +9,18 @@
 namespace talga
 {
 	class GameObject;
+	struct LuaCollisionData;
 	typedef std::function<void(GameObject*)> StagedStdFunction;
 	typedef std::function<void(GameObject*, I32 ms)> UpdateStdFunction;
 	typedef std::function<void(GameObject*)> UnstagedStdFunction;
 	typedef std::function<void(GameObject*, I32)> KeyStdCallback;
-	typedef std::function <void(GameObject*)> CollisionStdCallback;
+	typedef std::function <void(GameObject*, const LuaCollisionData*)> CollisionStdCallback;
+	
+	class StagedFunc;
+
+	typedef StagedFunc UnstagedFunc;
+	typedef StagedFunc InitFunc;
+	typedef StagedFunc DestroyFunc;
 
 	enum class TALGA_FUNC_TYPE { NONE, LUA, STD };
 
@@ -80,7 +87,7 @@ namespace talga
 		OOLUA::Lua_function luaFunc;
 		StagedStdFunction stdFunc;
 	};
-	typedef StagedFunc UnstagedFunc;
+	
 
 	class KeyCallbackFunc
 	{
@@ -139,7 +146,7 @@ namespace talga
 			return !(isLua == TALGA_FUNC_TYPE::NONE);
 		}
 
-		void operator()(GameObject* obj);
+		void operator()(GameObject* obj, const LuaCollisionData* data);
 
 	private:
 		TALGA_FUNC_TYPE isLua;

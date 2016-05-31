@@ -21,10 +21,12 @@ OOLUA_EXPORT_FUNCTIONS_CONST(AnimationSet)
 
 //PhysComp
 OOLUA_EXPORT_FUNCTIONS(PhysicsComponent, setFriction, setMoment, setMass, applyForceX, applyForceY,
-applyImpulseX, applyImpulseY, setX, setY)
+	applyImpulseX, applyImpulseY, setX, setY)
 OOLUA_EXPORT_FUNCTIONS_CONST(PhysicsComponent, getFriction, getMoment, getMass, getX, getY,
-getVx, getVy, getOrientation)
+		getVx, getVy, getOrientation)
 
+OOLUA_EXPORT_FUNCTIONS(CollisionData)
+OOLUA_EXPORT_FUNCTIONS_CONST(CollisionData, norm)
 
 //RectCollider
 OOLUA_EXPORT_FUNCTIONS(RectCollider)
@@ -58,7 +60,7 @@ OOLUA_EXPORT_FUNCTIONS(Camera, box)
 OOLUA_EXPORT_FUNCTIONS_CONST(Camera)
 
 //Game
-OOLUA_EXPORT_FUNCTIONS(Game, camera, manager, addObj, removeObj, printToLuaPromptStr, printToLuaPromptFl)
+OOLUA_EXPORT_FUNCTIONS(Game, camera, manager, addObj, removeObj, setGravity, printToLuaPromptStr, printToLuaPromptFl)
 OOLUA_EXPORT_FUNCTIONS_CONST(Game)
 
 void LUA_REGISTER_TYPES()
@@ -69,6 +71,7 @@ void LUA_REGISTER_TYPES()
 	talga::LuaEngine::instance()->regClass<talga::IRenderable>();
 	talga::LuaEngine::instance()->regClass<talga::AnimationSet>();
 	talga::LuaEngine::instance()->regClass<talga::PhysicsComponent>();
+	talga::LuaEngine::instance()->regClass<talga::LuaCollisionData>();
 	talga::LuaEngine::instance()->regClass<talga::RectCollider>();
 	talga::LuaEngine::instance()->regClass<talga::AssetManager>();
 	talga::LuaEngine::instance()->regClass<talga::Sprite>();

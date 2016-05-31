@@ -65,9 +65,9 @@ namespace talga
 	{
 		bool b1, b2, b3;
 
-		b1 = sign(pnt, tri.getVerts()[0], tri.getVerts()[1]) < 0.0f;
-		b2 = sign(pnt, tri.getVerts()[1], tri.getVerts()[2]) < 0.0f;
-		b3 = sign(pnt, tri.getVerts()[2], tri.getVerts()[0]) < 0.0f;
+		b1 = sign(pnt, vec2(tri.getVerts()[0].x(), tri.getVerts()[0].y()), vec2(tri.getVerts()[1].x(), tri.getVerts()[1].y())) < 0.0f;
+		b2 = sign(pnt, vec2(tri.getVerts()[1].x(), tri.getVerts()[1].y()), vec2(tri.getVerts()[2].x(), tri.getVerts()[2].y())) < 0.0f;
+		b3 = sign(pnt, vec2(tri.getVerts()[2].x(), tri.getVerts()[2].y()), vec2(tri.getVerts()[0].x(), tri.getVerts()[0].y())) < 0.0f;
 
 		return ((b1 == b2) && (b2 == b3));
 	}

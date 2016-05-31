@@ -1,38 +1,54 @@
 #pragma once
+#include "Vector2.h"
 namespace talga
 {
-	class Vector2;
-
-	class Vector3 {
+	template<typename T>
+	class Vector3 
+	{
 	public:
-		Vector3(float f = 0.0f, float f1 = 0.0f, float f2 = 0.0f);
-		Vector3(const Vector2& vec2Cpy, float z = 1.0f);
-		virtual ~Vector3();
+		Vector3(T f = 0.0f, T f1 = 0.0f, T f2 = 0.0f) : vec{f,f1,f2} {}
 
-		Vector3& operator=(const Vector3& copy);
-		float& operator[](int index);
-		const float& operator[](int index) const;
-		float operator()(int index) const;
+		template < template<typename Vector2> class T2>
+		Vector3(const T2<T>& ref)
+		{
+			vec[0] = ref.x();
+			vec[1] = ref.y();
+			vec[2] = 1.0f;
+		}
 
-		float x() const { return vec[0]; }
-		float y() const { return vec[1]; }
-		float z() const { return vec[2]; }
+		~Vector3() {}
 
-		float mag() const;
-		float dx() const;
-		float dy() const;
+		T& operator[](int index) { return vec[index]; }
+		T operator[](int index) const { return vec[index]; }
+		T operator()(int index) const { return vec[index]; }
+		
+
+		Vector3 operator*(float scaler) const { return Vector3{ x() * scaler, y() * scaler, z() * scaler }; }
+		Vector3 operator/(float scaler) const { return Vector3{ x() / scaler, y() / scaler, z() / scaler }; }
+		Vector3 operator+(Vector3 vector) const { return Vector3{ x() + vector.x(), y() + vector.y(), z() + vector.z() }; }
+		Vector3 operator-(Vector3 vector) const { return Vector3{ x() - vector.x(), y() - vector.y(), z() - vector.z() }; }
+
+
+		inline T x() const { return vec[0]; }
+		inline T y() const { return vec[1]; }
+		inline T z() const { return vec[2]; }
+
+		inline T mag() const { return std::sqrt(vec[0] * vec[0] + vec[1] * vec[1]); }
+		inline T dx() const { return x() / mag(); }
+		inline T dy() const { return y() / mag(); }
+		inline T dz() const { return z() / mag(); }
 	private:
-		float vec[3];
+		T vec[3];
 	};
 
-	Vector3 normalize(const Vector3& vec);
-	Vector3 cross(const Vector3& vec1, const Vector3& vec2);
-	Vector3 project(const Vector3& vec, const Vector3& onto);
-	float dot(const Vector3& vec1, const Vector3& vec2);
-	Vector3 operator-(const Vector3& vec1, const Vector3& vec2);
-	Vector3 operator+(const Vector3& vec1, const Vector3& vec2);
-	Vector3 vecBetween(Vector3 point1, Vector3 point2);
-	Vector3 operator*(const Vector3& vec, float scalar);
+	typedef Vector3<int> vec3i;
 
-	typedef Vector3 vec3;
+	typedef Vector3<float> vec3;
+	
+	vec3 normalize(const vec3& vec);
+	vec3 cross(const vec3& vec1, const vec3& vec2);
+	vec3 project(const vec3& vec, const vec3& onto);
+	float dot(const vec3& vec1, const vec3& vec2);
+	vec3 vecBetween(vec3 point1, vec3 point2);
+
 }

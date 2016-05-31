@@ -11,6 +11,8 @@
 
 namespace talga
 {
+	static LuaEngine* deleteEngine = nullptr;
+
 	LuaEngine::LuaEngine() 
 		: mScript()
 	{
@@ -18,9 +20,9 @@ namespace talga
 
 	LuaEngine* LuaEngine::instance()
 	{
-		static LuaEngine* engine = new LuaEngine();
+		static LuaEngine engine;
 
-		return engine;
+		return &engine;
 	}
 
 	lua_State* LuaEngine::getState()

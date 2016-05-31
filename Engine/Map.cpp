@@ -4,20 +4,23 @@
 #include "Camera.h"
 #include "Game.h"
 #include "Renderer.h"
-#include <algorithm>
-#include <fstream>
 #include "Math/RandomGen.h"
 #include "Math/Operations.h"
 #include "sys.h"
 #include "Script.h"
 
+
+#include <algorithm>
+#include <fstream>
+#include <cmath>
+
 #define RELATIVE_ASSETS_PATH std::string("../assets/")
 
 namespace talga
 {
-const I32 MAP_MAX_COLLIDERS = 1000;
+	const I32 MAP_MAX_COLLIDERS = 1000;
 #ifdef TALGA_QT_BUILD
-  const int VERT_SIZE = 6;
+	const int VERT_SIZE = 6;
 #endif
 	Map::Map()
 		: AAsset()
@@ -28,10 +31,11 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 		, mTileHeight{ -1 }
 		, mLayers{}
 		, mTileSheets{}
-		, mIsSaved{false}
+		, mIsSaved{ false }
 		, mStaticSceneGeom()
 		, mRenderSceneGeom(false)
-    , mInitScript(nullptr)
+		, mInitScript(nullptr)
+		, mCollisionMap{ 0 }
 	{
 		mLayers.reserve(MAX_LAYERS);
 		mStaticSceneGeom.reserve(MAP_MAX_COLLIDERS);
@@ -39,8 +43,8 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 
 	Map::Map(const Map& cpy)
 		: AAsset(cpy)
-		, mTileSet(cpy.mTileSet)
-		, mWidth(cpy.mWidth)
+		, mTileSet{ cpy.mTileSet }
+		, mWidth{ cpy.mWidth }
 		, mHeight(cpy.mHeight)
 		, mLayers(cpy.mLayers)
 		, mTileHeight(cpy.mTileHeight)
@@ -50,6 +54,7 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 		, mStaticSceneGeom(cpy.mStaticSceneGeom)
 		, mRenderSceneGeom(cpy.mRenderSceneGeom)
 		, mInitScript(cpy.mInitScript)
+		, mCollisionMap{cpy.mCollisionMap}
 	{
 	}
 
@@ -93,6 +98,7 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 		mStaticSceneGeom = cpy.mStaticSceneGeom;
 		mRenderSceneGeom = cpy.mRenderSceneGeom;
 		mInitScript = cpy.mInitScript;
+		mCollisionMap = cpy.mCollisionMap;
 
 		return *this;
 	}
@@ -119,10 +125,11 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 				for (I32 i = 0; i < mLayers.size(); ++i)
 				{
 					//could me much more optimal
-					if (!mLayers[i].isVisible()) 
+					if (!mLayers[i].isVisible())
 						continue;
 					if (getTileIndex(x, y, i) == 0)
 						continue;
+					
 
 					tempR.setX(I32(x * mTileWidth + (0.5f * mTileWidth)));
 					tempR.setY(I32(y * mTileHeight + (0.5f * mTileHeight)));
@@ -224,32 +231,7 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 		stream >> numLayers;
 		
 		
-    if (initScriptPath != "null")
-    {
-      mInitScript = manager.AddScript(getAbsFromRel(tempPath, getPathFromFilePath(initScriptPath)) + getFileNameFromPath(initScriptPath));
 
-#ifndef TALGA_QT_BUILD
-      mInitScript->execute();
-
-
-      OOLUA::Lua_func_ref initFunc = LuaEngine::instance()->getGlobalFunction("init");
-		
-      if (!initFunc.valid())
-      {
-        TALGA_WARN(0, "failed to find lua init function for map " + tempName);
-        return false;
-      }
-
-	  if (initFunc.valid())
-	  {
-		  OOLUA::Lua_function tempCall(initFunc.state());
-
-		  if (!tempCall(initFunc))
-			  LuaEngine::instance()->reportError();
-
-	  }
-#endif
-    }
 		for (auto i = 0; i < numTextures; ++i)
 		{
 			stream >> tempTexPath;
@@ -330,7 +312,7 @@ const I32 MAP_MAX_COLLIDERS = 1000;
       stream >> BL[0];
       stream >> BL[1];
 
-      RdrTri* tmpTri = new RdrTri( {T, BR, BL}, x, y, vec4(0.0f, 1.0f, 0.0f, 1.0f) );
+      RdrTri* tmpTri = new RdrTri( { vec3(T.x(), T.y()), vec3(BR.x(), BR.y()), vec3(BL.x(), BL.y())}, x, y, vec4(0.0f, 1.0f, 0.0f, 1.0f) );
 #ifdef TALGA_QT_BUILD
       RdrRect* TT = new RdrRect(VERT_SIZE, VERT_SIZE, T[0], T[1], vec4(1.0f, 0.0f, 1.0f, 1.0f));
       RdrRect* BRR = new RdrRect(VERT_SIZE, VERT_SIZE,BR[0], BR[1], vec4(1.0f, 0.0f, 1.0f, 1.0f));
@@ -378,7 +360,81 @@ const I32 MAP_MAX_COLLIDERS = 1000;
 		mHeight = mapHeight;
 		mTileWidth = tileWidth;
 		mTileHeight = tileHeight;
+		mCollisionMap = std::vector<U8>( (mWidth * mHeight) / 8); // 1 bit per tile
 
+		if (initScriptPath != "null")
+		{
+			mInitScript = manager.AddScript(getAbsFromRel(tempPath, getPathFromFilePath(initScriptPath)) + getFileNameFromPath(initScriptPath));
+
+#ifndef TALGA_QT_BUILD
+			for (auto it = mStaticSceneGeom.begin(); it != mStaticSceneGeom.end(); ++it)
+			{
+				if (dynamic_cast<RdrRect*>(*it))
+				{
+					RdrRect* rect = (RdrRect*)*it;
+
+					rect->box().updateVerts();
+
+					vec2 tl = rect->box().getVerts()[3] / mTileWidth;
+					vec2 tr = rect->box().getVerts()[2] / mTileWidth;
+					vec2 br = rect->box().getVerts()[1] / mTileWidth;
+					vec2 bl = rect->box().getVerts()[0] / mTileWidth;
+
+					int maxX = (ceil(br.x()) > mWidth) ? mWidth : ceil(br.x());
+					int maxY = (ceil(br.y()) > mHeight) ? mHeight : ceil(br.y());
+
+					for (I32 y = floor(tl.y()); y < maxY; ++y)
+					{
+						for (I32 x = floor(tl.x()); x < maxX; ++x)
+						{
+							I32 byte = (y * mWidth + x) / 8;
+							U8 bit = (y * mWidth + x) % 8;
+
+							mCollisionMap[byte] |= (0b00000001 << bit);
+						}
+						
+					}
+				}
+			}
+
+
+			std::cout << "\n--------COLLISION MAP---------\n\n";
+			for (int y = 0; y < mHeight; ++y)
+			{
+				for (int x = 0; x < mWidth; ++x)
+				{
+					I32 byte = (y * mWidth + x) / 8;
+					U8 bit = (y * mWidth + x) % 8;
+					
+
+					if ((0b00000001 << bit) & mCollisionMap[byte])
+						std::cout << 1;
+					else
+						std::cout << 0;
+					//std::cout << int( (0b00000001 << bit) & mCollisionMap[byte]);
+				}
+
+				std::cout << "\n";
+			}
+			std::cout << "\n-------------------------------\n\n";
+
+
+			mInitScript->execute();
+			OOLUA::Lua_func_ref initFunc = LuaEngine::instance()->getGlobalFunction("init");
+			if (!initFunc.valid())
+			{
+				TALGA_WARN(0, "failed to find lua init function for map " + tempName);
+				return false;
+			}
+			if (initFunc.valid())
+			{
+				OOLUA::Lua_function tempCall(initFunc.state());
+
+				if (!tempCall(initFunc))
+					LuaEngine::instance()->reportError();
+			}
+#endif
+		}
 
 		stream.close();
 		return true;

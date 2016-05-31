@@ -28,7 +28,7 @@ namespace talga
 	public:
 		GameObject();
 		GameObject(IRenderable* rdr, PhysicsComponent* collider);
-		GameObject(std::string script);
+		GameObject(OOLUA::Lua_table_ref tbl);
 		GameObject(const GameObject& cpy);
 		const GameObject& operator=(const GameObject& cpy);
 		virtual ~GameObject();
@@ -56,7 +56,9 @@ namespace talga
 		StagedFunc stagedFunc;
 		UpdateFunc updateFunc;
 		UnstagedFunc unstagedFunc;
-		
+		InitFunc initFunc;
+		DestroyFunc destroyFunc;
+
 		void init(IRenderable* rdr, PhysicsComponent* collider);
 		void destroy();
 
@@ -80,6 +82,13 @@ namespace talga
 	{
 		GameObject* obj;
 		I32 collisionWith;
+	};
+
+	struct LuaCollisionData
+	{
+		vec2 normal;
+		vec2 thisForce;
+		vec2 otherForce;
 	};
 
 	
