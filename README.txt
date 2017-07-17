@@ -23,3 +23,4 @@ Open with Qt Creator
 link all the appropriate libraries
 Build in x64
 
+Art credit: https://github.com/Jordanlagan
